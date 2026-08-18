@@ -1,0 +1,19 @@
+{
+  "name": "wellness-case-tracker",
+  "version": "2.0.0",
+  "description": "Multi-user software replacement for the \"(Do Not Disturb) Main template\" spreadsheet — shared team case log, invite-only accounts, editable dropdown lists, and the same aggregate reporting, backed by Postgres.",
+  "main": "server.js",
+  "engines": {
+    "node": ">=14.18.0"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "migrate": "node db/migrate.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "pg": "8.11.3"
+  }
+}

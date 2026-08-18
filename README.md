@@ -1,0 +1,98 @@
+# Wellness Case Tracker
+
+A multi-user software replacement for the "(Do Not Disturb) Main template" spreadsheet — the
+same 26 tracked fields and dropdown lists, plus the same aggregate reporting, as a shared,
+persistent, internet-hosted web app instead of a row-per-case spreadsheet.
+
+## How it works
+
+- **Shared team workspace.** Everyone with an account sees and edits the same case log — same
+  as the original spreadsheet — and every entry shows who logged and last edited it.
+- **Invite-only accounts.** Nobody can self-register. The first person to run setup becomes the
+  first admin; admins invite everyone else from **Team** (a shareable link, optionally locked to
+  one email address).
+- **Data lives in Postgres**, not a spreadsheet file — it persists across restarts/deploys, and
+  everyone always sees the current state when they log back in, any time.
+- **The default dropdown lists are editable.** Admins can add or remove values for any field
+  from **Template** — this is literally the workbook's original lists, seeded as the starting
+  point (`lib/config.js`), that your team can now tailor without editing code.
+
+## Local development
+
+1. Copy `.env.example` to `.env` and set `DATABASE_URL` to a Postgres connection string (a free
+   one from [neon.tech](https://neon.tech) works well).
+2. Install dependencies and set up the database:
+   ```bash
+   npm install
+   npm run migrate
+   ```
+   `npm run migrate` is idempotent — safe to re-run any time (e.g. after pulling schema changes).
+   It also does a one-time import of `data/db.json` if that legacy file is still present.
+3. Start the server:
+   ```bash
+   npm start
+   ```
+   Open **http://localhost:4787** — you'll land on "Set up your workspace" the first time.
+
+## Deploying so anyone on the internet can reach it
+
+This repo includes `render.yaml`, a [Render](https://render.com) Blueprint, paired with a free
+Postgres database from [Neon](https://neon.tech). Both have free tiers; you'll need to create
+accounts on each yourself (an assistant can't do that on your behalf).
+
+1. **Create the database:** sign up at neon.tech → New Project → copy the connection string
+   (starts with `postgres://`).
+2. **Push this project to a GitHub repo** (Render deploys from git).
+3. **Create the web service:** sign up at render.com → New → Blueprint → point it at your repo.
+   Render reads `render.yaml` and provisions the service automatically.
+4. **Set the secret:** in the Render dashboard for the new service → Environment → add
+   `DATABASE_URL` with the Neon connection string from step 1.
+5. Deploy. Render runs `npm install && npm run migrate` as the build step, then `npm start`.
+6. Visit the `.onrender.com` URL Render gives you → **Set up your workspace** → you're the first
+   admin → invite your team from **Team**.
+
+(Render's free web services sleep after inactivity and take ~30s to wake back up on the next
+visit — fine for a small team tool; upgrade the plan if that matters to you.)
+
+## What maps to what
+
+The spreadsheet's workflow — "copy row 2, paste it down, fill it in, move to the next student" —
+is now: click **+ New Entry**, optionally search for an existing student to reuse their details,
+fill in the new interaction, save. Each interaction is still one record; a student who's
+contacted multiple times just has multiple records grouped under their name in **Students**.
+
+| Spreadsheet | App |
+|---|---|
+| Master Doc rows | **Case Log** (flat, sortable, filterable table, shows who logged each entry) |
+| Same row, grouped by name in your head | **Students** (grouped case history / timeline) |
+| Z842:AA998 aggregation formulas | **Dashboard** (live, filterable by date range) |
+| Column dropdown lists | **Template** (admin-editable, seeded from the original lists) |
+| Emailing the file around / one shared drive copy | Everyone logs into the same hosted app |
+| Copy/paste a snapshot into "General Data" sheets | Dashboard's date-range filter, live |
+
+`lib/config.js` documents a few places where the original workbook's dropdown lists had drifted
+out of sync with its own count formulas (options you could pick that were never counted
+anywhere — including safety-critical ones like *Suicidal Ideation/Self Harm* and *Threat to
+Others*). Those are fixed here so every selectable value is reflected on the dashboard, including
+any custom values an admin adds later (unmapped custom values roll up into an "Other" bucket
+rather than disappearing).
+
+## Exporting
+
+**Export CSV** (top bar) downloads every logged entry in the same column order as the original
+Master Doc tab, so it can be opened in Excel or handed off for institutional reporting.
+
+## Project layout
+
+```
+server.js         http server + router: auth, entries, dashboard, template, team endpoints
+lib/config.js     field schema, default dropdown lists, dashboard bucket mappings
+lib/auth.js       password hashing (scrypt) + session cookie helpers
+lib/aggregate.js  dashboard aggregation logic
+lib/id.js         id generation
+db/schema.sql     Postgres schema (users, sessions, invites, entries, template_options)
+db/pool.js        Postgres connection pool (reads DATABASE_URL)
+db/repo.js        all database queries
+db/migrate.js     idempotent schema setup + default option seeding + legacy data import
+public/           frontend (vanilla HTML/CSS/JS, no build step) — auth.js, app.js, styles.css
+```

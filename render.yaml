@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: wellness-case-tracker
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run migrate
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false

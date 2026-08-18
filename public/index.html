@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Wellness Case Tracker</title>
+<link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+
+<div id="authRoot" class="auth-screen" style="display:none"></div>
+
+<div id="app" style="display:none">
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark">W</span>
+      <span class="brand-text">Wellness Tracker</span>
+    </div>
+    <nav class="nav" id="nav">
+      <button class="nav-item" data-view="log">
+        <svg viewBox="0 0 20 20" width="18" height="18"><path d="M3 4h14M3 10h14M3 16h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        Case Log
+      </button>
+      <button class="nav-item" data-view="students">
+        <svg viewBox="0 0 20 20" width="18" height="18"><circle cx="7" cy="6.5" r="2.5" stroke="currentColor" stroke-width="1.6"/><circle cx="14.5" cy="8" r="2" stroke="currentColor" stroke-width="1.6"/><path d="M2.5 16c.6-3 2.5-4.5 4.5-4.5s3.9 1.5 4.5 4.5M12 16c.4-2.2 1.8-3.5 3.4-3.5S18.2 13.8 18.6 16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        Students
+      </button>
+      <button class="nav-item" data-view="dashboard">
+        <svg viewBox="0 0 20 20" width="18" height="18"><rect x="3" y="10" width="3.4" height="7" rx="0.8" stroke="currentColor" stroke-width="1.6"/><rect x="8.3" y="6" width="3.4" height="11" rx="0.8" stroke="currentColor" stroke-width="1.6"/><rect x="13.6" y="3" width="3.4" height="14" rx="0.8" stroke="currentColor" stroke-width="1.6"/></svg>
+        Dashboard
+      </button>
+      <div class="nav-divider" id="adminNavDivider" style="display:none"></div>
+      <button class="nav-item" data-view="template" id="navTemplate" style="display:none">
+        <svg viewBox="0 0 20 20" width="18" height="18"><path d="M3 5h14M3 10h14M3 15h9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="15" cy="15" r="2" stroke="currentColor" stroke-width="1.6"/></svg>
+        Template
+      </button>
+      <button class="nav-item" data-view="team" id="navTeam" style="display:none">
+        <svg viewBox="0 0 20 20" width="18" height="18"><circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.6"/><path d="M4 17c.8-3.6 3-5.5 6-5.5s5.2 1.9 6 5.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        Team
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-chip">
+        <span class="user-avatar" id="userAvatar">–</span>
+        <div class="user-chip-text">
+          <div class="user-chip-name" id="userName">—</div>
+          <div class="user-chip-role" id="userRole">—</div>
+        </div>
+        <button class="icon-btn" id="logoutBtn" title="Log out">
+          <svg viewBox="0 0 20 20" width="16" height="16"><path d="M8 4H5a1 1 0 00-1 1v10a1 1 0 001 1h3M13 7l3 3-3 3M16 10H8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <div class="footer-line muted" id="entryCountFooter">— entries</div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="search-wrap">
+        <svg viewBox="0 0 20 20" width="16" height="16" class="search-icon"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.6"/><path d="M17 17l-3.6-3.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <input id="search" type="text" placeholder="Search students, notes, program…" />
+      </div>
+      <div class="topbar-actions">
+        <button class="btn" id="exportBtn">Export CSV</button>
+        <button class="btn primary" id="newEntryBtn">+ New Entry</button>
+      </div>
+    </header>
+    <div class="view-root" id="view-root"></div>
+  </main>
+</div>
+
+<div class="overlay" id="overlay"></div>
+<aside class="drawer" id="drawer"></aside>
+<div class="toast-stack" id="toastStack"></div>
+
+<script src="/config.js"></script>
+<script src="/auth.js"></script>
+<script src="/app.js"></script>
+</body>
+</html>
