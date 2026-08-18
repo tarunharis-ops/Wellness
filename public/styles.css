@@ -401,3 +401,21 @@ table.data-table { width: 100%; border-collapse: collapse; min-width: 900px; }
 
 /* ---------- Team view ---------- */
 .role-select { padding: 5px 8px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--surface); font-size: 12.5px; }
+
+/* ---------- Semester selector ---------- */
+.semester-wrap { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.semester-select, .counselor-select {
+  padding: 8px 12px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm);
+  background: var(--surface); font-weight: 550; font-size: 13px; max-width: 220px;
+}
+
+/* ---------- Import wizard ---------- */
+.import-upload-inner { text-align: center; padding: 10px 0; }
+.import-sheet-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+.import-sheet-card { transition: opacity .15s ease; }
+.import-sheet-card.excluded { opacity: .5; }
+.import-sheet-head { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.import-sheet-head input[type=checkbox] { width: 16px; height: 16px; flex-shrink: 0; }
+.import-sheet-name { font-weight: 650; font-size: 14px; }
+.import-summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; position: sticky; bottom: 16px; box-shadow: var(--shadow-md); }
+.import-skip-list { max-height: 260px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }

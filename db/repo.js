@@ -156,6 +156,36 @@ function inviteRow(row, withNames) {
   return out;
 }
 
+// ---------------- Semesters ----------------
+
+function listSemesters() {
+  return db.query(
+    'SELECT s.*, COUNT(e.id)::int AS entry_count FROM semesters s ' +
+    'LEFT JOIN entries e ON e.semester_id = s.id ' +
+    'GROUP BY s.id ORDER BY s.starts_on ASC NULLS LAST, s.label ASC'
+  ).then(function (r) { return r.rows.map(semesterRow); });
+}
+
+function createSemester(fields, userId) {
+  const id = uuid();
+  return db.query(
+    'INSERT INTO semesters (id, label, starts_on, ends_on, created_by) VALUES ($1,$2,$3,$4,$5) ' +
+    'ON CONFLICT (label) DO UPDATE SET label = EXCLUDED.label RETURNING *',
+    [id, fields.label.trim(), fields.startsOn || null, fields.endsOn || null, userId]
+  ).then(function (r) { return semesterRow(Object.assign({ entry_count: 0 }, r.rows[0])); });
+}
+
+function findOrCreateSemester(fields, userId) {
+  return createSemester(fields, userId);
+}
+
+function semesterRow(row) {
+  return {
+    id: row.id, label: row.label, startsOn: row.starts_on, endsOn: row.ends_on,
+    createdBy: row.created_by, createdAt: row.created_at, entryCount: row.entry_count || 0,
+  };
+}
+
 // ---------------- Entries ----------------
 
 function studentKeyFor(firstName, lastName) {
@@ -164,14 +194,18 @@ function studentKeyFor(firstName, lastName) {
 
 function listEntries() {
   return db.query(
-    'SELECT e.*, cu.name AS created_by_name, uu.name AS updated_by_name FROM entries e ' +
+    'SELECT e.*, COALESCE(cu.name, e.created_by_name_override) AS created_by_name, uu.name AS updated_by_name, ' +
+    'sem.label AS semester_label ' +
+    'FROM entries e ' +
     'LEFT JOIN users cu ON cu.id = e.created_by LEFT JOIN users uu ON uu.id = e.updated_by ' +
+    'LEFT JOIN semesters sem ON sem.id = e.semester_id ' +
     'ORDER BY e.created_at DESC'
   ).then(function (r) {
     return r.rows.map(function (row) {
       const entry = rowToEntry(row);
       entry.createdByName = row.created_by_name || '';
       entry.updatedByName = row.updated_by_name || '';
+      entry.semesterLabel = row.semester_label || '';
       return entry;
     });
   });
@@ -194,29 +228,83 @@ function buildEntryColumns(fields) {
   return { cols: cols, values: values };
 }
 
-function createEntry(fields, userId) {
+function createEntry(fields, userId, opts) {
+  opts = opts || {};
   const id = uuid();
   const built = buildEntryColumns(fields);
-  const cols = ['id', 'student_key'].concat(built.cols).concat(['created_by', 'updated_by']);
-  const values = [id, studentKeyFor(fields.firstName, fields.lastName)].concat(built.values).concat([userId, userId]);
+  const cols = ['id', 'student_key', 'semester_id', 'created_by_name_override'].concat(built.cols).concat(['created_by', 'updated_by']);
+  const values = [id, studentKeyFor(fields.firstName, fields.lastName), opts.semesterId || null, opts.createdByNameOverride || null]
+    .concat(built.values).concat([userId, userId]);
   const placeholders = values.map(function (_, i) { return '$' + (i + 1); });
   const sql = 'INSERT INTO entries (' + cols.join(',') + ') VALUES (' + placeholders.join(',') + ') RETURNING *';
   return db.query(sql, values).then(function (r) { return rowToEntry(r.rows[0]); });
 }
 
-function updateEntry(id, fields, userId) {
+function updateEntry(id, fields, userId, opts) {
+  opts = opts || {};
   const built = buildEntryColumns(fields);
-  const setClauses = built.cols.map(function (col, i) { return col + ' = $' + (i + 3); });
+  const setClauses = built.cols.map(function (col, i) { return col + ' = $' + (i + 4); });
   setClauses.push('student_key = $2');
-  setClauses.push('updated_by = $' + (built.cols.length + 3));
+  setClauses.push('semester_id = $3');
+  setClauses.push('updated_by = $' + (built.cols.length + 4));
   setClauses.push('updated_at = now()');
-  const values = [id, studentKeyFor(fields.firstName, fields.lastName)].concat(built.values).concat([userId]);
+  const values = [id, studentKeyFor(fields.firstName, fields.lastName), opts.semesterId || null]
+    .concat(built.values).concat([userId]);
   const sql = 'UPDATE entries SET ' + setClauses.join(', ') + ' WHERE id = $1 RETURNING *';
   return db.query(sql, values).then(function (r) { return r.rows[0] ? rowToEntry(r.rows[0]) : null; });
 }
 
 function deleteEntry(id) {
   return db.query('DELETE FROM entries WHERE id = $1', [id]).then(function (r) { return r.rowCount > 0; });
+}
+
+// Bulk-inserts pre-parsed import rows inside one transaction, batching many
+// rows per INSERT (imports can be thousands of rows — one round trip per row
+// would be far too slow). Each item:
+// { fields: {...cfg.FIELDS keys}, semesterId, createdByNameOverride, createdBy }
+const IMPORT_BATCH_SIZE = 200;
+const FIXED_COLS = ['id', 'student_key', 'semester_id', 'created_by_name_override'];
+const ENTRY_COLS = FIXED_COLS.concat(ENTRY_KEYS.map(camelToSnake)).concat(['created_by', 'updated_by']);
+
+function entryRowValues(item) {
+  const built = buildEntryColumns(item.fields);
+  return [uuid(), studentKeyFor(item.fields.firstName, item.fields.lastName), item.semesterId || null, item.createdByNameOverride || null]
+    .concat(built.values).concat([item.createdBy || null, item.createdBy || null]);
+}
+
+function insertBatch(client, batch) {
+  const perRow = ENTRY_COLS.length;
+  const values = [];
+  const rowPlaceholders = batch.map(function (item, rowIdx) {
+    const rowValues = entryRowValues(item);
+    values.push.apply(values, rowValues);
+    const base = rowIdx * perRow;
+    const placeholders = rowValues.map(function (_, i) { return '$' + (base + i + 1); });
+    return '(' + placeholders.join(',') + ')';
+  });
+  const sql = 'INSERT INTO entries (' + ENTRY_COLS.join(',') + ') VALUES ' + rowPlaceholders.join(',');
+  return client.query(sql, values);
+}
+
+function bulkCreateEntries(items) {
+  if (!items.length) return Promise.resolve({ inserted: 0 });
+  const pool = db.getPool();
+  return pool.connect().then(function (client) {
+    return client.query('BEGIN')
+      .then(function () {
+        var chain = Promise.resolve();
+        for (var i = 0; i < items.length; i += IMPORT_BATCH_SIZE) {
+          const batch = items.slice(i, i + IMPORT_BATCH_SIZE);
+          chain = chain.then(function () { return insertBatch(client, batch); });
+        }
+        return chain;
+      })
+      .then(function () { return client.query('COMMIT'); })
+      .then(function () { client.release(); return { inserted: items.length }; })
+      .catch(function (err) {
+        return client.query('ROLLBACK').then(function () { client.release(); throw err; }, function () { client.release(); throw err; });
+      });
+  });
 }
 
 // ---------------- Template options ----------------
@@ -250,6 +338,7 @@ module.exports = {
   countUsers, createUser, getUserByEmail, getUserById, listUsers, setUserActive, setUserRole, touchLogin, publicUser,
   createSession, getSession, deleteSession, touchSession,
   createInvite, listInvites, getInviteByToken, markInviteUsed, deleteInvite,
-  listEntries, getEntry, createEntry, updateEntry, deleteEntry, studentKeyFor,
+  listSemesters, createSemester, findOrCreateSemester,
+  listEntries, getEntry, createEntry, updateEntry, deleteEntry, bulkCreateEntries, studentKeyFor,
   listTemplateOptions, addTemplateOption, setTemplateOptionActive,
 };

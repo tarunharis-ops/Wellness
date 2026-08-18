@@ -21,11 +21,16 @@
     });
   }
 
+  var SEMESTER_STORAGE_KEY = 'wct_semester_id';
+
   var STATE = {
     currentUser: null,
     view: 'log',
     entries: [],
     students: [],
+    semesters: [],
+    currentSemesterId: localStorage.getItem(SEMESTER_STORAGE_KEY) || 'all',
+    dashCounselor: 'all',
     search: '',
     filters: { caseStatus: '', nabitaRisk: '' },
     sort: { key: 'outreachDate', dir: 'desc' },
@@ -56,20 +61,44 @@
     });
   }
 
+  function semesterQueryParam() {
+    return STATE.currentSemesterId && STATE.currentSemesterId !== 'all' ? STATE.currentSemesterId : '';
+  }
+
   function loadAll() {
+    var qs = semesterQueryParam() ? '?semesterId=' + encodeURIComponent(semesterQueryParam()) : '';
     return Promise.all([
-      api('/api/entries').then(function (d) { STATE.entries = d.entries; }),
-      api('/api/students').then(function (d) { STATE.students = d.students; }),
+      api('/api/semesters').then(function (d) { STATE.semesters = d.semesters; }),
+      api('/api/entries' + qs).then(function (d) { STATE.entries = d.entries; }),
+      api('/api/students' + qs).then(function (d) { STATE.students = d.students; }),
     ]).then(loadDashboard);
   }
 
+  function counselorOptions() {
+    var seen = {};
+    var names = [];
+    STATE.entries.forEach(function (e) {
+      if (e.createdByName && !seen[e.createdByName]) { seen[e.createdByName] = true; names.push(e.createdByName); }
+    });
+    names.sort();
+    return names;
+  }
+
   function loadDashboard() {
-    var qs = '';
     var range = computeDashRange();
-    if (range.from || range.to) {
-      qs = '?' + [range.from ? 'from=' + encodeURIComponent(range.from) : '', range.to ? 'to=' + encodeURIComponent(range.to) : ''].filter(Boolean).join('&');
-    }
+    var params = [];
+    if (range.from) params.push('from=' + encodeURIComponent(range.from));
+    if (range.to) params.push('to=' + encodeURIComponent(range.to));
+    if (semesterQueryParam()) params.push('semesterId=' + encodeURIComponent(semesterQueryParam()));
+    if (STATE.dashCounselor && STATE.dashCounselor !== 'all') params.push('counselor=' + encodeURIComponent(STATE.dashCounselor));
+    var qs = params.length ? '?' + params.join('&') : '';
     return api('/api/dashboard' + qs).then(function (d) { STATE.dashboard = d; });
+  }
+
+  function setSemester(semesterId) {
+    STATE.currentSemesterId = semesterId || 'all';
+    localStorage.setItem(SEMESTER_STORAGE_KEY, STATE.currentSemesterId);
+    return loadAll().then(render);
   }
 
   // ---------------- Helpers ----------------
@@ -174,12 +203,24 @@
     var root = document.getElementById('view-root');
     var footer = document.getElementById('entryCountFooter');
     footer.textContent = STATE.entries.length + ' entries · ' + STATE.students.length + ' students';
+    renderSemesterSelect();
     if (STATE.view === 'log') root.innerHTML = renderLogView();
     else if (STATE.view === 'students') root.innerHTML = renderStudentsView();
     else if (STATE.view === 'dashboard') root.innerHTML = renderDashboardView();
     else if (STATE.view === 'team') { root.innerHTML = renderTeamView(); loadTeamData(); }
     else if (STATE.view === 'template') { root.innerHTML = renderTemplateView(); loadTemplateData(); }
+    else if (STATE.view === 'import') { window.WCT_IMPORT.render(root); }
     bindViewEvents();
+  }
+
+  function renderSemesterSelect() {
+    var sel = document.getElementById('semesterSelect');
+    if (!sel) return;
+    var options = ['<option value="all"' + (STATE.currentSemesterId === 'all' ? ' selected' : '') + '>All Semesters</option>'];
+    STATE.semesters.forEach(function (s) {
+      options.push('<option value="' + s.id + '"' + (STATE.currentSemesterId === s.id ? ' selected' : '') + '>' + escapeHtml(s.label) + ' (' + s.entryCount + ')</option>');
+    });
+    sel.innerHTML = options.join('');
   }
 
   // ---------------- Log view ----------------
@@ -208,6 +249,7 @@
 
   function renderLogView() {
     var list = filteredEntries();
+    var showSemesterCol = STATE.currentSemesterId === 'all';
     var rows = list.map(function (e) {
       return '<tr data-id="' + e.id + '">' +
         '<td><span class="badge ' + caseStatusBadgeClass(e.caseStatus) + '">' + escapeHtml(e.caseStatus || '—') + '</span></td>' +
@@ -219,6 +261,7 @@
         '<td class="cell-muted">' + (e.durationMinutes !== '' && e.durationMinutes !== undefined ? e.durationMinutes + ' min' : '—') + '</td>' +
         '<td class="cell-muted">' + escapeHtml(e.concernPrimary || '—') + '</td>' +
         '<td class="cell-muted">' + escapeHtml(e.createdByName || '—') + '</td>' +
+        (showSemesterCol ? '<td class="cell-muted">' + escapeHtml(e.semesterLabel || '—') + '</td>' : '') +
         '</tr>';
     }).join('');
 
@@ -238,6 +281,7 @@
             th('caseStatus', 'Status') + th('lastName', 'Student') + th('program', 'Program') +
             th('nabitaRisk', 'Risk') + th('outreachConducted', 'Outreach') + th('outreachDate', 'Date') +
             th('durationMinutes', 'Duration') + th('concernPrimary', 'Primary Concern') + '<th>Logged By</th>' +
+            (showSemesterCol ? '<th>Semester</th>' : '') +
           '</tr></thead>' +
           '<tbody>' + rows + '</tbody>' +
         '</table>') : emptyState('No entries match your filters', 'Try clearing filters or add a new entry.')) +
@@ -346,9 +390,20 @@
     var customInputs = STATE.dashRangeMode === 'custom' ?
       '<input type="date" id="dashFrom" value="' + escapeHtml(STATE.dashFrom) + '" /><span class="small-muted">to</span><input type="date" id="dashTo" value="' + escapeHtml(STATE.dashTo) + '" />' : '';
 
+    var currentSemesterLabel = STATE.currentSemesterId === 'all' ? 'All semesters' :
+      ((STATE.semesters.find(function (s) { return s.id === STATE.currentSemesterId; }) || {}).label || 'Selected semester');
+
+    var counselors = counselorOptions();
+    var counselorSelect = '<select id="dashCounselor" class="counselor-select">' +
+      '<option value="all">All Counselors</option>' +
+      counselors.map(function (name) { return '<option value="' + escapeHtml(name) + '"' + (STATE.dashCounselor === name ? ' selected' : '') + '>' + escapeHtml(name) + '</option>'; }).join('') +
+      '</select>';
+
     return '' +
-      '<div class="page-head"><div><div class="page-title">Dashboard</div><div class="page-sub">' + escapeHtml(rangeLabel) + '</div></div></div>' +
-      '<div class="filter-bar">' + modeBtn('all', 'All Time') + modeBtn('semester', 'This Semester') + modeBtn('year', 'This Year') + modeBtn('custom', 'Custom Range') + customInputs + '</div>' +
+      '<div class="page-head"><div><div class="page-title">Dashboard</div><div class="page-sub">' + escapeHtml(currentSemesterLabel) + ' · ' + escapeHtml(rangeLabel) + '</div></div></div>' +
+      '<div class="filter-bar">' + modeBtn('all', 'All Time') + modeBtn('semester', 'This Semester') + modeBtn('year', 'This Year') + modeBtn('custom', 'Custom Range') + customInputs +
+        '<span style="width:1px;height:20px;background:var(--border);margin:0 4px;"></span>' + counselorSelect +
+      '</div>' +
       '<div class="stat-grid">' +
         statCard('Unique Students', d.totals.uniqueStudents, 'in selected period') +
         statCard('Active Cases', d.totals.activeCases, 'case status = Active') +
@@ -414,6 +469,19 @@
     return '<div class="form-field' + full + '">' + label + input + '</div>';
   }
 
+  function semesterFieldHtml(entry) {
+    var current = entry && entry.semesterId ? entry.semesterId : (STATE.currentSemesterId !== 'all' ? STATE.currentSemesterId : '');
+    var opts = '<option value="">— Select —</option>' + STATE.semesters.map(function (s) {
+      return '<option value="' + s.id + '"' + (s.id === current ? ' selected' : '') + '>' + escapeHtml(s.label) + '</option>';
+    }).join('');
+    return '<div class="form-section">' +
+      '<div class="form-section-title">Semester</div>' +
+      '<div class="form-grid"><div class="form-field"><label>Semester<span class="required-mark">*</span></label>' +
+      '<select name="semesterId" required>' + opts + '</select></div></div>' +
+      (STATE.semesters.length ? '' : '<div class="small-muted" style="margin-top:6px">No semesters yet — use "+ Semester" in the top bar to create one.</div>') +
+    '</div>';
+  }
+
   function entryFormHtml(entry, isNew) {
     var sectionsHtml = getSections().map(function (sec) {
       var fields = getFields().filter(function (f) { return f.section === sec.key; });
@@ -432,7 +500,7 @@
       '</div>';
     }
 
-    return '<form id="entryForm"><div id="formErrors"></div>' + linkBox + sectionsHtml + '</form>';
+    return '<form id="entryForm"><div id="formErrors"></div>' + linkBox + semesterFieldHtml(entry) + sectionsHtml + '</form>';
   }
 
   function openEntryDrawer(entryId) {
@@ -507,6 +575,8 @@
       var el = form.querySelector('[name="' + f.key + '"]');
       data[f.key] = el ? el.value : '';
     });
+    var semesterEl = form.querySelector('[name="semesterId"]');
+    data.semesterId = semesterEl ? semesterEl.value : '';
     return data;
   }
 
@@ -515,6 +585,7 @@
     var errBox = document.getElementById('formErrors');
     errBox.innerHTML = '';
     var missing = getFields().filter(function (f) { return f.required && !data[f.key]; });
+    if (!data.semesterId) missing.push({ label: 'Semester' });
     if (missing.length) {
       errBox.innerHTML = '<div class="form-errors">Please fill in: ' + missing.map(function (f) { return f.label; }).join(', ') + '</div>';
       return;
@@ -792,6 +863,8 @@
     var dashTo = document.getElementById('dashTo');
     if (dashFrom) dashFrom.addEventListener('change', function () { STATE.dashFrom = dashFrom.value; loadDashboard().then(render); });
     if (dashTo) dashTo.addEventListener('change', function () { STATE.dashTo = dashTo.value; loadDashboard().then(render); });
+    var dashCounselor = document.getElementById('dashCounselor');
+    if (dashCounselor) dashCounselor.addEventListener('change', function () { STATE.dashCounselor = dashCounselor.value; loadDashboard().then(render); });
   }
 
   function bindGlobalEvents() {
@@ -801,10 +874,34 @@
     });
     document.getElementById('search').addEventListener('input', debounce(function (e) { STATE.search = e.target.value; render(); }, 120));
     document.getElementById('newEntryBtn').addEventListener('click', function () { STATE.linkedStudentPrefill = null; openEntryDrawer(null); });
-    document.getElementById('exportBtn').addEventListener('click', function () { window.location.href = '/api/export.csv'; });
+    document.getElementById('exportBtn').addEventListener('click', function () {
+      var qs = semesterQueryParam() ? '?semesterId=' + encodeURIComponent(semesterQueryParam()) : '';
+      window.location.href = '/api/export.csv' + qs;
+    });
     document.getElementById('overlay').addEventListener('click', closeDrawer);
     document.getElementById('logoutBtn').addEventListener('click', function () { window.WCT_AUTH.logout(); });
+    document.getElementById('semesterSelect').addEventListener('change', function (e) { setSemester(e.target.value); });
+    document.getElementById('newSemesterBtn').addEventListener('click', promptNewSemester);
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeDrawer(); });
+  }
+
+  function promptNewSemester() {
+    var label = prompt('New semester name (e.g. "Fall 2026"):');
+    if (!label || !label.trim()) return;
+    var guess = guessSemesterDates(label.trim());
+    api('/api/semesters', { method: 'POST', body: { label: label.trim(), startsOn: guess.startsOn, endsOn: guess.endsOn } }).then(function (d) {
+      toast('Semester "' + d.semester.label + '" created', 'ok');
+      return setSemester(d.semester.id);
+    }).catch(function (err) { toast(err.message, 'err'); });
+  }
+
+  function guessSemesterDates(label) {
+    var m = label.match(/(Fall|Spring|Summer)\s+(\d{4})/i);
+    if (!m) return { startsOn: '', endsOn: '' };
+    var season = m[1].toLowerCase(), year = m[2];
+    if (season === 'fall') return { startsOn: year + '-08-01', endsOn: year + '-12-31' };
+    if (season === 'spring') return { startsOn: year + '-01-01', endsOn: year + '-05-31' };
+    return { startsOn: year + '-06-01', endsOn: year + '-07-31' };
   }
 
   // ---------------- Init ----------------
@@ -814,6 +911,7 @@
     document.getElementById('userName').textContent = user.name;
     document.getElementById('userRole').textContent = user.role === 'admin' ? 'Admin' : 'Counselor';
     if (user.role === 'admin') {
+      document.getElementById('navImport').style.display = '';
       document.getElementById('navTemplate').style.display = '';
       document.getElementById('navTeam').style.display = '';
       document.getElementById('adminNavDivider').style.display = '';
@@ -823,5 +921,13 @@
     loadAll().then(render).catch(function (err) { toast('Failed to load data: ' + err.message, 'err'); });
   }
 
-  window.WCT_APP = { start: start };
+  window.WCT_APP = {
+    start: start,
+    api: api,
+    toast: toast,
+    escapeHtml: escapeHtml,
+    getFields: getFields,
+    getState: function () { return STATE; },
+    refreshAfterImport: function () { return loadAll().then(render); },
+  };
 })();

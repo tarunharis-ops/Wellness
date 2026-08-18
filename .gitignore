@@ -2,3 +2,7 @@ node_modules/
 .env
 data/
 *.log
+
+# Personal/example spreadsheets dropped into the project folder for testing —
+# not part of the app itself (the reference template stays tracked).
+Render copy.xlsx

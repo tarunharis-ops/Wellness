@@ -4,6 +4,12 @@
 
 'use strict';
 
+// Force UTC regardless of host timezone: dates are stored as DATE columns
+// (no time component) and treated as UTC-midnight everywhere in this app —
+// running the process in any other zone can shift imported/entered dates by
+// a day when read back with local Date getters.
+process.env.TZ = 'UTC';
+
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
@@ -42,12 +48,13 @@ function sendText(res, status, text, contentType) {
   res.end(body);
 }
 
-function readBody(req) {
+function readBody(req, maxBytes) {
+  maxBytes = maxBytes || 5 * 1024 * 1024;
   return new Promise(function (resolve, reject) {
     let chunks = [], size = 0;
     req.on('data', function (chunk) {
       size += chunk.length;
-      if (size > 5 * 1024 * 1024) { req.destroy(); reject(new Error('Payload too large')); return; }
+      if (size > maxBytes) { req.destroy(); reject(new Error('Payload too large')); return; }
       chunks.push(chunk);
     });
     req.on('end', function () {
@@ -82,11 +89,12 @@ function sanitizeFields(input) {
   return out;
 }
 
-function validateEntry(fields) {
+function validateEntry(fields, semesterId) {
   const errors = [];
   cfg.FIELDS.forEach(function (f) {
     if (f.required && (fields[f.key] === '' || fields[f.key] === undefined)) errors.push(f.label + ' is required.');
   });
+  if (!semesterId) errors.push('Semester is required.');
   return errors;
 }
 
@@ -99,6 +107,21 @@ function entriesToCSV(entries) {
   const header = cfg.CSV_COLUMNS.map(function (c) { return csvEscape(c.header); }).join(',');
   const rows = entries.map(function (e) { return cfg.CSV_COLUMNS.map(function (c) { return csvEscape(e[c.key]); }).join(','); });
   return [header].concat(rows).join('\r\n');
+}
+
+function filterEntries(entries, query) {
+  var out = entries;
+  if (query.semesterId && query.semesterId !== 'all') {
+    out = out.filter(function (e) { return e.semesterId === query.semesterId; });
+  }
+  if (query.counselor && query.counselor !== 'all') {
+    var needle = String(query.counselor).toLowerCase();
+    out = out.filter(function (e) {
+      return (e.createdBy && e.createdBy === query.counselor) ||
+        (e.createdByName && e.createdByName.toLowerCase() === needle);
+    });
+  }
+  return out;
 }
 
 async function activeOptionsByGroup() {
@@ -160,7 +183,7 @@ async function handleConfigJs(res) {
     const groupDefaults = (cfg.OPTION_GROUPS.find(function (g) { return g.key === f.optionGroup; }) || {}).defaults || [];
     return Object.assign({}, f, { options: live.length ? live : groupDefaults });
   });
-  const payload = { FIELDS: fields, SECTIONS: cfg.SECTIONS };
+  const payload = { FIELDS: fields, SECTIONS: cfg.SECTIONS, CSV_COLUMNS: cfg.CSV_COLUMNS };
   sendText(res, 200, 'window.WELLNESS_CONFIG = ' + JSON.stringify(payload) + ';\n', 'text/javascript; charset=utf-8');
 }
 
@@ -241,7 +264,7 @@ async function handleApi(req, res, pathname, query) {
   if (entryMatch) {
     const id = entryMatch[1];
     if (req.method === 'GET' && !id) {
-      const entries = await repo.listEntries();
+      const entries = filterEntries(await repo.listEntries(), query);
       return sendJSON(res, 200, { entries: entries });
     }
     if (req.method === 'GET' && id) {
@@ -252,17 +275,17 @@ async function handleApi(req, res, pathname, query) {
     if (req.method === 'POST' && !id) {
       const body = await readBody(req);
       const fields = sanitizeFields(body);
-      const errors = validateEntry(fields);
+      const errors = validateEntry(fields, body.semesterId);
       if (errors.length) return sendJSON(res, 400, { errors: errors });
-      const entry = await repo.createEntry(fields, user.id);
+      const entry = await repo.createEntry(fields, user.id, { semesterId: body.semesterId });
       return sendJSON(res, 201, { entry: entry });
     }
     if ((req.method === 'PUT' || req.method === 'PATCH') && id) {
       const body = await readBody(req);
       const fields = sanitizeFields(body);
-      const errors = validateEntry(fields);
+      const errors = validateEntry(fields, body.semesterId);
       if (errors.length) return sendJSON(res, 400, { errors: errors });
-      const entry = await repo.updateEntry(id, fields, user.id);
+      const entry = await repo.updateEntry(id, fields, user.id, { semesterId: body.semesterId });
       if (!entry) return sendJSON(res, 404, { error: 'Entry not found' });
       return sendJSON(res, 200, { entry: entry });
     }
@@ -274,8 +297,20 @@ async function handleApi(req, res, pathname, query) {
     return sendJSON(res, 405, { error: 'Method not allowed' });
   }
 
+  if (pathname === '/api/semesters' && req.method === 'GET') {
+    const semesters = await repo.listSemesters();
+    return sendJSON(res, 200, { semesters: semesters });
+  }
+  if (pathname === '/api/semesters' && req.method === 'POST') {
+    const body = await readBody(req);
+    const label = String(body.label || '').trim();
+    if (!label) return sendJSON(res, 400, { error: 'Semester name is required.' });
+    const semester = await repo.createSemester({ label: label, startsOn: body.startsOn || null, endsOn: body.endsOn || null }, user.id);
+    return sendJSON(res, 201, { semester: semester });
+  }
+
   if (pathname === '/api/students' && req.method === 'GET') {
-    const students = agg.groupStudents(await repo.listEntries());
+    const students = agg.groupStudents(filterEntries(await repo.listEntries(), query));
     return sendJSON(res, 200, { students: students });
   }
 
@@ -283,12 +318,20 @@ async function handleApi(req, res, pathname, query) {
     const from = parseDateParam(query.from);
     const to = parseDateParam(query.to);
     const optionsByGroup = await activeOptionsByGroup();
-    const dashboard = agg.computeDashboard(await repo.listEntries(), from, to, optionsByGroup);
+    const entries = filterEntries(await repo.listEntries(), query);
+    const dashboard = agg.computeDashboard(entries, from, to, optionsByGroup);
     return sendJSON(res, 200, dashboard);
   }
 
+  if (pathname === '/api/import' && req.method === 'POST') {
+    requireAdmin(user);
+    const body = await readBody(req, 20 * 1024 * 1024);
+    const result = await runImport(body, user);
+    return sendJSON(res, 200, result);
+  }
+
   if (pathname === '/api/export.csv' && req.method === 'GET') {
-    const csv = entriesToCSV(await repo.listEntries());
+    const csv = entriesToCSV(filterEntries(await repo.listEntries(), query));
     res.writeHead(200, { 'Content-Type': 'text/csv; charset=utf-8', 'Content-Disposition': 'attachment; filename="wellness-case-log.csv"' });
     res.end(csv);
     return;
@@ -358,6 +401,51 @@ async function handleApi(req, res, pathname, query) {
   }
 
   sendJSON(res, 404, { error: 'Not found' });
+}
+
+async function runImport(body, user) {
+  const semesterDefs = Array.isArray(body.semesters) ? body.semesters : [];
+  const rows = Array.isArray(body.entries) ? body.entries : [];
+
+  const labelToId = {};
+  for (const s of semesterDefs) {
+    const label = String(s.label || '').trim();
+    if (!label || labelToId[label]) continue;
+    const semester = await repo.createSemester({ label: label, startsOn: s.startsOn || null, endsOn: s.endsOn || null }, user.id);
+    labelToId[label] = semester.id;
+  }
+
+  const users = await repo.listUsers();
+  const nameToUserId = {};
+  users.forEach(function (u) { if (u.isActive) nameToUserId[u.name.trim().toLowerCase()] = u.id; });
+
+  const valid = [];
+  const skipped = [];
+  rows.forEach(function (row, idx) {
+    const fields = sanitizeFields(row.fields || {});
+    const semesterLabel = String(row.semesterLabel || '').trim();
+    const semesterId = labelToId[semesterLabel];
+    if (!semesterId) { skipped.push({ row: idx + 1, reason: 'Unrecognized semester "' + semesterLabel + '"' }); return; }
+    const errors = validateEntry(fields, semesterId);
+    if (errors.length) { skipped.push({ row: idx + 1, reason: errors.join(' ') }); return; }
+    const counselorName = String(row.counselorName || '').trim();
+    const matchedUserId = counselorName ? nameToUserId[counselorName.toLowerCase()] : null;
+    valid.push({
+      fields: fields,
+      semesterId: semesterId,
+      createdBy: matchedUserId || null,
+      createdByNameOverride: matchedUserId ? null : (counselorName || null),
+    });
+  });
+
+  await repo.bulkCreateEntries(valid);
+
+  return {
+    semestersCreated: Object.keys(labelToId).length,
+    entriesImported: valid.length,
+    totalRows: rows.length,
+    skipped: skipped,
+  };
 }
 
 function requireAdmin(user) {

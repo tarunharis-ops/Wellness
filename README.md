@@ -16,6 +16,17 @@ persistent, internet-hosted web app instead of a row-per-case spreadsheet.
 - **The default dropdown lists are editable.** Admins can add or remove values for any field
   from **Template** — this is literally the workbook's original lists, seeded as the starting
   point (`lib/config.js`), that your team can now tailor without editing code.
+- **Semesters are first-class.** Every entry belongs to a semester (create one from **+ Semester**
+  in the top bar); the semester selector there filters the whole app, or switch to "All Semesters"
+  to see everything combined. The Dashboard adds its own Counselor filter on top, so a semester's
+  numbers can be viewed team-wide or narrowed to one person.
+- **Import a previous semester's spreadsheet from Admin → Import.** Upload a workbook shaped like
+  the original template (one sheet per counselor/semester, e.g. "Brooke Fall 2025") and it parses
+  entirely in your browser — nothing is uploaded until you review and confirm the mapping. It
+  correctly handles the spreadsheet's real-world shorthand: counselors only filled in a student's
+  name on their first row, leaving follow-up interaction rows blank underneath it. The importer
+  detects those blocks and carries the student's identity down through the follow-ups, the same
+  way the software's own "+ New Entry" does when linking to an existing student.
 
 ## Local development
 
@@ -94,5 +105,6 @@ db/schema.sql     Postgres schema (users, sessions, invites, entries, template_o
 db/pool.js        Postgres connection pool (reads DATABASE_URL)
 db/repo.js        all database queries
 db/migrate.js     idempotent schema setup + default option seeding + legacy data import
-public/           frontend (vanilla HTML/CSS/JS, no build step) — auth.js, app.js, styles.css
+public/           frontend (vanilla HTML/CSS/JS, no build step) — auth.js, app.js, import.js, styles.css
+public/vendor/    SheetJS (xlsx.full.min.js), vendored — lazy-loaded only when Import is opened
 ```

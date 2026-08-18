@@ -32,9 +32,19 @@ CREATE TABLE IF NOT EXISTS invites (
   used_by TEXT REFERENCES users(id)
 );
 
+CREATE TABLE IF NOT EXISTS semesters (
+  id TEXT PRIMARY KEY,
+  label TEXT UNIQUE NOT NULL,
+  starts_on DATE,
+  ends_on DATE,
+  created_by TEXT REFERENCES users(id),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
 CREATE TABLE IF NOT EXISTS entries (
   id TEXT PRIMARY KEY,
   student_key TEXT NOT NULL,
+  semester_id TEXT REFERENCES semesters(id),
   case_status TEXT,
   first_name TEXT,
   last_name TEXT,
@@ -62,12 +72,20 @@ CREATE TABLE IF NOT EXISTS entries (
   referral_tertiary TEXT,
   notes TEXT,
   created_by TEXT REFERENCES users(id),
+  created_by_name_override TEXT,
   updated_by TEXT REFERENCES users(id),
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS idx_entries_student ON entries(student_key);
 CREATE INDEX IF NOT EXISTS idx_entries_outreach_date ON entries(outreach_date);
+
+-- Upgrade path for databases created before these columns existed. Must run
+-- before any index/constraint below references them.
+ALTER TABLE entries ADD COLUMN IF NOT EXISTS semester_id TEXT REFERENCES semesters(id);
+ALTER TABLE entries ADD COLUMN IF NOT EXISTS created_by_name_override TEXT;
+
+CREATE INDEX IF NOT EXISTS idx_entries_semester ON entries(semester_id);
 
 CREATE TABLE IF NOT EXISTS template_options (
   id TEXT PRIMARY KEY,
