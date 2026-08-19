@@ -232,8 +232,8 @@ function createEntry(fields, userId, opts) {
   opts = opts || {};
   const id = uuid();
   const built = buildEntryColumns(fields);
-  const cols = ['id', 'student_key', 'semester_id', 'created_by_name_override'].concat(built.cols).concat(['created_by', 'updated_by']);
-  const values = [id, studentKeyFor(fields.firstName, fields.lastName), opts.semesterId || null, opts.createdByNameOverride || null]
+  const cols = ['id', 'student_key', 'semester_id', 'template_id', 'created_by_name_override'].concat(built.cols).concat(['created_by', 'updated_by']);
+  const values = [id, studentKeyFor(fields.firstName, fields.lastName), opts.semesterId || null, opts.templateId || null, opts.createdByNameOverride || null]
     .concat(built.values).concat([userId, userId]);
   const placeholders = values.map(function (_, i) { return '$' + (i + 1); });
   const sql = 'INSERT INTO entries (' + cols.join(',') + ') VALUES (' + placeholders.join(',') + ') RETURNING *';
@@ -243,12 +243,13 @@ function createEntry(fields, userId, opts) {
 function updateEntry(id, fields, userId, opts) {
   opts = opts || {};
   const built = buildEntryColumns(fields);
-  const setClauses = built.cols.map(function (col, i) { return col + ' = $' + (i + 4); });
+  const setClauses = built.cols.map(function (col, i) { return col + ' = $' + (i + 5); });
   setClauses.push('student_key = $2');
   setClauses.push('semester_id = $3');
-  setClauses.push('updated_by = $' + (built.cols.length + 4));
+  setClauses.push('template_id = $4');
+  setClauses.push('updated_by = $' + (built.cols.length + 5));
   setClauses.push('updated_at = now()');
-  const values = [id, studentKeyFor(fields.firstName, fields.lastName), opts.semesterId || null]
+  const values = [id, studentKeyFor(fields.firstName, fields.lastName), opts.semesterId || null, opts.templateId || null]
     .concat(built.values).concat([userId]);
   const sql = 'UPDATE entries SET ' + setClauses.join(', ') + ' WHERE id = $1 RETURNING *';
   return db.query(sql, values).then(function (r) { return r.rows[0] ? rowToEntry(r.rows[0]) : null; });
@@ -261,14 +262,14 @@ function deleteEntry(id) {
 // Bulk-inserts pre-parsed import rows inside one transaction, batching many
 // rows per INSERT (imports can be thousands of rows — one round trip per row
 // would be far too slow). Each item:
-// { fields: {...cfg.FIELDS keys}, semesterId, createdByNameOverride, createdBy }
+// { fields: {...cfg.FIELDS keys}, semesterId, templateId, createdByNameOverride, createdBy }
 const IMPORT_BATCH_SIZE = 200;
-const FIXED_COLS = ['id', 'student_key', 'semester_id', 'created_by_name_override'];
+const FIXED_COLS = ['id', 'student_key', 'semester_id', 'template_id', 'created_by_name_override'];
 const ENTRY_COLS = FIXED_COLS.concat(ENTRY_KEYS.map(camelToSnake)).concat(['created_by', 'updated_by']);
 
 function entryRowValues(item) {
   const built = buildEntryColumns(item.fields);
-  return [uuid(), studentKeyFor(item.fields.firstName, item.fields.lastName), item.semesterId || null, item.createdByNameOverride || null]
+  return [uuid(), studentKeyFor(item.fields.firstName, item.fields.lastName), item.semesterId || null, item.templateId || null, item.createdByNameOverride || null]
     .concat(built.values).concat([item.createdBy || null, item.createdBy || null]);
 }
 
@@ -307,10 +308,67 @@ function bulkCreateEntries(items) {
   });
 }
 
+// ---------------- Templates ----------------
+
+function templateRow(row) {
+  return { id: row.id, name: row.name, isDefault: row.is_default, createdBy: row.created_by, createdAt: row.created_at };
+}
+
+function listTemplates() {
+  return db.query('SELECT * FROM templates ORDER BY is_default DESC, name ASC').then(function (r) { return r.rows.map(templateRow); });
+}
+
+function getTemplate(id) {
+  return db.query('SELECT * FROM templates WHERE id = $1', [id]).then(function (r) { return r.rows[0] ? templateRow(r.rows[0]) : null; });
+}
+
+function getDefaultTemplate() {
+  return db.query('SELECT * FROM templates WHERE is_default = true LIMIT 1').then(function (r) { return r.rows[0] ? templateRow(r.rows[0]) : null; });
+}
+
+// Creates a new named template pre-populated with a copy of the Default
+// template's currently-active options — the "start from the default, then
+// customize" flow.
+function createTemplate(name, userId) {
+  const id = uuid();
+  return db.query(
+    'INSERT INTO templates (id, name, created_by) VALUES ($1,$2,$3) RETURNING *',
+    [id, name.trim(), userId]
+  ).then(function (r) {
+    return getDefaultTemplate().then(function (def) {
+      if (!def) return r.rows[0];
+      return db.query(
+        'INSERT INTO template_options (id, template_id, group_key, value, sort_order, created_by) ' +
+        'SELECT gen_random_uuid()::text, $1, group_key, value, sort_order, $2 FROM template_options ' +
+        'WHERE template_id = $3 AND active = true',
+        [id, userId, def.id]
+      ).catch(function () {
+        // gen_random_uuid() needs pgcrypto; fall back to per-row inserts with our own id generator if it's unavailable.
+        return listTemplateOptions(def.id).then(function (byGroup) {
+          const rowsToInsert = [];
+          Object.keys(byGroup).forEach(function (g) {
+            byGroup[g].forEach(function (o) { if (o.active) rowsToInsert.push({ groupKey: g, value: o.value, sortOrder: o.sortOrder }); });
+          });
+          var chain = Promise.resolve();
+          rowsToInsert.forEach(function (o) {
+            chain = chain.then(function () {
+              return db.query(
+                'INSERT INTO template_options (id, template_id, group_key, value, sort_order, created_by) VALUES ($1,$2,$3,$4,$5,$6)',
+                [uuid(), id, o.groupKey, o.value, o.sortOrder, userId]
+              );
+            });
+          });
+          return chain;
+        });
+      });
+    }).then(function () { return r.rows[0]; });
+  }).then(function (row) { return templateRow(row); });
+}
+
 // ---------------- Template options ----------------
 
-function listTemplateOptions() {
-  return db.query('SELECT * FROM template_options ORDER BY group_key, sort_order, value').then(function (r) {
+function listTemplateOptions(templateId) {
+  return db.query('SELECT * FROM template_options WHERE template_id = $1 ORDER BY group_key, sort_order, value', [templateId]).then(function (r) {
     const byGroup = {};
     r.rows.forEach(function (row) {
       if (!byGroup[row.group_key]) byGroup[row.group_key] = [];
@@ -320,17 +378,17 @@ function listTemplateOptions() {
   });
 }
 
-function addTemplateOption(groupKey, value, userId) {
+function addTemplateOption(templateId, groupKey, value, userId) {
   const id = uuid();
   return db.query(
-    'INSERT INTO template_options (id, group_key, value, created_by) VALUES ($1,$2,$3,$4) ' +
-    'ON CONFLICT (group_key, value) DO UPDATE SET active = true RETURNING *',
-    [id, groupKey, value.trim(), userId]
+    'INSERT INTO template_options (id, template_id, group_key, value, created_by) VALUES ($1,$2,$3,$4,$5) ' +
+    'ON CONFLICT (template_id, group_key, value) DO UPDATE SET active = true RETURNING *',
+    [id, templateId, groupKey, value.trim(), userId]
   ).then(function (r) { return r.rows[0]; });
 }
 
-function setTemplateOptionActive(id, active) {
-  return db.query('UPDATE template_options SET active = $2 WHERE id = $1 RETURNING *', [id, active])
+function setTemplateOptionActive(templateId, id, active) {
+  return db.query('UPDATE template_options SET active = $3 WHERE id = $1 AND template_id = $2 RETURNING *', [id, templateId, active])
     .then(function (r) { return r.rows[0]; });
 }
 
@@ -340,5 +398,6 @@ module.exports = {
   createInvite, listInvites, getInviteByToken, markInviteUsed, deleteInvite,
   listSemesters, createSemester, findOrCreateSemester,
   listEntries, getEntry, createEntry, updateEntry, deleteEntry, bulkCreateEntries, studentKeyFor,
+  listTemplates, getTemplate, getDefaultTemplate, createTemplate,
   listTemplateOptions, addTemplateOption, setTemplateOptionActive,
 };

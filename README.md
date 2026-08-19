@@ -13,9 +13,13 @@ persistent, internet-hosted web app instead of a row-per-case spreadsheet.
   one email address).
 - **Data lives in Postgres**, not a spreadsheet file — it persists across restarts/deploys, and
   everyone always sees the current state when they log back in, any time.
-- **The default dropdown lists are editable.** Admins can add or remove values for any field
-  from **Template** — this is literally the workbook's original lists, seeded as the starting
-  point (`lib/config.js`), that your team can now tailor without editing code.
+- **Multiple templates, each a full set of dropdown lists.** **Template** always has a "Default"
+  (the workbook's original lists, seeded from `lib/config.js` — admin-editable). Anyone can create
+  a new named template from there, or inline from the entry form itself; it starts as a clone of
+  Default's current options and is freely editable from that point on. When logging an entry, a
+  **Template** field asks which one to use — its choice decides what shows up in every dropdown
+  on the rest of that form (Program, Concerns, Referral Types, etc.), so different contexts (e.g.
+  undergrad vs. graduate) can keep their own option sets without touching the shared Default.
 - **Semesters are first-class.** Every entry belongs to a semester (create one from **+ Semester**
   in the top bar); the semester selector there filters the whole app, or switch to "All Semesters"
   to see everything combined. The Dashboard adds its own Counselor filter on top, so a semester's
@@ -77,7 +81,7 @@ contacted multiple times just has multiple records grouped under their name in *
 | Master Doc rows | **Case Log** (flat, sortable, filterable table, shows who logged each entry) |
 | Same row, grouped by name in your head | **Students** (grouped case history / timeline) |
 | Z842:AA998 aggregation formulas | **Dashboard** (live, filterable by date range) |
-| Column dropdown lists | **Template** (admin-editable, seeded from the original lists) |
+| Column dropdown lists | **Template** — a "Default" seeded from the original lists, plus any number of named templates cloned from it, picked per entry |
 | Emailing the file around / one shared drive copy | Everyone logs into the same hosted app |
 | Copy/paste a snapshot into "General Data" sheets | Dashboard's date-range filter, live |
 

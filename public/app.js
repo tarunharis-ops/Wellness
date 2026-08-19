@@ -42,7 +42,9 @@
     editingId: null,
     linkedStudentPrefill: null,
     team: { users: [], invites: [] },
-    template: { groups: [] },
+    templates: [],
+    templateOptionsCache: {},
+    templateView: { selectedId: null, groups: [] },
   };
 
   // ---------------- API ----------------
@@ -69,6 +71,7 @@
     var qs = semesterQueryParam() ? '?semesterId=' + encodeURIComponent(semesterQueryParam()) : '';
     return Promise.all([
       api('/api/semesters').then(function (d) { STATE.semesters = d.semesters; }),
+      api('/api/templates').then(function (d) { STATE.templates = d.templates; }),
       api('/api/entries' + qs).then(function (d) { STATE.entries = d.entries; }),
       api('/api/students' + qs).then(function (d) { STATE.students = d.students; }),
     ]).then(loadDashboard);
@@ -482,6 +485,21 @@
     '</div>';
   }
 
+  var CREATE_TEMPLATE_VALUE = '__create_new_template__';
+
+  function templateFieldHtml(entry) {
+    var current = entry && entry.templateId ? entry.templateId : (window.WELLNESS_CONFIG.DEFAULT_TEMPLATE_ID || '');
+    var opts = STATE.templates.map(function (t) {
+      return '<option value="' + t.id + '"' + (t.id === current ? ' selected' : '') + '>' + escapeHtml(t.name) + (t.isDefault ? ' (Default)' : '') + '</option>';
+    }).join('') + '<option value="' + CREATE_TEMPLATE_VALUE + '">+ Create New Template…</option>';
+    return '<div class="form-section">' +
+      '<div class="form-section-title">Template</div>' +
+      '<div class="form-grid"><div class="form-field"><label>Which dropdown options should this entry use?<span class="required-mark">*</span></label>' +
+      '<select name="templateId" id="entryTemplateSelect" required>' + opts + '</select></div></div>' +
+      '<div class="small-muted" style="margin-top:6px">Starts from the Default list — create a new template to add or remove choices just for this context.</div>' +
+    '</div>';
+  }
+
   function entryFormHtml(entry, isNew) {
     var sectionsHtml = getSections().map(function (sec) {
       var fields = getFields().filter(function (f) { return f.section === sec.key; });
@@ -500,7 +518,35 @@
       '</div>';
     }
 
-    return '<form id="entryForm"><div id="formErrors"></div>' + linkBox + semesterFieldHtml(entry) + sectionsHtml + '</form>';
+    return '<form id="entryForm"><div id="formErrors"></div>' + linkBox + semesterFieldHtml(entry) + templateFieldHtml(entry) + sectionsHtml + '</form>';
+  }
+
+  // Re-populates every select-type field's options from the given template,
+  // preserving whatever is currently chosen even if that value isn't part of
+  // this template's list (e.g. editing an entry created under a different
+  // template) — never silently blanks out existing data.
+  function applyTemplateOptions(templateId) {
+    if (!templateId || templateId === CREATE_TEMPLATE_VALUE) return Promise.resolve();
+    var cached = STATE.templateOptionsCache[templateId];
+    var fetchP = cached ? Promise.resolve(cached) : api('/api/templates/' + templateId + '/options').then(function (d) {
+      var byGroup = {};
+      d.groups.forEach(function (g) { byGroup[g.key] = g.options.filter(function (o) { return o.active; }).map(function (o) { return o.value; }); });
+      STATE.templateOptionsCache[templateId] = byGroup;
+      return byGroup;
+    });
+    return fetchP.then(function (byGroup) {
+      getFields().forEach(function (f) {
+        if (f.type !== 'select') return;
+        var el = document.querySelector('#entryForm [name="' + f.key + '"]');
+        if (!el) return;
+        var currentValue = el.value;
+        var options = byGroup[f.optionGroup] || [];
+        if (currentValue && options.indexOf(currentValue) === -1) options = options.concat([currentValue]);
+        el.innerHTML = '<option value="">— Select —</option>' + options.map(function (o) {
+          return '<option value="' + escapeHtml(o) + '"' + (o === currentValue ? ' selected' : '') + '>' + escapeHtml(o) + '</option>';
+        }).join('');
+      });
+    });
   }
 
   function openEntryDrawer(entryId) {
@@ -554,6 +600,33 @@
         });
       }, 150));
     }
+    var templateSelect = document.getElementById('entryTemplateSelect');
+    var activeTemplateId = templateSelect.value;
+    applyTemplateOptions(activeTemplateId);
+    templateSelect.addEventListener('change', function () {
+      if (templateSelect.value === CREATE_TEMPLATE_VALUE) {
+        var name = prompt('New template name (e.g. "Undergrad Wellness"):');
+        if (!name || !name.trim()) { templateSelect.value = activeTemplateId; return; }
+        api('/api/templates', { method: 'POST', body: { name: name.trim() } }).then(function (d) {
+          STATE.templates.push(d.template);
+          var byGroup = {};
+          d.groups.forEach(function (g) { byGroup[g.key] = g.options.filter(function (o) { return o.active; }).map(function (o) { return o.value; }); });
+          STATE.templateOptionsCache[d.template.id] = byGroup;
+          var newOpt = document.createElement('option');
+          newOpt.value = d.template.id;
+          newOpt.textContent = d.template.name;
+          templateSelect.insertBefore(newOpt, templateSelect.lastElementChild);
+          templateSelect.value = d.template.id;
+          activeTemplateId = d.template.id;
+          toast('Template "' + d.template.name + '" created', 'ok');
+          return applyTemplateOptions(d.template.id);
+        }).catch(function (err) { toast(err.message, 'err'); templateSelect.value = activeTemplateId; });
+      } else {
+        activeTemplateId = templateSelect.value;
+        applyTemplateOptions(activeTemplateId);
+      }
+    });
+
     document.getElementById('drawerClose').addEventListener('click', closeDrawer);
     document.getElementById('cancelEntryBtn').addEventListener('click', closeDrawer);
     document.getElementById('saveEntryBtn').addEventListener('click', submitEntryForm);
@@ -577,6 +650,8 @@
     });
     var semesterEl = form.querySelector('[name="semesterId"]');
     data.semesterId = semesterEl ? semesterEl.value : '';
+    var templateEl = form.querySelector('[name="templateId"]');
+    data.templateId = templateEl ? templateEl.value : '';
     return data;
   }
 
@@ -586,6 +661,7 @@
     errBox.innerHTML = '';
     var missing = getFields().filter(function (f) { return f.required && !data[f.key]; });
     if (!data.semesterId) missing.push({ label: 'Semester' });
+    if (!data.templateId || data.templateId === CREATE_TEMPLATE_VALUE) missing.push({ label: 'Template' });
     if (missing.length) {
       errBox.innerHTML = '<div class="form-errors">Please fill in: ' + missing.map(function (f) { return f.label; }).join(', ') + '</div>';
       return;
@@ -760,48 +836,72 @@
 
   // ---------------- Template view (admin) ----------------
   function renderTemplateView() {
-    return '<div class="page-head"><div><div class="page-title">Template</div><div class="page-sub">Add or remove the choices available in each dropdown. This is what "(Do Not Disturb) Main template" started as — you can tailor it to your team.</div></div></div>' +
+    if (!STATE.templateView.selectedId) {
+      var def = STATE.templates.find(function (t) { return t.isDefault; });
+      STATE.templateView.selectedId = def ? def.id : (STATE.templates[0] || {}).id;
+    }
+    var templateSelect = '<select id="templateViewSelect" class="semester-select">' +
+      STATE.templates.map(function (t) {
+        return '<option value="' + t.id + '"' + (t.id === STATE.templateView.selectedId ? ' selected' : '') + '>' + escapeHtml(t.name) + (t.isDefault ? ' (Default)' : '') + '</option>';
+      }).join('') + '</select>';
+
+    return '<div class="page-head"><div><div class="page-title">Template</div><div class="page-sub">Add or remove the choices available in each dropdown. "Default" is what "(Do Not Disturb) Main template" started as — create additional templates for other contexts.</div></div></div>' +
+      '<div class="filter-bar">' + templateSelect + '<button class="btn small ghost" id="newTemplateBtn">+ New Template</button></div>' +
       '<div id="templateGroups">' + emptyState('Loading…', '') + '</div>';
   }
 
+  function selectedTemplateIsDefault() {
+    var t = STATE.templates.find(function (t) { return t.id === STATE.templateView.selectedId; });
+    return t ? t.isDefault : false;
+  }
+
+  function canEditSelectedTemplate() {
+    return !selectedTemplateIsDefault() || (STATE.currentUser && STATE.currentUser.role === 'admin');
+  }
+
   function loadTemplateData() {
-    api('/api/template').then(function (d) {
-      STATE.template.groups = d.groups;
+    if (!STATE.templateView.selectedId) { renderTemplateGroups(); return; }
+    api('/api/templates/' + STATE.templateView.selectedId + '/options').then(function (d) {
+      STATE.templateView.groups = d.groups;
       renderTemplateGroups();
     });
   }
 
   function renderTemplateGroups() {
-    var html = STATE.template.groups.map(function (g) {
+    var editable = canEditSelectedTemplate();
+    var restrictedNote = !editable ? '<div class="auth-notice" style="margin-bottom:16px">Only admins can edit the Default template. Create your own template to customize freely.</div>' : '';
+    var html = STATE.templateView.groups.map(function (g) {
       var active = g.options.filter(function (o) { return o.active; });
       var archived = g.options.filter(function (o) { return !o.active; });
       var chips = active.map(function (o) {
-        return '<span class="option-chip">' + escapeHtml(o.value) + '<button class="chip-x" data-archive="' + o.id + '" title="Remove">&times;</button></span>';
+        return '<span class="option-chip">' + escapeHtml(o.value) + (editable ? '<button class="chip-x" data-archive="' + o.id + '" title="Remove">&times;</button>' : '') + '</span>';
       }).join('');
       var archivedHtml = archived.length ? '<details class="archived-details"><summary>' + archived.length + ' removed value' + (archived.length > 1 ? 's' : '') + '</summary>' +
-        archived.map(function (o) { return '<span class="option-chip archived">' + escapeHtml(o.value) + '<button class="chip-x" data-restore="' + o.id + '" title="Restore">↺</button></span>'; }).join('') +
+        archived.map(function (o) { return '<span class="option-chip archived">' + escapeHtml(o.value) + (editable ? '<button class="chip-x" data-restore="' + o.id + '" title="Restore">↺</button>' : '') + '</span>'; }).join('') +
         '</details>' : '';
       return '<div class="card card-pad" style="margin-bottom:14px">' +
         '<div class="dash-section-title">' + escapeHtml(g.label) + '</div>' +
         '<div class="option-chip-list">' + chips + '</div>' +
-        '<form class="add-option-form" data-group="' + g.key + '"><input type="text" placeholder="Add a new value…" required /><button class="btn small" type="submit">Add</button></form>' +
+        (editable ? '<form class="add-option-form" data-group="' + g.key + '"><input type="text" placeholder="Add a new value…" required /><button class="btn small" type="submit">Add</button></form>' : '') +
         archivedHtml +
       '</div>';
     }).join('');
-    document.getElementById('templateGroups').innerHTML = html;
+    document.getElementById('templateGroups').innerHTML = restrictedNote + html;
     bindTemplateEvents();
   }
 
   function bindTemplateEvents() {
     var wrap = document.getElementById('view-root');
+    var templateId = STATE.templateView.selectedId;
     wrap.querySelectorAll('.add-option-form').forEach(function (form) {
       form.addEventListener('submit', function (e) {
         e.preventDefault();
         var input = form.querySelector('input');
         var value = input.value.trim();
         if (!value) return;
-        api('/api/template/' + form.getAttribute('data-group'), { method: 'POST', body: { value: value } }).then(function () {
+        api('/api/templates/' + templateId + '/options/' + form.getAttribute('data-group'), { method: 'POST', body: { value: value } }).then(function () {
           input.value = '';
+          delete STATE.templateOptionsCache[templateId];
           return Promise.all([loadTemplateData(), reloadConfig()]);
         }).then(function () { toast('Added "' + value + '"', 'ok'); });
       });
@@ -809,7 +909,8 @@
     wrap.querySelectorAll('[data-archive]').forEach(function (btn) {
       btn.addEventListener('click', function () {
         var groupKey = btn.closest('.card').querySelector('.add-option-form').getAttribute('data-group');
-        api('/api/template/' + groupKey + '/' + btn.getAttribute('data-archive'), { method: 'DELETE' }).then(function () {
+        api('/api/templates/' + templateId + '/options/' + groupKey + '/' + btn.getAttribute('data-archive'), { method: 'DELETE' }).then(function () {
+          delete STATE.templateOptionsCache[templateId];
           return Promise.all([loadTemplateData(), reloadConfig()]);
         }).then(function () { toast('Removed from dropdown', 'ok'); });
       });
@@ -817,10 +918,27 @@
     wrap.querySelectorAll('[data-restore]').forEach(function (btn) {
       btn.addEventListener('click', function () {
         var groupKey = btn.closest('.card').querySelector('.add-option-form').getAttribute('data-group');
-        api('/api/template/' + groupKey + '/' + btn.getAttribute('data-restore'), { method: 'PATCH' }).then(function () {
+        api('/api/templates/' + templateId + '/options/' + groupKey + '/' + btn.getAttribute('data-restore'), { method: 'PATCH' }).then(function () {
+          delete STATE.templateOptionsCache[templateId];
           return Promise.all([loadTemplateData(), reloadConfig()]);
         }).then(function () { toast('Restored', 'ok'); });
       });
+    });
+    var templateViewSelect = document.getElementById('templateViewSelect');
+    if (templateViewSelect) templateViewSelect.addEventListener('change', function () {
+      STATE.templateView.selectedId = templateViewSelect.value;
+      loadTemplateData();
+    });
+    var newTemplateBtn = document.getElementById('newTemplateBtn');
+    if (newTemplateBtn) newTemplateBtn.addEventListener('click', function () {
+      var name = prompt('New template name (e.g. "Undergrad Wellness"):');
+      if (!name || !name.trim()) return;
+      api('/api/templates', { method: 'POST', body: { name: name.trim() } }).then(function (d) {
+        STATE.templates.push(d.template);
+        STATE.templateView.selectedId = d.template.id;
+        toast('Template "' + d.template.name + '" created', 'ok');
+        render();
+      }).catch(function (err) { toast(err.message, 'err'); });
     });
   }
 
@@ -912,7 +1030,6 @@
     document.getElementById('userRole').textContent = user.role === 'admin' ? 'Admin' : 'Counselor';
     if (user.role === 'admin') {
       document.getElementById('navImport').style.display = '';
-      document.getElementById('navTemplate').style.display = '';
       document.getElementById('navTeam').style.display = '';
       document.getElementById('adminNavDivider').style.display = '';
     }

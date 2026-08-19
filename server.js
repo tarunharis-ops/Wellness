@@ -89,12 +89,13 @@ function sanitizeFields(input) {
   return out;
 }
 
-function validateEntry(fields, semesterId) {
+function validateEntry(fields, semesterId, templateId) {
   const errors = [];
   cfg.FIELDS.forEach(function (f) {
     if (f.required && (fields[f.key] === '' || fields[f.key] === undefined)) errors.push(f.label + ' is required.');
   });
   if (!semesterId) errors.push('Semester is required.');
+  if (!templateId) errors.push('Template is required.');
   return errors;
 }
 
@@ -124,8 +125,8 @@ function filterEntries(entries, query) {
   return out;
 }
 
-async function activeOptionsByGroup() {
-  const byGroup = await repo.listTemplateOptions();
+async function activeOptionsByGroup(templateId) {
+  const byGroup = await repo.listTemplateOptions(templateId);
   const out = {};
   Object.keys(byGroup).forEach(function (g) {
     out[g] = byGroup[g].filter(function (o) { return o.active; }).map(function (o) { return o.value; });
@@ -176,14 +177,15 @@ const server = http.createServer(function (req, res) {
 });
 
 async function handleConfigJs(res) {
-  const byGroup = await repo.listTemplateOptions().catch(function () { return {}; });
+  const defaultTemplate = await repo.getDefaultTemplate().catch(function () { return null; });
+  const byGroup = defaultTemplate ? await repo.listTemplateOptions(defaultTemplate.id).catch(function () { return {}; }) : {};
   const fields = cfg.FIELDS.map(function (f) {
     if (f.type !== 'select') return f;
     const live = (byGroup[f.optionGroup] || []).filter(function (o) { return o.active; }).map(function (o) { return o.value; });
     const groupDefaults = (cfg.OPTION_GROUPS.find(function (g) { return g.key === f.optionGroup; }) || {}).defaults || [];
     return Object.assign({}, f, { options: live.length ? live : groupDefaults });
   });
-  const payload = { FIELDS: fields, SECTIONS: cfg.SECTIONS, CSV_COLUMNS: cfg.CSV_COLUMNS };
+  const payload = { FIELDS: fields, SECTIONS: cfg.SECTIONS, CSV_COLUMNS: cfg.CSV_COLUMNS, DEFAULT_TEMPLATE_ID: defaultTemplate ? defaultTemplate.id : null };
   sendText(res, 200, 'window.WELLNESS_CONFIG = ' + JSON.stringify(payload) + ';\n', 'text/javascript; charset=utf-8');
 }
 
@@ -275,17 +277,17 @@ async function handleApi(req, res, pathname, query) {
     if (req.method === 'POST' && !id) {
       const body = await readBody(req);
       const fields = sanitizeFields(body);
-      const errors = validateEntry(fields, body.semesterId);
+      const errors = validateEntry(fields, body.semesterId, body.templateId);
       if (errors.length) return sendJSON(res, 400, { errors: errors });
-      const entry = await repo.createEntry(fields, user.id, { semesterId: body.semesterId });
+      const entry = await repo.createEntry(fields, user.id, { semesterId: body.semesterId, templateId: body.templateId });
       return sendJSON(res, 201, { entry: entry });
     }
     if ((req.method === 'PUT' || req.method === 'PATCH') && id) {
       const body = await readBody(req);
       const fields = sanitizeFields(body);
-      const errors = validateEntry(fields, body.semesterId);
+      const errors = validateEntry(fields, body.semesterId, body.templateId);
       if (errors.length) return sendJSON(res, 400, { errors: errors });
-      const entry = await repo.updateEntry(id, fields, user.id, { semesterId: body.semesterId });
+      const entry = await repo.updateEntry(id, fields, user.id, { semesterId: body.semesterId, templateId: body.templateId });
       if (!entry) return sendJSON(res, 404, { error: 'Entry not found' });
       return sendJSON(res, 200, { entry: entry });
     }
@@ -317,7 +319,8 @@ async function handleApi(req, res, pathname, query) {
   if (pathname === '/api/dashboard' && req.method === 'GET') {
     const from = parseDateParam(query.from);
     const to = parseDateParam(query.to);
-    const optionsByGroup = await activeOptionsByGroup();
+    const defaultTemplate = await repo.getDefaultTemplate();
+    const optionsByGroup = defaultTemplate ? await activeOptionsByGroup(defaultTemplate.id) : {};
     const entries = filterEntries(await repo.listEntries(), query);
     const dashboard = agg.computeDashboard(entries, from, to, optionsByGroup);
     return sendJSON(res, 200, dashboard);
@@ -337,28 +340,46 @@ async function handleApi(req, res, pathname, query) {
     return;
   }
 
-  if (pathname === '/api/template' && req.method === 'GET') {
-    const byGroup = await repo.listTemplateOptions();
-    return sendJSON(res, 200, { groups: cfg.OPTION_GROUPS.map(function (g) { return { key: g.key, label: g.label, options: byGroup[g.key] || [] }; }) });
+  if (pathname === '/api/templates' && req.method === 'GET') {
+    const templates = await repo.listTemplates();
+    return sendJSON(res, 200, { templates: templates });
+  }
+  if (pathname === '/api/templates' && req.method === 'POST') {
+    const body = await readBody(req);
+    const name = String(body.name || '').trim();
+    if (!name) return sendJSON(res, 400, { error: 'Template name is required.' });
+    const template = await repo.createTemplate(name, user.id).catch(function (err) {
+      if (/duplicate key|unique/i.test(err.message)) { const e = new Error('A template named "' + name + '" already exists.'); e.status = 400; throw e; }
+      throw err;
+    });
+    const options = await repo.listTemplateOptions(template.id);
+    return sendJSON(res, 201, { template: template, groups: cfg.OPTION_GROUPS.map(function (g) { return { key: g.key, label: g.label, options: options[g.key] || [] }; }) });
   }
 
-  const templateAddMatch = pathname.match(/^\/api\/template\/([^/]+)$/);
+  const templateOptionsMatch = pathname.match(/^\/api\/templates\/([^/]+)\/options$/);
+  if (templateOptionsMatch && req.method === 'GET') {
+    const options = await repo.listTemplateOptions(templateOptionsMatch[1]);
+    return sendJSON(res, 200, { groups: cfg.OPTION_GROUPS.map(function (g) { return { key: g.key, label: g.label, options: options[g.key] || [] }; }) });
+  }
+
+  const templateAddMatch = pathname.match(/^\/api\/templates\/([^/]+)\/options\/([^/]+)$/);
   if (templateAddMatch && req.method === 'POST') {
-    requireAdmin(user);
+    const templateId = templateAddMatch[1], groupKey = templateAddMatch[2];
+    await requireTemplateEditable(templateId, user);
     const body = await readBody(req);
     const value = String(body.value || '').trim();
     if (!value) return sendJSON(res, 400, { error: 'Value is required.' });
-    const groupKey = templateAddMatch[1];
     if (!cfg.OPTION_GROUPS.find(function (g) { return g.key === groupKey; })) return sendJSON(res, 404, { error: 'Unknown option group.' });
-    const row = await repo.addTemplateOption(groupKey, value, user.id);
+    const row = await repo.addTemplateOption(templateId, groupKey, value, user.id);
     return sendJSON(res, 201, { option: { id: row.id, value: row.value, active: row.active } });
   }
 
-  const templateArchiveMatch = pathname.match(/^\/api\/template\/([^/]+)\/([^/]+)$/);
+  const templateArchiveMatch = pathname.match(/^\/api\/templates\/([^/]+)\/options\/([^/]+)\/([^/]+)$/);
   if (templateArchiveMatch && (req.method === 'DELETE' || req.method === 'PATCH')) {
-    requireAdmin(user);
+    const templateId = templateArchiveMatch[1], optionId = templateArchiveMatch[3];
+    await requireTemplateEditable(templateId, user);
     const active = req.method === 'PATCH' ? true : false;
-    const row = await repo.setTemplateOptionActive(templateArchiveMatch[2], active);
+    const row = await repo.setTemplateOptionActive(templateId, optionId, active);
     if (!row) return sendJSON(res, 404, { error: 'Option not found' });
     return sendJSON(res, 200, { option: { id: row.id, value: row.value, active: row.active } });
   }
@@ -415,6 +436,9 @@ async function runImport(body, user) {
     labelToId[label] = semester.id;
   }
 
+  const defaultTemplate = await repo.getDefaultTemplate();
+  const importTemplateId = (defaultTemplate || {}).id || null;
+
   const users = await repo.listUsers();
   const nameToUserId = {};
   users.forEach(function (u) { if (u.isActive) nameToUserId[u.name.trim().toLowerCase()] = u.id; });
@@ -426,13 +450,14 @@ async function runImport(body, user) {
     const semesterLabel = String(row.semesterLabel || '').trim();
     const semesterId = labelToId[semesterLabel];
     if (!semesterId) { skipped.push({ row: idx + 1, reason: 'Unrecognized semester "' + semesterLabel + '"' }); return; }
-    const errors = validateEntry(fields, semesterId);
+    const errors = validateEntry(fields, semesterId, importTemplateId);
     if (errors.length) { skipped.push({ row: idx + 1, reason: errors.join(' ') }); return; }
     const counselorName = String(row.counselorName || '').trim();
     const matchedUserId = counselorName ? nameToUserId[counselorName.toLowerCase()] : null;
     valid.push({
       fields: fields,
       semesterId: semesterId,
+      templateId: importTemplateId,
       createdBy: matchedUserId || null,
       createdByNameOverride: matchedUserId ? null : (counselorName || null),
     });
@@ -450,6 +475,15 @@ async function runImport(body, user) {
 
 function requireAdmin(user) {
   if (user.role !== 'admin') { const e = new Error('Admin access required.'); e.status = 403; throw e; }
+}
+
+// Any signed-in user can edit a custom template's options, but the shared
+// Default template — the baseline every new template clones from — is
+// admin-only so one counselor can't silently change everyone's starting point.
+async function requireTemplateEditable(templateId, user) {
+  const template = await repo.getTemplate(templateId);
+  if (!template) { const e = new Error('Template not found.'); e.status = 404; throw e; }
+  if (template.isDefault) requireAdmin(user);
 }
 
 async function startSession(res, userId) {

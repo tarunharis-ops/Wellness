@@ -19,13 +19,49 @@ async function run() {
   await db.query(schema);
   console.log('Schema OK.');
 
+  // Ensure exactly one Default template exists — every new template clones
+  // its active options from this one.
+  let defaultTemplate = (await db.query('SELECT * FROM templates WHERE is_default = true LIMIT 1')).rows[0];
+  if (!defaultTemplate) {
+    const id = uuid();
+    await db.query('INSERT INTO templates (id, name, is_default) VALUES ($1,$2,true)', [id, 'Default']);
+    defaultTemplate = { id: id };
+    console.log('Created Default template.');
+  }
+  const defaultTemplateId = defaultTemplate.id;
+
+  // Upgrade path: template_options predates the templates table — backfill
+  // any rows still missing template_id, then swap its unique constraint from
+  // (group_key, value) to (template_id, group_key, value) now that more than
+  // one template's options can share a group_key/value pair.
+  await db.query('UPDATE template_options SET template_id = $1 WHERE template_id IS NULL', [defaultTemplateId]);
+  await db.query('UPDATE entries SET template_id = $1 WHERE template_id IS NULL', [defaultTemplateId]);
+
+  const staleConstraints = await db.query(
+    "SELECT tc.constraint_name FROM information_schema.table_constraints tc " +
+    "WHERE tc.table_name = 'template_options' AND tc.constraint_type = 'UNIQUE' " +
+    "AND tc.constraint_name != 'template_options_template_group_value_key'"
+  );
+  for (const row of staleConstraints.rows) {
+    const name = row.constraint_name.replace(/[^a-zA-Z0-9_]/g, '');
+    await db.query('ALTER TABLE template_options DROP CONSTRAINT "' + name + '"');
+    console.log('Dropped stale constraint ' + name + ' on template_options.');
+  }
+  await db.query(
+    'ALTER TABLE template_options ADD CONSTRAINT template_options_template_group_value_key UNIQUE (template_id, group_key, value)'
+  ).catch(function (err) { if (!/already exists/.test(err.message)) throw err; });
+  await db.query('ALTER TABLE template_options ALTER COLUMN template_id SET NOT NULL');
+
   for (const group of cfg.OPTION_GROUPS) {
-    const existing = await db.query('SELECT COUNT(*)::int AS n FROM template_options WHERE group_key = $1', [group.key]);
+    const existing = await db.query(
+      'SELECT COUNT(*)::int AS n FROM template_options WHERE template_id = $1 AND group_key = $2',
+      [defaultTemplateId, group.key]
+    );
     if (existing.rows[0].n > 0) continue;
     for (let i = 0; i < group.defaults.length; i++) {
       await db.query(
-        'INSERT INTO template_options (id, group_key, value, sort_order) VALUES ($1,$2,$3,$4) ON CONFLICT DO NOTHING',
-        [uuid(), group.key, group.defaults[i], i]
+        'INSERT INTO template_options (id, template_id, group_key, value, sort_order) VALUES ($1,$2,$3,$4,$5) ON CONFLICT DO NOTHING',
+        [uuid(), defaultTemplateId, group.key, group.defaults[i], i]
       );
     }
     console.log('Seeded ' + group.defaults.length + ' default options for "' + group.key + '".');

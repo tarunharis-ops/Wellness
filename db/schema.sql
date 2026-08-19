@@ -41,10 +41,21 @@ CREATE TABLE IF NOT EXISTS semesters (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+-- A template is a named set of dropdown option lists. Exactly one row has
+-- is_default = true — the baseline every new template is cloned from.
+CREATE TABLE IF NOT EXISTS templates (
+  id TEXT PRIMARY KEY,
+  name TEXT UNIQUE NOT NULL,
+  is_default BOOLEAN NOT NULL DEFAULT FALSE,
+  created_by TEXT REFERENCES users(id),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
 CREATE TABLE IF NOT EXISTS entries (
   id TEXT PRIMARY KEY,
   student_key TEXT NOT NULL,
   semester_id TEXT REFERENCES semesters(id),
+  template_id TEXT REFERENCES templates(id),
   case_status TEXT,
   first_name TEXT,
   last_name TEXT,
@@ -84,17 +95,28 @@ CREATE INDEX IF NOT EXISTS idx_entries_outreach_date ON entries(outreach_date);
 -- before any index/constraint below references them.
 ALTER TABLE entries ADD COLUMN IF NOT EXISTS semester_id TEXT REFERENCES semesters(id);
 ALTER TABLE entries ADD COLUMN IF NOT EXISTS created_by_name_override TEXT;
+ALTER TABLE entries ADD COLUMN IF NOT EXISTS template_id TEXT REFERENCES templates(id);
 
 CREATE INDEX IF NOT EXISTS idx_entries_semester ON entries(semester_id);
+CREATE INDEX IF NOT EXISTS idx_entries_template ON entries(template_id);
 
 CREATE TABLE IF NOT EXISTS template_options (
   id TEXT PRIMARY KEY,
+  template_id TEXT REFERENCES templates(id),
   group_key TEXT NOT NULL,
   value TEXT NOT NULL,
   active BOOLEAN NOT NULL DEFAULT TRUE,
   sort_order INTEGER NOT NULL DEFAULT 0,
   created_by TEXT REFERENCES users(id),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  UNIQUE(group_key, value)
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
-CREATE INDEX IF NOT EXISTS idx_template_group ON template_options(group_key);
+
+-- Upgrade path: this table originally had no template_id column (one global
+-- option set, uniqueness on group_key+value alone). db/migrate.js backfills
+-- template_id onto pre-existing rows and swaps the unique constraint to be
+-- scoped per-template (handled there, not here, since it needs to look up
+-- the actual constraint name to drop it safely). Must run before the index
+-- below, which references this column.
+ALTER TABLE template_options ADD COLUMN IF NOT EXISTS template_id TEXT REFERENCES templates(id);
+
+CREATE INDEX IF NOT EXISTS idx_template_group ON template_options(template_id, group_key);
