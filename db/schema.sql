@@ -16,9 +16,13 @@ CREATE TABLE IF NOT EXISTS sessions (
   id TEXT PRIMARY KEY,
   user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  expires_at TIMESTAMPTZ NOT NULL
+  expires_at TIMESTAMPTZ NOT NULL,
+  last_seen_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id);
+
+-- Upgrade path: sessions predates the idle-timeout tracking column.
+ALTER TABLE sessions ADD COLUMN IF NOT EXISTS last_seen_at TIMESTAMPTZ NOT NULL DEFAULT now();
 
 CREATE TABLE IF NOT EXISTS invites (
   id TEXT PRIMARY KEY,
@@ -120,3 +124,22 @@ CREATE TABLE IF NOT EXISTS template_options (
 ALTER TABLE template_options ADD COLUMN IF NOT EXISTS template_id TEXT REFERENCES templates(id);
 
 CREATE INDEX IF NOT EXISTS idx_template_group ON template_options(template_id, group_key);
+
+-- Audit trail: every sensitive access or mutation writes one row here.
+-- actor_id/actor_name are both stored (rather than joining users at read
+-- time) so the log stays intact and attributable even if the acting user is
+-- later deactivated or deleted.
+CREATE TABLE IF NOT EXISTS audit_log (
+  id TEXT PRIMARY KEY,
+  actor_id TEXT REFERENCES users(id) ON DELETE SET NULL,
+  actor_name TEXT,
+  action_type TEXT NOT NULL,
+  target_record_id TEXT,
+  ip_address TEXT,
+  user_agent TEXT,
+  metadata JSONB,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_audit_created ON audit_log(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_audit_actor ON audit_log(actor_id);
+CREATE INDEX IF NOT EXISTS idx_audit_action ON audit_log(action_type);

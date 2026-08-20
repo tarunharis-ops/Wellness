@@ -32,6 +32,26 @@ persistent, internet-hosted web app instead of a row-per-case spreadsheet.
   detects those blocks and carries the student's identity down through the follow-ups, the same
   way the software's own "+ New Entry" does when linking to an existing student.
 
+## Security controls
+
+These are real, verified technical controls — not a claim of FERPA/HIPAA/SOC 2 *certification*,
+which is a legal/organizational status involving policy, agreements with vendors, and usually a
+third-party audit, none of which code alone can grant. What's actually implemented:
+
+- **RBAC.** Team and invite management, and editing the shared Default template, are admin-only.
+  Deleting a case record is restricted to that record's own creator or an admin — previously any
+  signed-in user could delete anyone's entries.
+- **Audit log** (**Audit Log**, admin-only). Every sensitive access or mutation — entry
+  create/update/delete/view, CSV export, semester/template changes, invite and role changes, login/
+  logout — writes one row with actor, action type, target record id, IP, user agent, and a
+  timestamp. Logging is fire-and-forget (`server.js`'s `logAudit`): a logging failure never blocks
+  or fails the action it's recording.
+- **15-minute idle session timeout**, NIST-style. The server is the actual enforcement point —
+  every request checks the session's last-activity time and invalidates it server-side past 15
+  minutes idle, independent of anything client-side (`server.js`'s `currentUser`). The browser
+  mirrors this with its own timer so an idle user gets a warning ~1 minute before logout and a
+  clean redirect at the limit, rather than just failing on their next click.
+
 ## Local development
 
 1. Copy `.env.example` to `.env` and set `DATABASE_URL` to a Postgres connection string (a free

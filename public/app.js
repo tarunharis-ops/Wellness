@@ -45,6 +45,7 @@
     templates: [],
     templateOptionsCache: {},
     templateView: { selectedId: null, groups: [] },
+    auditFilters: { actionType: '', actorId: '' },
   };
 
   // ---------------- API ----------------
@@ -119,6 +120,15 @@
     var d = new Date(v);
     if (isNaN(d.getTime())) return '—';
     return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' });
+  }
+
+  // Timestamps (audit log, createdAt/updatedAt) are real instants, not
+  // date-only values — format in the viewer's local timezone as usual.
+  function fmtDateTime(v) {
+    if (!v) return '—';
+    var d = new Date(v);
+    if (isNaN(d.getTime())) return '—';
+    return d.toLocaleString(undefined, { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
   }
 
   function toInputDate(v) {
@@ -213,6 +223,7 @@
     else if (STATE.view === 'team') { root.innerHTML = renderTeamView(); loadTeamData(); }
     else if (STATE.view === 'template') { root.innerHTML = renderTemplateView(); loadTemplateData(); }
     else if (STATE.view === 'import') { window.WCT_IMPORT.render(root); }
+    else if (STATE.view === 'audit') { root.innerHTML = renderAuditView(); loadAuditData(); }
     bindViewEvents();
   }
 
@@ -834,6 +845,65 @@
     });
   }
 
+  // ---------------- Audit log (admin) ----------------
+  var AUDIT_ACTION_TYPES = [
+    'auth.login', 'auth.login_failed', 'auth.logout', 'auth.setup', 'auth.idle_timeout',
+    'invite.create', 'invite.revoke', 'invite.accept',
+    'user.role_change', 'user.deactivate', 'user.reactivate',
+    'entry.create', 'entry.update', 'entry.delete', 'entry.view', 'entry.export',
+    'semester.create', 'template.create', 'template.option_add', 'template.option_archive', 'template.option_restore',
+  ];
+
+  function renderAuditView() {
+    var actionOptions = '<option value="">All Actions</option>' + AUDIT_ACTION_TYPES.map(function (a) {
+      return '<option value="' + a + '"' + (STATE.auditFilters.actionType === a ? ' selected' : '') + '>' + a + '</option>';
+    }).join('');
+    var actorOptions = '<option value="">All Team Members</option>' + STATE.team.users.map(function (u) {
+      return '<option value="' + u.id + '"' + (STATE.auditFilters.actorId === u.id ? ' selected' : '') + '>' + escapeHtml(u.name) + '</option>';
+    }).join('');
+    return '<div class="page-head"><div><div class="page-title">Audit Log</div><div class="page-sub">Every sensitive access and change, for SOC 2 / FERPA-style audit review. Most recent first.</div></div></div>' +
+      '<div class="audit-filters">' +
+        '<select id="auditActionFilter">' + actionOptions + '</select>' +
+        '<select id="auditActorFilter">' + actorOptions + '</select>' +
+      '</div>' +
+      '<div id="auditTableWrap">' + emptyState('Loading…', '') + '</div>';
+  }
+
+  function loadAuditData() {
+    var params = [];
+    if (STATE.auditFilters.actionType) params.push('actionType=' + encodeURIComponent(STATE.auditFilters.actionType));
+    if (STATE.auditFilters.actorId) params.push('actorId=' + encodeURIComponent(STATE.auditFilters.actorId));
+    var qs = params.length ? '?' + params.join('&') : '';
+    Promise.all([
+      api('/api/audit-log' + qs),
+      STATE.team.users.length ? Promise.resolve({ users: STATE.team.users }) : api('/api/users'),
+    ]).then(function (r) {
+      STATE.team.users = r[1].users;
+      renderAuditTable(r[0].logs);
+    });
+  }
+
+  function renderAuditTable(logs) {
+    var rows = logs.map(function (l) {
+      return '<tr>' +
+        '<td class="cell-muted">' + fmtDateTime(l.createdAt) + '</td>' +
+        '<td class="cell-name">' + escapeHtml(l.actorName || 'System') + '</td>' +
+        '<td><span class="tag">' + escapeHtml(l.actionType) + '</span></td>' +
+        '<td class="cell-muted">' + escapeHtml(l.targetRecordId || '—') + '</td>' +
+        '<td class="cell-muted">' + escapeHtml(l.ipAddress || '—') + '</td>' +
+      '</tr>';
+    }).join('');
+    var wrap = document.getElementById('auditTableWrap');
+    wrap.innerHTML = logs.length ?
+      '<div class="table-wrap"><table class="data-table"><thead><tr><th>Time</th><th>Actor</th><th>Action</th><th>Target Record</th><th>IP Address</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
+      '<div class="audit-meta" style="margin-top:8px">Showing ' + logs.length + ' most recent event(s).</div>' :
+      emptyState('No matching events', 'Try clearing filters.');
+    var actionSel = document.getElementById('auditActionFilter');
+    var actorSel = document.getElementById('auditActorFilter');
+    if (actionSel) actionSel.addEventListener('change', function () { STATE.auditFilters.actionType = actionSel.value; loadAuditData(); });
+    if (actorSel) actorSel.addEventListener('change', function () { STATE.auditFilters.actorId = actorSel.value; loadAuditData(); });
+  }
+
   // ---------------- Template view (admin) ----------------
   function renderTemplateView() {
     if (!STATE.templateView.selectedId) {
@@ -1031,11 +1101,65 @@
     if (user.role === 'admin') {
       document.getElementById('navImport').style.display = '';
       document.getElementById('navTeam').style.display = '';
+      document.getElementById('navAudit').style.display = '';
       document.getElementById('adminNavDivider').style.display = '';
     }
     bindGlobalEvents();
+    initIdleTimer();
     setView('log');
     loadAll().then(render).catch(function (err) { toast('Failed to load data: ' + err.message, 'err'); });
+  }
+
+  // ---------------- Idle timeout (NIST-style: 15 min idle -> forced logout) ----------------
+  // The server independently enforces this on every request (see
+  // server.js's currentUser()) — this timer just gives a proactive warning
+  // and a clean redirect instead of the user discovering it on their next click.
+  var IDLE_LIMIT_MS = 15 * 60 * 1000;
+  var IDLE_WARNING_AT_MS = 14 * 60 * 1000;
+  var idleLastActivity = Date.now();
+  var idleWarningShown = false;
+  var idleCheckHandle = null;
+
+  function idleMarkActive() {
+    idleLastActivity = Date.now();
+    if (idleWarningShown) hideIdleWarning();
+  }
+
+  function showIdleWarning() {
+    idleWarningShown = true;
+    document.getElementById('idleOverlay').style.display = 'flex';
+  }
+
+  function hideIdleWarning() {
+    idleWarningShown = false;
+    document.getElementById('idleOverlay').style.display = 'none';
+  }
+
+  function idleForceLogout() {
+    clearInterval(idleCheckHandle);
+    api('/api/auth/logout', { method: 'POST' }).catch(function () {}).then(function () {
+      window.location.reload();
+    });
+  }
+
+  function initIdleTimer() {
+    idleLastActivity = Date.now(); // don't count page-load time against the idle budget
+    ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchstart'].forEach(function (evt) {
+      document.addEventListener(evt, idleMarkActive, { passive: true });
+    });
+    document.getElementById('idleStayBtn').addEventListener('click', function () {
+      idleMarkActive();
+      api('/api/auth/me').catch(function () {}); // refresh server-side last_seen_at
+    });
+    idleCheckHandle = setInterval(function () {
+      var idleMs = Date.now() - idleLastActivity;
+      if (idleMs >= IDLE_LIMIT_MS) { idleForceLogout(); return; }
+      if (idleMs >= IDLE_WARNING_AT_MS) {
+        if (!idleWarningShown) showIdleWarning();
+        var secondsLeft = Math.max(0, Math.round((IDLE_LIMIT_MS - idleMs) / 1000));
+        document.getElementById('idleCountdown').textContent = secondsLeft;
+      }
+    }, 1000);
   }
 
   window.WCT_APP = {

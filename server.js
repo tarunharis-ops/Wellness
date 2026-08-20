@@ -26,6 +26,13 @@ const PORT = process.env.PORT || 4787;
 const PUBLIC_DIR = path.join(__dirname, 'public');
 const COOKIE_SECURE = process.env.NODE_ENV === 'production';
 
+// NIST-style idle timeout: a session with no authenticated request in this
+// window is treated as expired server-side, independent of its absolute
+// expiry. The client mirrors this with its own timer (see public/app.js) so
+// an idle user is warned and redirected proactively rather than just failing
+// on their next click — but this check is the actual enforcement point.
+const IDLE_TIMEOUT_MS = 15 * 60 * 1000;
+
 const MIME = {
   '.html': 'text/html; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
@@ -66,14 +73,40 @@ function readBody(req, maxBytes) {
   });
 }
 
+function requestIp(req) {
+  const fwd = req.headers['x-forwarded-for'];
+  if (fwd) return String(fwd).split(',')[0].trim();
+  return (req.socket && req.socket.remoteAddress) || '';
+}
+
+// Fire-and-forget audit write — never awaited by callers, so a logging
+// failure can't block or fail the action it's recording. Every access to or
+// mutation of a specific record should call this with that record's id.
+function logAudit(req, user, actionType, targetRecordId, metadata) {
+  repo.createAuditLog({
+    actorId: user ? user.id : null,
+    actorName: user ? user.name : null,
+    actionType: actionType,
+    targetRecordId: targetRecordId || null,
+    ipAddress: requestIp(req),
+    userAgent: req.headers['user-agent'] || '',
+    metadata: metadata || null,
+  }).catch(function (err) { console.error('audit log failed:', actionType, err.message); });
+}
+
 async function currentUser(req) {
   const cookies = auth.parseCookies(req);
   const token = cookies[auth.SESSION_COOKIE];
   if (!token) return null;
   const session = await repo.getSession(token);
   if (!session || !session.user.isActive) return null;
-  // sliding expiration: refresh on use
-  repo.touchSession(token, auth.sessionExpiry()).catch(function () {});
+  const idleMs = Date.now() - new Date(session.lastSeenAt).getTime();
+  if (idleMs > IDLE_TIMEOUT_MS) {
+    await repo.deleteSession(token);
+    logAudit(req, session.user, 'auth.idle_timeout', session.user.id);
+    return null;
+  }
+  repo.touchSessionActivity(token).catch(function () {});
   return session.user;
 }
 
@@ -205,6 +238,7 @@ async function handleApi(req, res, pathname, query) {
     if (err) return sendJSON(res, 400, { error: err });
     const user = await repo.createUser({ email: body.email, name: body.name, passwordHash: auth.hashPassword(body.password), role: 'admin' });
     await startSession(res, user.id);
+    logAudit(req, user, 'auth.setup', user.id);
     return sendJSON(res, 201, { user: repo.publicUser(user) });
   }
 
@@ -212,17 +246,23 @@ async function handleApi(req, res, pathname, query) {
     const body = await readBody(req);
     const user = await repo.getUserByEmail(body.email || '');
     if (!user || !user.isActive || !auth.verifyPassword(body.password || '', user.passwordHash)) {
+      logAudit(req, null, 'auth.login_failed', null, { email: body.email || '' });
       return sendJSON(res, 401, { error: 'Incorrect email or password.' });
     }
     await startSession(res, user.id);
     repo.touchLogin(user.id).catch(function () {});
+    logAudit(req, user, 'auth.login', user.id);
     return sendJSON(res, 200, { user: repo.publicUser(user) });
   }
 
   if (pathname === '/api/auth/logout' && req.method === 'POST') {
     const cookies = auth.parseCookies(req);
     const token = cookies[auth.SESSION_COOKIE];
-    if (token) await repo.deleteSession(token);
+    if (token) {
+      const session = await repo.getSession(token).catch(function () { return null; });
+      await repo.deleteSession(token);
+      if (session) logAudit(req, session.user, 'auth.logout', session.user.id);
+    }
     auth.clearSessionCookie(res, COOKIE_SECURE);
     return sendJSON(res, 200, { ok: true });
   }
@@ -253,6 +293,7 @@ async function handleApi(req, res, pathname, query) {
     const user = await repo.createUser({ email: email, name: body.name, passwordHash: auth.hashPassword(body.password), role: invite.role });
     await repo.markInviteUsed(invite.id, user.id);
     await startSession(res, user.id);
+    logAudit(req, user, 'invite.accept', invite.id, { newUserId: user.id });
     return sendJSON(res, 201, { user: repo.publicUser(user) });
   }
 
@@ -272,6 +313,7 @@ async function handleApi(req, res, pathname, query) {
     if (req.method === 'GET' && id) {
       const entry = await repo.getEntry(id);
       if (!entry) return sendJSON(res, 404, { error: 'Entry not found' });
+      logAudit(req, user, 'entry.view', id);
       return sendJSON(res, 200, { entry: entry });
     }
     if (req.method === 'POST' && !id) {
@@ -280,6 +322,7 @@ async function handleApi(req, res, pathname, query) {
       const errors = validateEntry(fields, body.semesterId, body.templateId);
       if (errors.length) return sendJSON(res, 400, { errors: errors });
       const entry = await repo.createEntry(fields, user.id, { semesterId: body.semesterId, templateId: body.templateId });
+      logAudit(req, user, 'entry.create', entry.id, { studentKey: entry.studentKey });
       return sendJSON(res, 201, { entry: entry });
     }
     if ((req.method === 'PUT' || req.method === 'PATCH') && id) {
@@ -289,11 +332,22 @@ async function handleApi(req, res, pathname, query) {
       if (errors.length) return sendJSON(res, 400, { errors: errors });
       const entry = await repo.updateEntry(id, fields, user.id, { semesterId: body.semesterId, templateId: body.templateId });
       if (!entry) return sendJSON(res, 404, { error: 'Entry not found' });
+      logAudit(req, user, 'entry.update', id, { studentKey: entry.studentKey });
       return sendJSON(res, 200, { entry: entry });
     }
     if (req.method === 'DELETE' && id) {
+      // RBAC: only the entry's own creator or an admin may delete a case
+      // record — any signed-in user could otherwise erase anyone's cases.
+      const existing = await repo.getEntry(id);
+      if (!existing) return sendJSON(res, 404, { error: 'Entry not found' });
+      if (user.role !== 'admin' && existing.createdBy !== user.id) {
+        const e = new Error('Only an admin or the counselor who logged this entry can delete it.');
+        e.status = 403;
+        throw e;
+      }
       const ok = await repo.deleteEntry(id);
       if (!ok) return sendJSON(res, 404, { error: 'Entry not found' });
+      logAudit(req, user, 'entry.delete', id, { studentKey: existing.studentKey });
       return sendJSON(res, 200, { ok: true });
     }
     return sendJSON(res, 405, { error: 'Method not allowed' });
@@ -308,6 +362,7 @@ async function handleApi(req, res, pathname, query) {
     const label = String(body.label || '').trim();
     if (!label) return sendJSON(res, 400, { error: 'Semester name is required.' });
     const semester = await repo.createSemester({ label: label, startsOn: body.startsOn || null, endsOn: body.endsOn || null }, user.id);
+    logAudit(req, user, 'semester.create', semester.id, { label: semester.label });
     return sendJSON(res, 201, { semester: semester });
   }
 
@@ -334,7 +389,9 @@ async function handleApi(req, res, pathname, query) {
   }
 
   if (pathname === '/api/export.csv' && req.method === 'GET') {
-    const csv = entriesToCSV(filterEntries(await repo.listEntries(), query));
+    const filtered = filterEntries(await repo.listEntries(), query);
+    const csv = entriesToCSV(filtered);
+    logAudit(req, user, 'entry.export', null, { rowCount: filtered.length, semesterId: query.semesterId || null });
     res.writeHead(200, { 'Content-Type': 'text/csv; charset=utf-8', 'Content-Disposition': 'attachment; filename="wellness-case-log.csv"' });
     res.end(csv);
     return;
@@ -353,6 +410,7 @@ async function handleApi(req, res, pathname, query) {
       throw err;
     });
     const options = await repo.listTemplateOptions(template.id);
+    logAudit(req, user, 'template.create', template.id, { name: template.name });
     return sendJSON(res, 201, { template: template, groups: cfg.OPTION_GROUPS.map(function (g) { return { key: g.key, label: g.label, options: options[g.key] || [] }; }) });
   }
 
@@ -371,16 +429,18 @@ async function handleApi(req, res, pathname, query) {
     if (!value) return sendJSON(res, 400, { error: 'Value is required.' });
     if (!cfg.OPTION_GROUPS.find(function (g) { return g.key === groupKey; })) return sendJSON(res, 404, { error: 'Unknown option group.' });
     const row = await repo.addTemplateOption(templateId, groupKey, value, user.id);
+    logAudit(req, user, 'template.option_add', templateId, { groupKey: groupKey, value: value });
     return sendJSON(res, 201, { option: { id: row.id, value: row.value, active: row.active } });
   }
 
   const templateArchiveMatch = pathname.match(/^\/api\/templates\/([^/]+)\/options\/([^/]+)\/([^/]+)$/);
   if (templateArchiveMatch && (req.method === 'DELETE' || req.method === 'PATCH')) {
-    const templateId = templateArchiveMatch[1], optionId = templateArchiveMatch[3];
+    const templateId = templateArchiveMatch[1], groupKeyForLog = templateArchiveMatch[2], optionId = templateArchiveMatch[3];
     await requireTemplateEditable(templateId, user);
     const active = req.method === 'PATCH' ? true : false;
     const row = await repo.setTemplateOptionActive(templateId, optionId, active);
     if (!row) return sendJSON(res, 404, { error: 'Option not found' });
+    logAudit(req, user, active ? 'template.option_restore' : 'template.option_archive', templateId, { groupKey: groupKeyForLog, value: row.value });
     return sendJSON(res, 200, { option: { id: row.id, value: row.value, active: row.active } });
   }
 
@@ -395,8 +455,14 @@ async function handleApi(req, res, pathname, query) {
     requireAdmin(user);
     const body = await readBody(req);
     let updated = null;
-    if (typeof body.isActive === 'boolean') updated = await repo.setUserActive(userPatchMatch[1], body.isActive);
-    if (body.role) updated = await repo.setUserRole(userPatchMatch[1], body.role);
+    if (typeof body.isActive === 'boolean') {
+      updated = await repo.setUserActive(userPatchMatch[1], body.isActive);
+      if (updated) logAudit(req, user, body.isActive ? 'user.reactivate' : 'user.deactivate', updated.id);
+    }
+    if (body.role) {
+      updated = await repo.setUserRole(userPatchMatch[1], body.role);
+      if (updated) logAudit(req, user, 'user.role_change', updated.id, { newRole: body.role });
+    }
     if (!updated) return sendJSON(res, 404, { error: 'User not found' });
     return sendJSON(res, 200, { user: repo.publicUser(updated) });
   }
@@ -412,13 +478,24 @@ async function handleApi(req, res, pathname, query) {
     const token = auth.newToken();
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
     const invite = await repo.createInvite({ email: body.email ? String(body.email).trim().toLowerCase() : null, role: body.role === 'admin' ? 'admin' : 'counselor', createdBy: user.id, token: token, expiresAt: expiresAt });
+    logAudit(req, user, 'invite.create', invite.id, { email: invite.email, role: invite.role });
     return sendJSON(res, 201, { invite: invite });
   }
   const inviteDeleteMatch = pathname.match(/^\/api\/invites\/([^/]+)$/);
   if (inviteDeleteMatch && req.method === 'DELETE') {
     requireAdmin(user);
     await repo.deleteInvite(inviteDeleteMatch[1]);
+    logAudit(req, user, 'invite.revoke', inviteDeleteMatch[1]);
     return sendJSON(res, 200, { ok: true });
+  }
+
+  if (pathname === '/api/audit-log' && req.method === 'GET') {
+    requireAdmin(user);
+    const logs = await repo.listAuditLog(
+      { actorId: query.actorId || null, actionType: query.actionType || null },
+      Math.min(Number(query.limit) || 200, 500)
+    );
+    return sendJSON(res, 200, { logs: logs });
   }
 
   sendJSON(res, 404, { error: 'Not found' });

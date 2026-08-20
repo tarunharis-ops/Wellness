@@ -87,9 +87,14 @@ function publicUser(u) {
 }
 
 // ---------------- Sessions ----------------
+// expires_at is a fixed absolute ceiling set once at login (an account can be
+// "come back any time" persistent without the session itself living forever).
+// last_seen_at is the sliding NIST-style idle tracker — server.js compares it
+// against now() on every request and kills the session past the idle limit,
+// independent of expires_at.
 
 function createSession(userId, token, expiresAt) {
-  return db.query('INSERT INTO sessions (id, user_id, expires_at) VALUES ($1,$2,$3)', [token, userId, expiresAt]);
+  return db.query('INSERT INTO sessions (id, user_id, expires_at, last_seen_at) VALUES ($1,$2,$3,now())', [token, userId, expiresAt]);
 }
 
 function getSession(token) {
@@ -102,6 +107,7 @@ function getSession(token) {
     const row = r.rows[0];
     return {
       token: row.id,
+      lastSeenAt: row.last_seen_at,
       user: { id: row.u_id, email: row.u_email, name: row.u_name, role: row.u_role, isActive: row.u_is_active },
     };
   });
@@ -111,8 +117,8 @@ function deleteSession(token) {
   return db.query('DELETE FROM sessions WHERE id = $1', [token]);
 }
 
-function touchSession(token, expiresAt) {
-  return db.query('UPDATE sessions SET expires_at = $2 WHERE id = $1', [token, expiresAt]);
+function touchSessionActivity(token) {
+  return db.query('UPDATE sessions SET last_seen_at = now() WHERE id = $1', [token]);
 }
 
 // ---------------- Invites ----------------
@@ -392,12 +398,50 @@ function setTemplateOptionActive(templateId, id, active) {
     .then(function (r) { return r.rows[0]; });
 }
 
+// ---------------- Audit log ----------------
+// Fire-and-forget from server.js — callers don't await this, so a logging
+// hiccup never blocks or fails the user-facing action it's recording.
+
+function auditRow(row) {
+  return {
+    id: row.id, actorId: row.actor_id, actorName: row.actor_name, actionType: row.action_type,
+    targetRecordId: row.target_record_id, ipAddress: row.ip_address, userAgent: row.user_agent,
+    metadata: row.metadata, createdAt: row.created_at,
+  };
+}
+
+function createAuditLog(entry) {
+  const id = uuid();
+  return db.query(
+    'INSERT INTO audit_log (id, actor_id, actor_name, action_type, target_record_id, ip_address, user_agent, metadata) ' +
+    'VALUES ($1,$2,$3,$4,$5,$6,$7,$8)',
+    [id, entry.actorId || null, entry.actorName || null, entry.actionType, entry.targetRecordId || null,
+      entry.ipAddress || null, entry.userAgent || null, entry.metadata ? JSON.stringify(entry.metadata) : null]
+  );
+}
+
+function listAuditLog(filters, limit) {
+  filters = filters || {};
+  const clauses = [];
+  const values = [];
+  if (filters.actorId) { values.push(filters.actorId); clauses.push('actor_id = $' + values.length); }
+  if (filters.actionType) { values.push(filters.actionType); clauses.push('action_type = $' + values.length); }
+  if (filters.targetRecordId) { values.push(filters.targetRecordId); clauses.push('target_record_id = $' + values.length); }
+  values.push(limit || 200);
+  const where = clauses.length ? 'WHERE ' + clauses.join(' AND ') : '';
+  return db.query(
+    'SELECT * FROM audit_log ' + where + ' ORDER BY created_at DESC LIMIT $' + values.length,
+    values
+  ).then(function (r) { return r.rows.map(auditRow); });
+}
+
 module.exports = {
   countUsers, createUser, getUserByEmail, getUserById, listUsers, setUserActive, setUserRole, touchLogin, publicUser,
-  createSession, getSession, deleteSession, touchSession,
+  createSession, getSession, deleteSession, touchSessionActivity,
   createInvite, listInvites, getInviteByToken, markInviteUsed, deleteInvite,
   listSemesters, createSemester, findOrCreateSemester,
   listEntries, getEntry, createEntry, updateEntry, deleteEntry, bulkCreateEntries, studentKeyFor,
   listTemplates, getTemplate, getDefaultTemplate, createTemplate,
   listTemplateOptions, addTemplateOption, setTemplateOptionActive,
+  createAuditLog, listAuditLog,
 };
