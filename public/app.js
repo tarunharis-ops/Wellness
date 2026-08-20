@@ -224,7 +224,26 @@
     else if (STATE.view === 'template') { root.innerHTML = renderTemplateView(); loadTemplateData(); }
     else if (STATE.view === 'import') { window.WCT_IMPORT.render(root); }
     else if (STATE.view === 'audit') { root.innerHTML = renderAuditView(); loadAuditData(); }
+    else if (STATE.view === 'appearance') { root.innerHTML = renderAppearanceView(); }
     bindViewEvents();
+  }
+
+  // ---------------- Appearance ----------------
+  function renderAppearanceView() {
+    var current = window.WCT_THEME.get();
+    var option = function (value, label, swatchInner, desc) {
+      return '<button class="theme-option' + (current === value ? ' active' : '') + '" data-theme-option="' + value + '">' +
+        '<div class="theme-swatch">' + swatchInner + '</div>' +
+        '<div><div class="theme-option-label">' + escapeHtml(label) + '<span class="theme-option-check"></span></div>' +
+        '<div class="theme-option-desc">' + escapeHtml(desc) + '</div></div>' +
+      '</button>';
+    };
+    return '<div class="page-head"><div><div class="page-title">Appearance</div><div class="page-sub">Choose how Wellness Tracker looks on this device.</div></div></div>' +
+      '<div class="theme-grid">' +
+        option('light', 'Light', '<span class="sw-bg"></span><span class="sw-surface"></span>', 'Ivory background, dark text — the default.') +
+        option('dark', 'Dark', '<span class="sw-dark-bg"></span><span class="sw-dark-surface"></span>', 'Near-black background, light text.') +
+        option('system', 'System', '<span class="sw-split"></span>', 'Follows your device\'s light/dark setting automatically.') +
+      '</div>';
   }
 
   function renderSemesterSelect() {
@@ -1057,6 +1076,12 @@
     if (dashCounselor) dashCounselor.addEventListener('change', function () { STATE.dashCounselor = dashCounselor.value; loadDashboard().then(render); });
     var exportDashboardBtn = document.getElementById('exportDashboardBtn');
     if (exportDashboardBtn) exportDashboardBtn.addEventListener('click', openExportDashboardDrawer);
+    root.querySelectorAll('[data-theme-option]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        window.WCT_THEME.set(btn.getAttribute('data-theme-option'));
+        render();
+      });
+    });
   }
 
   // ---------------- Export Dashboard (Semester x Counselor scope picker) ----------------

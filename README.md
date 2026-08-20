@@ -6,6 +6,12 @@ persistent, internet-hosted web app instead of a row-per-case spreadsheet.
 
 ## How it works
 
+- **Appearance** (nav item, all users) — Light, Dark, or System, saved per-browser
+  (`localStorage`, no server round trip). Applied before first paint so there's no flash of the
+  wrong theme (`public/index.html`'s inline script sets `<html data-theme>` immediately; the CSS
+  in `public/styles.css` defines dark-mode tokens both under `@media (prefers-color-scheme:
+  dark)` for "System" and under `[data-theme="dark"]` for an explicit choice, so a manual pick
+  always wins over the OS setting).
 - **Shared team workspace.** Everyone with an account sees and edits the same case log — same
   as the original spreadsheet — and every entry shows who logged and last edited it.
 - **Invite-only accounts.** Nobody can self-register. The first person to run setup becomes the
