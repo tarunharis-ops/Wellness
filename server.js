@@ -14,6 +14,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const url = require('url');
+const crypto = require('crypto');
 
 require('./lib/env'); // loads .env in local dev if present
 
@@ -585,6 +586,24 @@ async function handleApi(req, res, pathname, query) {
     return sendJSON(res, 200, { logs: logs });
   }
 
+  // ---- Danger Zone: bulk-delete case entries ----
+  if (pathname === '/api/admin/purge/preview' && req.method === 'GET') {
+    requireAdmin(user);
+    const scope = purgeScopeFromQuery(query);
+    const count = await repo.countEntriesForScope(scope);
+    return sendJSON(res, 200, { count: count });
+  }
+
+  if (pathname === '/api/admin/purge' && req.method === 'POST') {
+    requireAdmin(user);
+    const body = await readBody(req);
+    verifyPurgePassword(body.password);
+    const scope = purgeScopeFromQuery(body);
+    const deletedCount = await repo.purgeEntries(scope);
+    logAudit(req, user, 'data.purge', null, { scope: scope, deletedCount: deletedCount });
+    return sendJSON(res, 200, { deletedCount: deletedCount });
+  }
+
   sendJSON(res, 404, { error: 'Not found' });
 }
 
@@ -639,6 +658,34 @@ async function runImport(body, user) {
 
 function requireAdmin(user) {
   if (user.role !== 'admin') { const e = new Error('Admin access required.'); e.status = 403; throw e; }
+}
+
+// Danger Zone gate: a separate shared password (not a user's login password),
+// held only in the server's env — never in source, so it isn't sitting in
+// git history in plaintext. Fails closed if unset, and compares in constant
+// time so response timing can't leak how much of the guess was right.
+function verifyPurgePassword(candidate) {
+  const expected = process.env.PURGE_PASSWORD;
+  if (!expected) { const e = new Error('Danger Zone is not configured on this server (PURGE_PASSWORD is unset).'); e.status = 503; throw e; }
+  const a = Buffer.from(String(candidate || ''));
+  const b = Buffer.from(expected);
+  const ok = a.length === b.length && crypto.timingSafeEqual(a, b);
+  if (!ok) { const e = new Error('Incorrect Danger Zone password.'); e.status = 403; throw e; }
+}
+
+function purgeScopeFromQuery(query) {
+  if (query.scope === 'semester') {
+    if (!query.semesterId) { const e = new Error('semesterId is required for scope=semester.'); e.status = 400; throw e; }
+    return { type: 'semester', semesterId: query.semesterId };
+  }
+  if (query.scope === 'counselor') {
+    if (!query.counselor) { const e = new Error('counselor is required for scope=counselor.'); e.status = 400; throw e; }
+    return { type: 'counselor', counselorName: query.counselor };
+  }
+  if (query.scope === 'all') return { type: 'all' };
+  const e = new Error('scope must be "all", "semester", or "counselor".');
+  e.status = 400;
+  throw e;
 }
 
 // Any signed-in user can edit a custom template's options, but the shared

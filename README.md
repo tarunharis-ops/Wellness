@@ -6,6 +6,13 @@ persistent, internet-hosted web app instead of a row-per-case spreadsheet.
 
 ## How it works
 
+- **Danger Zone** (bottom of the Team page, admin-only) — permanently deletes case entries,
+  scoped to everything, one semester, or one counselor. Requires the separate `PURGE_PASSWORD`
+  (not anyone's login password — a shared gate for this one destructive action, read from an
+  environment variable so it isn't sitting in git history in plaintext; unset means purge is
+  refused entirely). Shows a live count of exactly what will be deleted before you confirm.
+  Semesters, templates, and team accounts are never touched by this — only case entries. Every
+  purge is written to the Audit Log with the scope and the number of rows deleted.
 - **Appearance** (nav item, all users) — Light, Dark, or System, saved per-browser
   (`localStorage`, no server round trip). Applied before first paint so there's no flash of the
   wrong theme (`public/index.html`'s inline script sets `<html data-theme>` immediately; the CSS
@@ -92,8 +99,10 @@ accounts on each yourself (an assistant can't do that on your behalf).
 2. **Push this project to a GitHub repo** (Render deploys from git).
 3. **Create the web service:** sign up at render.com → New → Blueprint → point it at your repo.
    Render reads `render.yaml` and provisions the service automatically.
-4. **Set the secret:** in the Render dashboard for the new service → Environment → add
-   `DATABASE_URL` with the Neon connection string from step 1.
+4. **Set the secrets:** in the Render dashboard for the new service → Environment → add
+   `DATABASE_URL` with the Neon connection string from step 1, and `PURGE_PASSWORD` with whatever
+   you want the Danger Zone's confirmation password to be (leave it unset to disable Danger Zone
+   entirely).
 5. Deploy. Render runs `npm install && npm run migrate` as the build step, then `npm start`.
 6. Visit the `.onrender.com` URL Render gives you → **Set up your workspace** → you're the first
    admin → invite your team from **Team**.

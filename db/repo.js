@@ -265,6 +265,32 @@ function deleteEntry(id) {
   return db.query('DELETE FROM entries WHERE id = $1', [id]).then(function (r) { return r.rowCount > 0; });
 }
 
+// ---- Bulk purge (Danger Zone) ----
+// scope: { type: 'all' } | { type: 'semester', semesterId } | { type: 'counselor', counselorName }
+// Matches counselor the same way filterEntries() does elsewhere: by the
+// linked user account id/name, or by the free-text created_by_name_override
+// for imported/unlinked entries.
+function purgeWhereClause(scope) {
+  if (scope.type === 'semester') return { clause: 'semester_id = $1', values: [scope.semesterId] };
+  if (scope.type === 'counselor') {
+    return {
+      clause: '(created_by IN (SELECT id FROM users WHERE lower(name) = lower($1)) OR lower(created_by_name_override) = lower($1))',
+      values: [scope.counselorName],
+    };
+  }
+  return { clause: 'true', values: [] };
+}
+
+function countEntriesForScope(scope) {
+  const w = purgeWhereClause(scope);
+  return db.query('SELECT COUNT(*)::int AS n FROM entries WHERE ' + w.clause, w.values).then(function (r) { return r.rows[0].n; });
+}
+
+function purgeEntries(scope) {
+  const w = purgeWhereClause(scope);
+  return db.query('DELETE FROM entries WHERE ' + w.clause, w.values).then(function (r) { return r.rowCount; });
+}
+
 // Bulk-inserts pre-parsed import rows inside one transaction, batching many
 // rows per INSERT (imports can be thousands of rows — one round trip per row
 // would be far too slow). Each item:
@@ -441,6 +467,7 @@ module.exports = {
   createInvite, listInvites, getInviteByToken, markInviteUsed, deleteInvite,
   listSemesters, createSemester, findOrCreateSemester,
   listEntries, getEntry, createEntry, updateEntry, deleteEntry, bulkCreateEntries, studentKeyFor,
+  countEntriesForScope, purgeEntries,
   listTemplates, getTemplate, getDefaultTemplate, createTemplate,
   listTemplateOptions, addTemplateOption, setTemplateOptionActive,
   createAuditLog, listAuditLog,

@@ -46,6 +46,7 @@
     templateOptionsCache: {},
     templateView: { selectedId: null, groups: [] },
     auditFilters: { actionType: '', actorId: '' },
+    purge: { scope: 'all', semesterId: '', counselor: '', counselors: [], previewCount: null },
   };
 
   // ---------------- API ----------------
@@ -781,15 +782,105 @@
       '<div class="dash-section-title">Pending &amp; past invites</div>' +
       '<div class="table-wrap" style="margin-bottom:22px"><div id="invitesTableWrap"></div></div>' +
       '<div class="dash-section-title">Team members</div>' +
-      '<div class="table-wrap"><div id="usersTableWrap"></div></div>';
+      '<div class="table-wrap" style="margin-bottom:22px"><div id="usersTableWrap"></div></div>' +
+      '<div id="dangerZoneWrap">' + renderDangerZone() + '</div>';
+  }
+
+  function renderDangerZone() {
+    var scope = STATE.purge.scope;
+    var scopeBtn = function (value, label) {
+      return '<button class="filter-chip' + (scope === value ? ' active' : '') + '" data-purge-scope="' + value + '">' + label + '</button>';
+    };
+    var scopePicker = '';
+    if (scope === 'semester') {
+      scopePicker = '<div class="form-field" style="max-width:280px;margin-top:12px"><label>Semester</label><select id="purgeSemester">' +
+        '<option value="">— Select —</option>' +
+        STATE.semesters.map(function (s) { return '<option value="' + s.id + '"' + (s.id === STATE.purge.semesterId ? ' selected' : '') + '>' + escapeHtml(s.label) + '</option>'; }).join('') +
+        '</select></div>';
+    } else if (scope === 'counselor') {
+      scopePicker = '<div class="form-field" style="max-width:280px;margin-top:12px"><label>Counselor</label><select id="purgeCounselor">' +
+        '<option value="">— Select —</option>' +
+        STATE.purge.counselors.map(function (c) { return '<option value="' + escapeHtml(c) + '"' + (c === STATE.purge.counselor ? ' selected' : '') + '>' + escapeHtml(c) + '</option>'; }).join('') +
+        '</select></div>';
+    }
+
+    var previewText = STATE.purge.previewCount === null ? 'Choose a scope to see how many entries this affects.' :
+      '<b>' + STATE.purge.previewCount + '</b> entr' + (STATE.purge.previewCount === 1 ? 'y' : 'ies') + ' will be permanently deleted. Semesters, templates, and team accounts are not affected. This cannot be undone.';
+
+    var canSubmit = STATE.purge.previewCount !== null && STATE.purge.previewCount > 0;
+
+    return '<div class="dash-section-title" style="color:var(--danger)">Danger Zone</div>' +
+      '<div class="card card-pad" style="border-color:var(--danger)">' +
+        '<div class="filter-bar" style="margin-bottom:0">' +
+          scopeBtn('all', 'All Data') + scopeBtn('semester', 'One Semester') + scopeBtn('counselor', 'One Counselor') +
+        '</div>' +
+        scopePicker +
+        '<div class="small-muted" style="margin-top:14px;line-height:1.6">' + previewText + '</div>' +
+        '<div class="form-grid" style="margin-top:14px;align-items:end;max-width:520px">' +
+          '<div class="form-field"><label>Danger Zone Password</label><input type="password" id="purgePassword" autocomplete="off" placeholder="Required to confirm" /></div>' +
+          '<div class="form-field"><button class="btn danger" id="purgeConfirmBtn"' + (canSubmit ? '' : ' disabled') + '>Permanently Delete</button></div>' +
+        '</div>' +
+      '</div>';
   }
 
   function loadTeamData() {
-    Promise.all([api('/api/users'), api('/api/invites')]).then(function (r) {
+    Promise.all([api('/api/users'), api('/api/invites'), api('/api/counselors')]).then(function (r) {
       STATE.team.users = r[0].users;
       STATE.team.invites = r[1].invites;
+      STATE.purge.counselors = r[2].counselors;
       renderTeamTables();
+      refreshPurgeZone();
       bindTeamEvents();
+    });
+  }
+
+  function refreshPurgeZone() {
+    var container = document.getElementById('dangerZoneWrap');
+    if (!container) return;
+    container.innerHTML = renderDangerZone();
+    bindDangerZoneEvents();
+  }
+
+  function fetchPurgePreview() {
+    var scope = STATE.purge.scope;
+    var params = ['scope=' + scope];
+    if (scope === 'semester') { if (!STATE.purge.semesterId) { STATE.purge.previewCount = null; refreshPurgeZone(); return; } params.push('semesterId=' + encodeURIComponent(STATE.purge.semesterId)); }
+    if (scope === 'counselor') { if (!STATE.purge.counselor) { STATE.purge.previewCount = null; refreshPurgeZone(); return; } params.push('counselor=' + encodeURIComponent(STATE.purge.counselor)); }
+    api('/api/admin/purge/preview?' + params.join('&')).then(function (d) {
+      STATE.purge.previewCount = d.count;
+      refreshPurgeZone();
+    });
+  }
+
+  function bindDangerZoneEvents() {
+    var wrap = document.getElementById('view-root');
+    wrap.querySelectorAll('[data-purge-scope]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        STATE.purge.scope = btn.getAttribute('data-purge-scope');
+        STATE.purge.previewCount = null;
+        refreshPurgeZone();
+        if (STATE.purge.scope === 'all') fetchPurgePreview();
+      });
+    });
+    var semSel = document.getElementById('purgeSemester');
+    if (semSel) semSel.addEventListener('change', function () { STATE.purge.semesterId = semSel.value; fetchPurgePreview(); });
+    var counSel = document.getElementById('purgeCounselor');
+    if (counSel) counSel.addEventListener('change', function () { STATE.purge.counselor = counSel.value; fetchPurgePreview(); });
+
+    var confirmBtn = document.getElementById('purgeConfirmBtn');
+    if (confirmBtn) confirmBtn.addEventListener('click', function () {
+      var password = document.getElementById('purgePassword').value;
+      if (!password) { toast('Enter the Danger Zone password.', 'err'); return; }
+      var body = { scope: STATE.purge.scope, password: password };
+      if (STATE.purge.scope === 'semester') body.semesterId = STATE.purge.semesterId;
+      if (STATE.purge.scope === 'counselor') body.counselor = STATE.purge.counselor;
+      confirmBtn.disabled = true;
+      api('/api/admin/purge', { method: 'POST', body: body }).then(function (d) {
+        toast('Deleted ' + d.deletedCount + ' entries.', 'ok');
+        STATE.purge = { scope: 'all', semesterId: '', counselor: '', counselors: STATE.purge.counselors, previewCount: null };
+        return loadAll();
+      }).then(function () { loadTeamData(); render(); })
+        .catch(function (err) { toast(err.message, 'err'); confirmBtn.disabled = false; });
     });
   }
 
@@ -873,6 +964,7 @@
     'user.role_change', 'user.deactivate', 'user.reactivate',
     'entry.create', 'entry.update', 'entry.delete', 'entry.view', 'entry.export',
     'semester.create', 'template.create', 'template.option_add', 'template.option_archive', 'template.option_restore',
+    'dashboard.export', 'data.purge',
   ];
 
   function renderAuditView() {
