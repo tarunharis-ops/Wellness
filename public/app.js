@@ -414,7 +414,9 @@
       '</select>';
 
     return '' +
-      '<div class="page-head"><div><div class="page-title">Dashboard</div><div class="page-sub">' + escapeHtml(currentSemesterLabel) + ' · ' + escapeHtml(rangeLabel) + '</div></div></div>' +
+      '<div class="page-head"><div><div class="page-title">Dashboard</div><div class="page-sub">' + escapeHtml(currentSemesterLabel) + ' · ' + escapeHtml(rangeLabel) + '</div></div>' +
+        '<button class="btn" id="exportDashboardBtn">Export Dashboard…</button>' +
+      '</div>' +
       '<div class="filter-bar">' + modeBtn('all', 'All Time') + modeBtn('semester', 'This Semester') + modeBtn('year', 'This Year') + modeBtn('custom', 'Custom Range') + customInputs +
         '<span style="width:1px;height:20px;background:var(--border);margin:0 4px;"></span>' + counselorSelect +
       '</div>' +
@@ -1053,6 +1055,57 @@
     if (dashTo) dashTo.addEventListener('change', function () { STATE.dashTo = dashTo.value; loadDashboard().then(render); });
     var dashCounselor = document.getElementById('dashCounselor');
     if (dashCounselor) dashCounselor.addEventListener('change', function () { STATE.dashCounselor = dashCounselor.value; loadDashboard().then(render); });
+    var exportDashboardBtn = document.getElementById('exportDashboardBtn');
+    if (exportDashboardBtn) exportDashboardBtn.addEventListener('click', openExportDashboardDrawer);
+  }
+
+  // ---------------- Export Dashboard (Semester x Counselor scope picker) ----------------
+  function openExportDashboardDrawer() {
+    STATE.drawerMode = 'export';
+    var drawer = document.getElementById('drawer');
+    drawer.innerHTML = '' +
+      '<div class="drawer-head">' +
+        '<div><div class="drawer-title">Export Dashboard</div><div class="drawer-sub">Downloads the same metrics shown on screen as a spreadsheet-ready file.</div></div>' +
+        '<button class="drawer-close" id="drawerClose">&times;</button>' +
+      '</div>' +
+      '<div class="drawer-body">' +
+        '<div class="form-section">' +
+          '<div class="form-section-title">Scope</div>' +
+          '<div class="form-grid">' +
+            '<div class="form-field"><label>Semester</label><select id="exportSemester">' +
+              '<option value="all">All Semesters</option>' +
+              STATE.semesters.map(function (s) { return '<option value="' + s.id + '"' + (s.id === STATE.currentSemesterId ? ' selected' : '') + '>' + escapeHtml(s.label) + '</option>'; }).join('') +
+            '</select></div>' +
+            '<div class="form-field"><label>Counselor</label><select id="exportCounselor"><option value="all">All Counselors</option></select></div>' +
+          '</div>' +
+          '<div class="small-muted" style="margin-top:10px">Includes every section on the Dashboard: student status, program breakdown, wellness hours, concerns, referral source/type, and referral date by month — computed fresh for whatever you pick here, independent of what\'s currently on screen.</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="drawer-foot"><span></span><button class="btn primary" id="exportDashboardConfirmBtn">Download CSV</button></div>';
+
+    openDrawer();
+    document.getElementById('drawerClose').addEventListener('click', closeDrawer);
+
+    var counselorSelect = document.getElementById('exportCounselor');
+    api('/api/counselors').then(function (d) {
+      d.counselors.forEach(function (name) {
+        var opt = document.createElement('option');
+        opt.value = name;
+        opt.textContent = name;
+        if (name === STATE.dashCounselor) opt.selected = true;
+        counselorSelect.appendChild(opt);
+      });
+    });
+
+    document.getElementById('exportDashboardConfirmBtn').addEventListener('click', function () {
+      var semesterId = document.getElementById('exportSemester').value;
+      var counselor = counselorSelect.value;
+      var params = [];
+      if (semesterId !== 'all') params.push('semesterId=' + encodeURIComponent(semesterId));
+      if (counselor !== 'all') params.push('counselor=' + encodeURIComponent(counselor));
+      window.location.href = '/api/dashboard/export' + (params.length ? '?' + params.join('&') : '');
+      closeDrawer();
+    });
   }
 
   function bindGlobalEvents() {

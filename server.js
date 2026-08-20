@@ -167,6 +167,77 @@ async function activeOptionsByGroup(templateId) {
   return out;
 }
 
+// Shared by GET /api/dashboard (on-screen) and GET /api/dashboard/export
+// (downloadable file) so the two can never drift apart.
+async function buildDashboard(query) {
+  const from = parseDateParam(query.from);
+  const to = parseDateParam(query.to);
+  const defaultTemplate = await repo.getDefaultTemplate();
+  const optionsByGroup = defaultTemplate ? await activeOptionsByGroup(defaultTemplate.id) : {};
+  const entries = filterEntries(await repo.listEntries(), query);
+  return agg.computeDashboard(entries, from, to, optionsByGroup);
+}
+
+// Renders the same sections shown on the Dashboard screen as a labeled CSV —
+// the software equivalent of the original workbook's "General Data" /
+// "Graduate Raw data" snapshot tabs, but generated live for any semester /
+// counselor combination instead of copy-pasted by hand.
+function dashboardToCSV(d, semesterLabel, counselorLabel) {
+  const lines = [];
+  const row = function () { lines.push(Array.prototype.slice.call(arguments).map(csvEscape).join(',')); };
+  const section = function (title) { lines.push(''); row(title.toUpperCase()); };
+  const bucket = function (title, counts) {
+    section(title);
+    row('Category', 'Count');
+    Object.keys(counts).sort(function (a, b) { return counts[b] - counts[a]; }).forEach(function (k) { row(k, counts[k]); });
+  };
+
+  row('Wellness Dashboard Export');
+  row('Semester', semesterLabel);
+  row('Counselor', counselorLabel);
+  row('Generated', new Date().toISOString());
+
+  section('Overview');
+  row('Metric', 'Value');
+  row('Unique Students', d.totals.uniqueStudents);
+  row('Active Cases', d.totals.activeCases);
+  row('Total Entries Logged', d.totals.totalEntries);
+  row('Wellness Hours', d.totalHours);
+
+  section('Student Status (unique students, most recent record)');
+  row('Category', 'Count');
+  row('Full-Time', d.studentStatus.fullTime);
+  row('Part-Time', d.studentStatus.partTime);
+  row('Not Currently Enrolled', d.studentStatus.notCurrentlyEnrolled);
+  row('Non-Affiliate', d.studentStatus.nonAffiliate);
+  row('International', d.studentStatus.international);
+  row('Domestic', d.studentStatus.domestic);
+  row('In Person', d.studentStatus.inPerson);
+  row('Online Only', d.studentStatus.onlineOnly);
+  row('Mode N/A', d.studentStatus.modalityNA);
+
+  bucket('Case Status (unique students, current status)', d.caseStatus);
+  bucket('Program Breakdown', d.program.buckets);
+  bucket('Case Type — NABITA Risk Rubric', d.caseType);
+  bucket('Referral Source (every logged entry)', d.referralSource);
+  bucket('Referrals Made', d.referralsMade);
+
+  section('Wellness Hours by Category (minutes ÷ 60, every logged entry)');
+  row('Category', 'Hours');
+  Object.keys(d.hours).forEach(function (k) { row(k, d.hours[k]); });
+  row('Total', d.totalHours);
+
+  bucket('Outreach Method (every logged entry)', d.outreachMethod);
+  bucket('Wellness Concern Category (Primary + Secondary + Tertiary)', d.concerns);
+  bucket('Referral Type (every logged entry)', d.referralType);
+
+  section('Referral Date by Month');
+  row('Month', 'Count');
+  Object.keys(d.referralDateByMonth).forEach(function (k) { row(k, d.referralDateByMonth[k]); });
+
+  return lines.join('\r\n');
+}
+
 function serveStatic(req, res, pathname) {
   let filePath = path.join(PUBLIC_DIR, pathname === '/' ? 'index.html' : pathname);
   if (filePath.indexOf(PUBLIC_DIR) !== 0) { sendText(res, 403, 'Forbidden'); return; }
@@ -372,13 +443,29 @@ async function handleApi(req, res, pathname, query) {
   }
 
   if (pathname === '/api/dashboard' && req.method === 'GET') {
-    const from = parseDateParam(query.from);
-    const to = parseDateParam(query.to);
-    const defaultTemplate = await repo.getDefaultTemplate();
-    const optionsByGroup = defaultTemplate ? await activeOptionsByGroup(defaultTemplate.id) : {};
-    const entries = filterEntries(await repo.listEntries(), query);
-    const dashboard = agg.computeDashboard(entries, from, to, optionsByGroup);
+    const dashboard = await buildDashboard(query);
     return sendJSON(res, 200, dashboard);
+  }
+
+  if (pathname === '/api/counselors' && req.method === 'GET') {
+    const entries = await repo.listEntries();
+    const seen = {};
+    entries.forEach(function (e) { if (e.createdByName) seen[e.createdByName] = true; });
+    return sendJSON(res, 200, { counselors: Object.keys(seen).sort() });
+  }
+
+  if (pathname === '/api/dashboard/export' && req.method === 'GET') {
+    const dashboard = await buildDashboard(query);
+    const semesters = await repo.listSemesters();
+    const semesterLabel = (!query.semesterId || query.semesterId === 'all') ? 'All Semesters'
+      : ((semesters.find(function (s) { return s.id === query.semesterId; }) || {}).label || 'Unknown Semester');
+    const counselorLabel = (!query.counselor || query.counselor === 'all') ? 'All Counselors' : query.counselor;
+    const csv = dashboardToCSV(dashboard, semesterLabel, counselorLabel);
+    logAudit(req, user, 'dashboard.export', null, { semesterId: query.semesterId || null, counselor: query.counselor || null });
+    const filenameSafe = (semesterLabel + '_' + counselorLabel).replace(/[^a-z0-9]+/gi, '-').toLowerCase();
+    res.writeHead(200, { 'Content-Type': 'text/csv; charset=utf-8', 'Content-Disposition': 'attachment; filename="wellness-dashboard-' + filenameSafe + '.csv"' });
+    res.end(csv);
+    return;
   }
 
   if (pathname === '/api/import' && req.method === 'POST') {

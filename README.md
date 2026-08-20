@@ -31,6 +31,12 @@ persistent, internet-hosted web app instead of a row-per-case spreadsheet.
   name on their first row, leaving follow-up interaction rows blank underneath it. The importer
   detects those blocks and carries the student's identity down through the follow-ups, the same
   way the software's own "+ New Entry" does when linking to an existing student.
+- **Export Dashboard** (button on the Dashboard page) downloads the on-screen metrics — student
+  status, program breakdown, wellness hours, concerns, referral source/type, referral date by
+  month — as a labeled CSV, for any Semester × Counselor combination: all data, one semester (all
+  counselors), one counselor (all semesters), or one semester + one counselor. This is separate
+  from the top bar's **Export CSV**, which downloads the raw case log rows rather than the
+  aggregated metrics.
 
 ## Security controls
 
