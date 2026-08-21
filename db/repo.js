@@ -373,6 +373,20 @@ function getDefaultTemplate() {
   return db.query('SELECT * FROM templates WHERE is_default = true LIMIT 1').then(function (r) { return r.rows[0] ? templateRow(r.rows[0]) : null; });
 }
 
+function countEntriesForTemplate(templateId) {
+  return db.query('SELECT COUNT(*)::int AS n FROM entries WHERE template_id = $1', [templateId]).then(function (r) { return r.rows[0].n; });
+}
+
+// Templates aren't deletable while any entry still references them — the
+// caller (server.js) checks countEntriesForTemplate first and returns a
+// clear error rather than letting this hit the FK constraint.
+function deleteTemplate(id) {
+  return db.query('DELETE FROM template_options WHERE template_id = $1', [id])
+    .then(function () { return db.query('DELETE FROM template_fields WHERE template_id = $1', [id]); })
+    .then(function () { return db.query('DELETE FROM templates WHERE id = $1', [id]); })
+    .then(function (r) { return r.rowCount > 0; });
+}
+
 // Creates a new named template. By default it's pre-populated with a copy
 // of the Default template's current field schema + active options — the
 // "start from the default, then customize" flow (field_key stays identical
@@ -762,7 +776,7 @@ module.exports = {
   listSemesters, createSemester, findOrCreateSemester,
   listEntries, getEntry, createEntry, updateEntry, deleteEntry, bulkCreateEntries, studentKeyFor,
   countEntriesForScope, purgeEntries,
-  listTemplates, getTemplate, getDefaultTemplate, createTemplate,
+  listTemplates, getTemplate, getDefaultTemplate, createTemplate, deleteTemplate, countEntriesForTemplate,
   listTemplateFields, addTemplateField, updateTemplateField, getTemplateField,
   listTemplateOptions, addTemplateOption, setTemplateOptionActive,
   createAuditLog, listAuditLog,

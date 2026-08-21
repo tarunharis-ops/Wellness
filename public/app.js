@@ -1036,8 +1036,13 @@
         return '<option value="' + t.id + '"' + (t.id === STATE.templateView.selectedId ? ' selected' : '') + '>' + escapeHtml(t.name) + (t.isDefault ? ' (Default)' : '') + '</option>';
       }).join('') + '</select>';
 
+    var selected = STATE.templates.find(function (t) { return t.id === STATE.templateView.selectedId; });
+    var canDelete = selected && !selected.isDefault && STATE.currentUser && STATE.currentUser.role === 'admin';
+
     return '<div class="page-head"><div><div class="page-title">Template</div><div class="page-sub">Add or remove the choices available in each dropdown. "Default" is what "(Do Not Disturb) Main template" started as — create additional templates for other contexts.</div></div></div>' +
-      '<div class="filter-bar">' + templateSelect + '<button class="btn small ghost" id="newTemplateBtn">+ New Template</button></div>' +
+      '<div class="filter-bar">' + templateSelect + '<button class="btn small ghost" id="newTemplateBtn">+ New Template</button>' +
+        (canDelete ? '<button class="btn small danger" id="deleteTemplateBtn">Delete Template</button>' : '') +
+      '</div>' +
       '<div id="templateGroups">' + emptyState('Loading…', '') + '</div>';
   }
 
@@ -1119,6 +1124,19 @@
     if (templateViewSelect) templateViewSelect.addEventListener('change', function () {
       STATE.templateView.selectedId = templateViewSelect.value;
       loadTemplateData();
+    });
+    var deleteTemplateBtn = document.getElementById('deleteTemplateBtn');
+    if (deleteTemplateBtn) deleteTemplateBtn.addEventListener('click', function () {
+      var t = STATE.templates.find(function (x) { return x.id === templateId; });
+      if (!t) return;
+      if (!confirm('Delete template "' + t.name + '"? This only works if no entries use it, and cannot be undone.')) return;
+      api('/api/templates/' + templateId, { method: 'DELETE' }).then(function () {
+        STATE.templates = STATE.templates.filter(function (x) { return x.id !== templateId; });
+        delete STATE.templateOptionsCache[templateId];
+        STATE.templateView.selectedId = null;
+        toast('Template "' + t.name + '" deleted', 'ok');
+        render();
+      }).catch(function (err) { toast(err.message, 'err'); });
     });
     var newTemplateBtn = document.getElementById('newTemplateBtn');
     if (newTemplateBtn) newTemplateBtn.addEventListener('click', function () {
