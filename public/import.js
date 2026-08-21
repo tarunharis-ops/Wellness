@@ -17,7 +17,8 @@
 (function () {
   'use strict';
 
-  var STATE = { fileName: '', sheets: [], parsing: false, importing: false, result: null, knownUsers: [] };
+  var STATE = { fileName: '', sheets: [], parsing: false, importing: false, importProgress: { current: 0, total: 0 }, result: null, knownUsers: [] };
+  var CHUNK_SIZE = 500; // entries per /api/import request — avoids one giant request timing out on a large file
 
   function ensureXLSX() {
     if (window.XLSX) return Promise.resolve();
@@ -327,17 +328,24 @@
           '<div class="form-field"><label>Semester Ends</label><input type="date" data-sheet-field="endsOn" data-sheet-idx="' + idx + '" value="' + esc(s.endsOn) + '" /></div>' +
         '</div>' +
         '<div class="small-muted" style="margin-top:8px">' + attributionNote + '</div>' +
-        '<div class="dash-section-title" style="margin-top:16px;font-size:13px">Detected Fields <span class="hint">' + s.fields.length + ' column(s) — adjust label/type before importing</span></div>' +
-        '<div class="import-field-list">' + (fieldRows || '<div class="small-muted">No other columns detected — just identity fields.</div>') + '</div>' +
+        '<details class="archived-details" style="margin-top:14px">' +
+          '<summary>' + s.fields.length + ' column(s) detected automatically — review or adjust (optional)</summary>' +
+          '<div class="import-field-list" style="margin-top:10px">' + (fieldRows || '<div class="small-muted">No other columns detected — just identity fields.</div>') + '</div>' +
+        '</details>' +
       '</div>';
     }).join('');
 
+    var importBtnLabel = STATE.importing ?
+      'Importing… ' + STATE.importProgress.current + ' / ' + STATE.importProgress.total :
+      'Import Selected Sheets';
+
     return '' +
       '<div class="dash-section-title" style="margin-top:20px">Detected Sheets</div>' +
+      '<div class="small-muted" style="margin-bottom:14px">Column types are detected automatically — nothing below requires your input unless something looks wrong.</div>' +
       '<div class="import-sheet-list">' + cards + '</div>' +
       '<div class="card card-pad import-summary">' +
         '<div><b>' + included + '</b> sheet(s) selected · <b>' + totalRows + '</b> entries · <b>' + totalStudents + '</b> students (approx., counted per sheet)</div>' +
-        '<button class="btn primary" id="importCommitBtn"' + (included === 0 || STATE.importing ? ' disabled' : '') + '>' + (STATE.importing ? 'Importing…' : 'Import Selected Sheets') + '</button>' +
+        '<button class="btn primary" id="importCommitBtn"' + (included === 0 || STATE.importing ? ' disabled' : '') + '>' + esc(importBtnLabel) + '</button>' +
       '</div>';
   }
 
@@ -414,7 +422,7 @@
     });
     var againBtn = document.getElementById('importAnotherBtn');
     if (againBtn) againBtn.addEventListener('click', function () {
-      STATE = { fileName: '', sheets: [], parsing: false, importing: false, result: null, knownUsers: STATE.knownUsers };
+      STATE = { fileName: '', sheets: [], parsing: false, importing: false, importProgress: { current: 0, total: 0 }, result: null, knownUsers: STATE.knownUsers };
       rerender();
     });
   }
@@ -479,27 +487,28 @@
     return chain.then(function () { return sheetToTemplateId; });
   }
 
+  // Fields (and each select field's options) are created in parallel rather
+  // than one-request-at-a-time — a sheet with 27 columns was previously 27+
+  // sequential round trips before the actual import could even start.
   function createTemplateForFields(name, fields) {
     var templateName = (name || 'Import') + ' — ' + new Date().toISOString().slice(0, 10);
     return window.WCT_APP.api('/api/templates', { method: 'POST', body: { name: templateName, blank: true } }).then(function (d) {
       var templateId = d.template.id;
-      var chain = Promise.resolve();
-      fields.forEach(function (f) {
-        chain = chain.then(function () {
-          return window.WCT_APP.api('/api/templates/' + templateId + '/fields', { method: 'POST', body: { fieldKey: f.key, label: f.label, fieldType: f.type, section: 'Imported Fields' } });
-        });
-        if (f.type === 'select') {
-          (f.options || []).forEach(function (opt) {
-            chain = chain.then(function () {
+      return Promise.all(fields.map(function (f) {
+        return window.WCT_APP.api('/api/templates/' + templateId + '/fields', { method: 'POST', body: { fieldKey: f.key, label: f.label, fieldType: f.type, section: 'Imported Fields' } })
+          .then(function () {
+            if (f.type !== 'select') return;
+            return Promise.all((f.options || []).map(function (opt) {
               return window.WCT_APP.api('/api/templates/' + templateId + '/options/' + f.key, { method: 'POST', body: { value: opt } });
-            });
+            }));
           });
-        }
-      });
-      return chain.then(function () { return templateId; });
+      })).then(function () { return templateId; });
     });
   }
 
+  // Sent in chunks (not one request for the whole file) so a large import
+  // can't time out a single request, and so the button can show real
+  // progress instead of just "Importing…" with no feedback for a long file.
   function commitImport() {
     var included = STATE.sheets.filter(function (s) { return s.include; });
     if (!included.length) return;
@@ -513,6 +522,7 @@
     });
 
     STATE.importing = true;
+    STATE.importProgress = { current: 0, total: 0 };
     rerender();
 
     resolveTemplatesForSheets(included).then(function (sheetToTemplateId) {
@@ -528,7 +538,30 @@
           });
         });
       });
-      return window.WCT_APP.api('/api/import', { method: 'POST', body: { semesters: semesters, entries: entries } });
+
+      STATE.importProgress.total = entries.length;
+      rerender();
+
+      var chunks = [];
+      for (var i = 0; i < entries.length; i += CHUNK_SIZE) chunks.push(entries.slice(i, i + CHUNK_SIZE));
+
+      var aggregate = { semestersCreated: 0, entriesImported: 0, totalRows: entries.length, skipped: [] };
+      var chain = Promise.resolve();
+      chunks.forEach(function (chunk, idx) {
+        chain = chain.then(function () {
+          // semesters sent on every chunk, not just the first — semester
+          // creation is idempotent (ON CONFLICT) server-side, and every
+          // chunk needs its own semesterId lookups to resolve correctly.
+          return window.WCT_APP.api('/api/import', { method: 'POST', body: { semesters: semesters, entries: chunk } });
+        }).then(function (result) {
+          aggregate.entriesImported += result.entriesImported;
+          aggregate.semestersCreated = result.semestersCreated;
+          aggregate.skipped = aggregate.skipped.concat((result.skipped || []).map(function (s) { return { row: s.row + idx * CHUNK_SIZE, reason: s.reason }; }));
+          STATE.importProgress.current = Math.min(entries.length, (idx + 1) * CHUNK_SIZE);
+          rerender();
+        });
+      });
+      return chain.then(function () { return aggregate; });
     }).then(function (result) {
       STATE.importing = false;
       STATE.result = result;

@@ -536,6 +536,20 @@ async function handleApi(req, res, pathname, query) {
     return sendJSON(res, 201, { template: template, config: await buildTemplateFieldConfig(template.id) });
   }
 
+  const templateDeleteMatch = pathname.match(/^\/api\/templates\/([^/]+)$/);
+  if (templateDeleteMatch && req.method === 'DELETE') {
+    requireAdmin(user);
+    const templateId = templateDeleteMatch[1];
+    const template = await repo.getTemplate(templateId);
+    if (!template) return sendJSON(res, 404, { error: 'Template not found' });
+    if (template.isDefault) return sendJSON(res, 400, { error: 'The Default template can\'t be deleted.' });
+    const entryCount = await repo.countEntriesForTemplate(templateId);
+    if (entryCount > 0) return sendJSON(res, 400, { error: 'This template has ' + entryCount + ' entr' + (entryCount === 1 ? 'y' : 'ies') + ' — delete or reassign them first.' });
+    await repo.deleteTemplate(templateId);
+    logAudit(req, user, 'template.delete', templateId, { name: template.name });
+    return sendJSON(res, 200, { ok: true });
+  }
+
   // Full dynamic field + section list for one template — what the entry
   // form fetches whenever the chosen template changes.
   const templateFieldsMatch = pathname.match(/^\/api\/templates\/([^/]+)\/fields$/);
