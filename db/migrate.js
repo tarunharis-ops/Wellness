@@ -15,37 +15,57 @@ const cfg = require('../lib/config');
 const { uuid } = require('../lib/id');
 const { parseCSV } = require('../lib/csv');
 
-// Upgrade path: `entries` used to have one fixed column per Wellness field
-// (case_status, nabita_risk, concern_primary, ...) instead of the dynamic
-// `fields` JSONB blob. Backfills any pre-existing rows' `fields` from those
-// columns, then drops them. Guarded by an information_schema check so this
-// is a no-op on a fresh database (schema.sql never creates those columns)
-// or once already migrated.
-async function migrateLegacyEntryColumns() {
-  const camelToSnake = function (s) { return s.replace(/[A-Z]/g, function (c) { return '_' + c.toLowerCase(); }); };
-  const legacyColumns = cfg.FIELDS
-    .filter(function (f) { return f.key !== 'firstName' && f.key !== 'lastName'; })
-    .map(function (f) { return { column: camelToSnake(f.key), key: f.key }; });
+// Reverses the dynamic-schema experiment run earlier in this project
+// (entries.fields JSONB + a template_fields table, one field list per
+// template). Re-adds the 23 fixed Wellness columns, backfills any existing
+// rows' fields JSONB into them (defensive — entries was empty when this
+// reversal happened, so this is a no-op in practice), then drops the JSONB
+// column and the template_fields table entirely. Guarded so it's a no-op
+// once already reverted (or on a fresh database that never had it).
+async function revertDynamicSchema() {
+  const existing = await db.query("SELECT column_name FROM information_schema.columns WHERE table_name = 'entries' AND column_name = 'fields'");
+  if (!existing.rows.length) return;
 
-  const existing = await db.query("SELECT column_name FROM information_schema.columns WHERE table_name = 'entries'");
-  const existingNames = new Set(existing.rows.map(function (r) { return r.column_name; }));
-  const toMigrate = legacyColumns.filter(function (c) { return existingNames.has(c.column); });
-  if (!toMigrate.length) return;
+  const FIXED_COLUMNS = [
+    { col: 'case_status', key: 'caseStatus', type: 'TEXT' }, { col: 'pronouns', key: 'pronouns', type: 'TEXT' },
+    { col: 'international', key: 'international', type: 'TEXT' }, { col: 'program', key: 'program', type: 'TEXT' },
+    { col: 'modality', key: 'modality', type: 'TEXT' }, { col: 'enrollment_status', key: 'enrollmentStatus', type: 'TEXT' },
+    { col: 'columbia_officer', key: 'columbiaOfficer', type: 'TEXT' }, { col: 'nabita_risk', key: 'nabitaRisk', type: 'TEXT' },
+    { col: 'referral_source', key: 'referralSource', type: 'TEXT' }, { col: 'referral_date', key: 'referralDate', type: 'DATE' },
+    { col: 'outreach_type', key: 'outreachType', type: 'TEXT' }, { col: 'outreach_method', key: 'outreachMethod', type: 'TEXT' },
+    { col: 'outreach_date', key: 'outreachDate', type: 'DATE' }, { col: 'outreach_conducted', key: 'outreachConducted', type: 'TEXT' },
+    { col: 'duration_minutes', key: 'durationMinutes', type: 'NUMERIC' }, { col: 'outreach_outcome', key: 'outreachOutcome', type: 'TEXT' },
+    { col: 'concern_primary', key: 'concernPrimary', type: 'TEXT' }, { col: 'concern_secondary', key: 'concernSecondary', type: 'TEXT' },
+    { col: 'concern_tertiary', key: 'concernTertiary', type: 'TEXT' }, { col: 'referrals_made', key: 'referralsMade', type: 'TEXT' },
+    { col: 'referral_primary', key: 'referralPrimary', type: 'TEXT' }, { col: 'referral_secondary', key: 'referralSecondary', type: 'TEXT' },
+    { col: 'referral_tertiary', key: 'referralTertiary', type: 'TEXT' }, { col: 'notes', key: 'notes', type: 'TEXT' },
+  ];
 
-  const pairs = toMigrate.map(function (c) { return "'" + c.key + "', " + c.column; }).join(', ');
-  await db.query("UPDATE entries SET fields = fields || jsonb_strip_nulls(jsonb_build_object(" + pairs + ")) WHERE fields = '{}'::jsonb");
-  for (const c of toMigrate) {
-    await db.query('ALTER TABLE entries DROP COLUMN IF EXISTS ' + c.column);
+  for (const c of FIXED_COLUMNS) {
+    await db.query('ALTER TABLE entries ADD COLUMN IF NOT EXISTS ' + c.col + ' ' + c.type);
   }
-  console.log('Backfilled and dropped ' + toMigrate.length + ' legacy fixed columns from entries.');
+
+  const setClauses = FIXED_COLUMNS.map(function (c) {
+    if (c.type === 'NUMERIC') return c.col + " = NULLIF(fields->>'" + c.key + "', '')::numeric";
+    if (c.type === 'DATE') return c.col + " = NULLIF(fields->>'" + c.key + "', '')::date";
+    return c.col + " = fields->>'" + c.key + "'";
+  }).join(', ');
+  await db.query('UPDATE entries SET ' + setClauses + " WHERE fields IS NOT NULL AND fields != '{}'::jsonb");
+
+  await db.query('ALTER TABLE entries DROP COLUMN IF EXISTS fields');
+  await db.query('DROP TABLE IF EXISTS template_fields');
+  console.log('Reverted dynamic schema: restored 23 fixed entries columns, dropped fields JSONB and template_fields.');
 }
 
 async function run() {
+  // Must run before schema.sql is applied — schema.sql's CREATE INDEX on
+  // outreach_date (and similar) assumes the fixed columns already exist,
+  // and on a database still on the dynamic schema they don't yet.
+  await revertDynamicSchema();
+
   const schema = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8');
   await db.query(schema);
   console.log('Schema OK.');
-
-  await migrateLegacyEntryColumns();
 
   // Ensure exactly one Default template exists — every new template clones
   // its active options from this one.
@@ -80,39 +100,19 @@ async function run() {
   ).catch(function (err) { if (!/already exists/.test(err.message)) throw err; });
   await db.query('ALTER TABLE template_options ALTER COLUMN template_id SET NOT NULL');
 
-  // Seed the Default template's field schema + option lists, one time, from
-  // the pre-dynamic-schema Wellness field list (lib/config.js) — this
-  // preserves the exact current form/dropdowns as day-one seed data so nothing
-  // changes for existing users; from here on, template_fields/template_options
-  // are the only source of truth (lib/config.js's FIELDS/OPTION_GROUPS are not
-  // read anywhere else). First/Last Name are real `entries` columns (see
-  // migrateLegacyEntryColumns above), not part of the dynamic field list.
-  const existingFieldCount = await db.query('SELECT COUNT(*)::int AS n FROM template_fields WHERE template_id = $1', [defaultTemplateId]);
-  if (existingFieldCount.rows[0].n === 0) {
-    // template_fields.section is a free-text display label (not a lookup
-    // key) — the dynamic system has no fixed section list going forward, so
-    // this seed maps the old short section keys to their original labels once.
-    const sectionLabels = {};
-    cfg.SECTIONS.forEach(function (s) { sectionLabels[s.key] = s.label; });
-    const dynamicFields = cfg.FIELDS.filter(function (f) { return f.key !== 'firstName' && f.key !== 'lastName'; });
-    for (let i = 0; i < dynamicFields.length; i++) {
-      const f = dynamicFields[i];
+  for (const group of cfg.OPTION_GROUPS) {
+    const existing = await db.query(
+      'SELECT COUNT(*)::int AS n FROM template_options WHERE template_id = $1 AND group_key = $2',
+      [defaultTemplateId, group.key]
+    );
+    if (existing.rows[0].n > 0) continue;
+    for (let i = 0; i < group.defaults.length; i++) {
       await db.query(
-        'INSERT INTO template_fields (id, template_id, field_key, label, field_type, section, sort_order) VALUES ($1,$2,$3,$4,$5,$6,$7) ON CONFLICT DO NOTHING',
-        [uuid(), defaultTemplateId, f.key, f.label, f.type, sectionLabels[f.section] || f.section || null, i]
+        'INSERT INTO template_options (id, template_id, group_key, value, sort_order) VALUES ($1,$2,$3,$4,$5) ON CONFLICT DO NOTHING',
+        [uuid(), defaultTemplateId, group.key, group.defaults[i], i]
       );
-      if (f.type === 'select') {
-        const group = cfg.OPTION_GROUPS.find(function (g) { return g.key === f.optionGroup; });
-        const defaults = group ? group.defaults : [];
-        for (let j = 0; j < defaults.length; j++) {
-          await db.query(
-            'INSERT INTO template_options (id, template_id, group_key, value, sort_order) VALUES ($1,$2,$3,$4,$5) ON CONFLICT DO NOTHING',
-            [uuid(), defaultTemplateId, f.key, defaults[j], j]
-          );
-        }
-      }
     }
-    console.log('Seeded ' + dynamicFields.length + ' fields on the Default template.');
+    console.log('Seeded ' + group.defaults.length + ' default options for "' + group.key + '".');
   }
 
   await importStudentRecords();

@@ -55,21 +55,38 @@ CREATE TABLE IF NOT EXISTS templates (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
--- entries: a case-log row. Every field beyond the structural columns below
--- (identity, semester/template linkage, audit trail) is dynamic — driven by
--- whichever fields its template defines (see template_fields below) — and
--- lives in the `fields` JSONB blob rather than a fixed column per field.
--- Student ID / First Name / Last Name are the only guaranteed identity
--- fields, so they stay real columns.
 CREATE TABLE IF NOT EXISTS entries (
   id TEXT PRIMARY KEY,
   student_key TEXT NOT NULL,
   student_id_external TEXT,
   semester_id TEXT REFERENCES semesters(id),
   template_id TEXT REFERENCES templates(id),
+  case_status TEXT,
   first_name TEXT,
   last_name TEXT,
-  fields JSONB NOT NULL DEFAULT '{}',
+  pronouns TEXT,
+  international TEXT,
+  program TEXT,
+  modality TEXT,
+  enrollment_status TEXT,
+  columbia_officer TEXT,
+  nabita_risk TEXT,
+  referral_source TEXT,
+  referral_date DATE,
+  outreach_type TEXT,
+  outreach_method TEXT,
+  outreach_date DATE,
+  outreach_conducted TEXT,
+  duration_minutes NUMERIC,
+  outreach_outcome TEXT,
+  concern_primary TEXT,
+  concern_secondary TEXT,
+  concern_tertiary TEXT,
+  referrals_made TEXT,
+  referral_primary TEXT,
+  referral_secondary TEXT,
+  referral_tertiary TEXT,
+  notes TEXT,
   created_by TEXT REFERENCES users(id),
   created_by_name_override TEXT,
   updated_by TEXT REFERENCES users(id),
@@ -77,41 +94,17 @@ CREATE TABLE IF NOT EXISTS entries (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS idx_entries_student ON entries(student_key);
+CREATE INDEX IF NOT EXISTS idx_entries_outreach_date ON entries(outreach_date);
 
 -- Upgrade path for databases created before these columns existed. Must run
 -- before any index/constraint below references them.
 ALTER TABLE entries ADD COLUMN IF NOT EXISTS semester_id TEXT REFERENCES semesters(id);
 ALTER TABLE entries ADD COLUMN IF NOT EXISTS created_by_name_override TEXT;
 ALTER TABLE entries ADD COLUMN IF NOT EXISTS template_id TEXT REFERENCES templates(id);
-ALTER TABLE entries ADD COLUMN IF NOT EXISTS fields JSONB NOT NULL DEFAULT '{}';
 ALTER TABLE entries ADD COLUMN IF NOT EXISTS student_id_external TEXT;
 
 CREATE INDEX IF NOT EXISTS idx_entries_semester ON entries(semester_id);
 CREATE INDEX IF NOT EXISTS idx_entries_template ON entries(template_id);
-CREATE INDEX IF NOT EXISTS idx_entries_fields ON entries USING GIN (fields);
-
--- Upgrade path: entries predates the dynamic-schema change above — it used
--- to have one fixed column per Wellness field (case_status, nabita_risk,
--- concern_primary, ...). db/migrate.js backfills any pre-existing rows'
--- `fields` JSONB from those columns and then drops them (handled there, not
--- here, since it needs to check whether they still exist before touching
--- them — this file is applied unconditionally on every boot).
-
--- A template now defines a full field schema, not just dropdown option
--- lists. One row per field on that template's entry form.
-CREATE TABLE IF NOT EXISTS template_fields (
-  id TEXT PRIMARY KEY,
-  template_id TEXT NOT NULL REFERENCES templates(id),
-  field_key TEXT NOT NULL,
-  label TEXT NOT NULL,
-  field_type TEXT NOT NULL DEFAULT 'text',
-  section TEXT,
-  sort_order INTEGER NOT NULL DEFAULT 0,
-  active BOOLEAN NOT NULL DEFAULT TRUE,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  UNIQUE (template_id, field_key)
-);
-CREATE INDEX IF NOT EXISTS idx_template_fields_template ON template_fields(template_id);
 
 CREATE TABLE IF NOT EXISTS template_options (
   id TEXT PRIMARY KEY,

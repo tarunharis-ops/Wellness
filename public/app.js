@@ -3,6 +3,11 @@
 
   function getFields() { return window.WELLNESS_CONFIG.FIELDS; }
   function getSections() { return window.WELLNESS_CONFIG.SECTIONS; }
+  function getFieldMap() {
+    var m = {};
+    getFields().forEach(function (f) { m[f.key] = f; });
+    return m;
+  }
 
   function reloadConfig() {
     return new Promise(function (resolve) {
@@ -29,8 +34,8 @@
     currentSemesterId: localStorage.getItem(SEMESTER_STORAGE_KEY) || 'all',
     dashCounselor: 'all',
     search: '',
-    filters: {},
-    sort: { key: 'createdAt', dir: 'desc' },
+    filters: { caseStatus: '', nabitaRisk: '' },
+    sort: { key: 'outreachDate', dir: 'desc' },
     dashboard: null,
     dashRangeMode: 'all',
     dashFrom: '',
@@ -153,6 +158,20 @@
     return (parts[0][0] + (parts[1] ? parts[1][0] : '')).toUpperCase();
   }
 
+  function caseStatusBadgeClass(status) {
+    if (status === 'Active') return 'badge-active';
+    if (status === 'Monitoring') return 'badge-monitoring';
+    if (status === 'Closed') return 'badge-closed';
+    return 'badge-neutral';
+  }
+  function riskBadgeClass(risk) {
+    if (risk === 'Mild') return 'badge-mild';
+    if (risk === 'Moderate') return 'badge-moderate';
+    if (risk === 'Elevated') return 'badge-elevated';
+    if (risk === 'Critical') return 'badge-critical';
+    return 'badge-neutral';
+  }
+
   function toast(msg, kind) {
     var stack = document.getElementById('toastStack');
     var el = document.createElement('div');
@@ -257,25 +276,19 @@
   }
 
   // ---------------- Log view ----------------
-  // Search scans identity fields plus every dynamic field value present on
-  // an entry — not a fixed list of "searchable" columns, since fields vary
-  // by template. Filters are likewise a generic { fieldKey: value } map.
   function filteredEntries() {
     var q = STATE.search.trim().toLowerCase();
     var list = STATE.entries.filter(function (e) {
-      for (var key in STATE.filters) {
-        if (STATE.filters[key] && e[key] !== STATE.filters[key]) return false;
-      }
+      if (STATE.filters.caseStatus && e.caseStatus !== STATE.filters.caseStatus) return false;
+      if (STATE.filters.nabitaRisk && e.nabitaRisk !== STATE.filters.nabitaRisk) return false;
       if (!q) return true;
-      var hay = [e.firstName, e.lastName, e.studentIdExternal]
-        .concat(Object.keys(e.fields || {}).map(function (k) { return e.fields[k]; }))
-        .join(' ').toLowerCase();
+      var hay = [e.firstName, e.lastName, e.notes, e.program, e.concernPrimary, e.concernSecondary].join(' ').toLowerCase();
       return hay.indexOf(q) !== -1;
     });
     var key = STATE.sort.key, dir = STATE.sort.dir === 'asc' ? 1 : -1;
     list.sort(function (a, b) {
       var av = a[key] || '', bv = b[key] || '';
-      if (key === 'createdAt' || key === 'updatedAt') {
+      if (key === 'outreachDate' || key === 'referralDate' || key === 'createdAt') {
         av = av ? new Date(av).getTime() : 0;
         bv = bv ? new Date(bv).getTime() : 0;
       } else { av = String(av).toLowerCase(); bv = String(bv).toLowerCase(); }
@@ -286,49 +299,40 @@
     return list;
   }
 
-  function templateNameFor(templateId) {
-    var t = STATE.templates.find(function (x) { return x.id === templateId; });
-    return t ? t.name : '—';
-  }
-
-  // Table columns are the only fields guaranteed to exist across any
-  // template — everything else lives in the per-entry drawer, which renders
-  // whatever fields that entry's template actually defines.
   function renderLogView() {
     var list = filteredEntries();
     var showSemesterCol = STATE.currentSemesterId === 'all';
     var rows = list.map(function (e) {
       return '<tr data-id="' + e.id + '">' +
-        '<td class="cell-muted">' + escapeHtml(e.studentIdExternal || '—') + '</td>' +
+        '<td><span class="badge ' + caseStatusBadgeClass(e.caseStatus) + '">' + escapeHtml(e.caseStatus || '—') + '</span></td>' +
         '<td class="cell-name">' + escapeHtml(e.firstName) + ' ' + escapeHtml(e.lastName) + '</td>' +
-        '<td class="cell-muted">' + escapeHtml(templateNameFor(e.templateId)) + '</td>' +
+        '<td class="cell-muted">' + escapeHtml(e.program || '—') + '</td>' +
+        '<td><span class="badge ' + riskBadgeClass(e.nabitaRisk) + '">' + escapeHtml(e.nabitaRisk || '—') + '</span></td>' +
+        '<td class="cell-muted">' + escapeHtml(e.outreachConducted || '—') + '</td>' +
+        '<td class="cell-muted">' + fmtDate(e.outreachDate) + '</td>' +
+        '<td class="cell-muted">' + (e.durationMinutes !== '' && e.durationMinutes !== undefined ? e.durationMinutes + ' min' : '—') + '</td>' +
+        '<td class="cell-muted">' + escapeHtml(e.concernPrimary || '—') + '</td>' +
         '<td class="cell-muted">' + escapeHtml(e.createdByName || '—') + '</td>' +
-        '<td class="cell-muted">' + fmtDateTime(e.createdAt) + '</td>' +
         (showSemesterCol ? '<td class="cell-muted">' + escapeHtml(e.semesterLabel || '—') + '</td>' : '') +
         '</tr>';
-    }).join('');
-
-    // One dropdown filter per select-type field on the active template —
-    // capped to fields with a handful of options so the bar stays usable
-    // even when a template has many select fields (e.g. 19 on Default).
-    var dynamicFilters = getFields().filter(function (f) { return f.type === 'select' && f.options && f.options.length && f.options.length <= 8; });
-    var filterBarHtml = dynamicFilters.map(function (f) {
-      var opts = '<option value="">All ' + escapeHtml(f.label) + '</option>' + f.options.map(function (o) {
-        return '<option value="' + escapeHtml(o) + '"' + (STATE.filters[f.key] === o ? ' selected' : '') + '>' + escapeHtml(o) + '</option>';
-      }).join('');
-      return '<select class="counselor-select" data-dynamic-filter="' + f.key + '">' + opts + '</select>';
     }).join('');
 
     return '' +
       '<div class="page-head">' +
         '<div><div class="page-title">Case Log</div><div class="page-sub">Shared with your whole team — click a row to edit.</div></div>' +
       '</div>' +
-      (filterBarHtml ? '<div class="filter-bar">' + filterBarHtml + '</div>' : '') +
+      '<div class="filter-bar">' +
+        filterChips('caseStatus', optionsFor('caseStatus'), STATE.filters.caseStatus) +
+        '<span style="width:1px;height:20px;background:var(--border);margin:0 4px;"></span>' +
+        filterChips('nabitaRisk', optionsFor('nabitaRisk'), STATE.filters.nabitaRisk) +
+      '</div>' +
       '<div class="table-wrap">' +
         (list.length ? (
         '<table class="data-table">' +
           '<thead><tr>' +
-            '<th>Student ID</th>' + th('lastName', 'Student') + '<th>Template</th><th>Logged By</th>' + th('createdAt', 'Date') +
+            th('caseStatus', 'Status') + th('lastName', 'Student') + th('program', 'Program') +
+            th('nabitaRisk', 'Risk') + th('outreachConducted', 'Outreach') + th('outreachDate', 'Date') +
+            th('durationMinutes', 'Duration') + th('concernPrimary', 'Primary Concern') + '<th>Logged By</th>' +
             (showSemesterCol ? '<th>Semester</th>' : '') +
           '</tr></thead>' +
           '<tbody>' + rows + '</tbody>' +
@@ -342,20 +346,29 @@
     return '<th data-sort="' + key + '">' + label + arrow + '</th>';
   }
 
+  function filterChips(field, options, current) {
+    var all = '<button class="filter-chip' + (!current ? ' active' : '') + '" data-filter="' + field + '" data-value="">All</button>';
+    var chips = options.map(function (o) {
+      return '<button class="filter-chip' + (current === o ? ' active' : '') + '" data-filter="' + field + '" data-value="' + escapeHtml(o) + '">' + escapeHtml(o) + '</button>';
+    }).join('');
+    return all + chips;
+  }
+
   function emptyState(big, small) {
     return '<div class="empty-state"><div class="big">' + escapeHtml(big) + '</div><div>' + escapeHtml(small) + '</div></div>';
   }
 
+  function optionsFor(fieldKey) {
+    var f = getFieldMap()[fieldKey];
+    return f ? f.options : [];
+  }
+
   // ---------------- Students view ----------------
-  // Only entry count / first / last contact are guaranteed across any
-  // template — per-student status/program/risk badges moved into the
-  // per-entry drawer (opened from the card), since a template might not
-  // define anything shaped like those fields at all.
   function renderStudentsView() {
     var q = STATE.search.trim().toLowerCase();
     var list = STATE.students.filter(function (s) {
       if (!q) return true;
-      return (s.firstName + ' ' + s.lastName + ' ' + (s.studentIdExternal || '')).toLowerCase().indexOf(q) !== -1;
+      return (s.firstName + ' ' + s.lastName + ' ' + (s.program || '')).toLowerCase().indexOf(q) !== -1;
     });
     if (!list.length) {
       return '<div class="page-head"><div><div class="page-title">Students</div><div class="page-sub">Grouped case history, one card per student.</div></div></div>' +
@@ -365,11 +378,14 @@
       return '<div class="card student-card" data-student="' + escapeHtml(s.studentKey) + '">' +
         '<div class="student-card-head">' +
           '<div><div class="student-name">' + escapeHtml(s.firstName) + ' ' + escapeHtml(s.lastName) + '</div>' +
-          '<div class="student-meta">' + escapeHtml(s.studentIdExternal || 'No student ID on file') + '</div></div>' +
+          '<div class="student-meta">' + escapeHtml(s.program || 'No program on file') + (s.pronouns ? ' · ' + escapeHtml(s.pronouns) : '') + '</div></div>' +
+          '<span class="badge ' + caseStatusBadgeClass(s.caseStatus) + '">' + escapeHtml(s.caseStatus || '—') + '</span>' +
         '</div>' +
+        '<div class="student-meta">' + escapeHtml(s.enrollmentStatus || '—') + ' · ' + escapeHtml(s.modality || '—') + (s.international === 'Yes' ? ' · International' : '') + '</div>' +
         '<div class="student-stats">' +
           '<div class="student-stat"><b>' + s.entryCount + '</b>entries</div>' +
-          '<div class="student-stat"><b>' + fmtDate(s.firstContact) + '</b>first contact</div>' +
+          '<div class="student-stat"><b>' + Math.round(s.totalMinutes) + '</b>minutes logged</div>' +
+          '<div class="student-stat"><b><span class="badge ' + riskBadgeClass(s.nabitaRisk) + '">' + escapeHtml(s.nabitaRisk || '—') + '</span></b></div>' +
           '<div class="student-stat" style="margin-left:auto"><b>' + fmtDate(s.lastContact) + '</b>last contact</div>' +
         '</div>' +
       '</div>';
@@ -413,11 +429,6 @@
       bodyHtml + '</div>';
   }
 
-  // One card per section the API returns — sections are the merged
-  // select/number/date fields actually defined across active templates
-  // (see server.js's buildFieldSchemaForDashboard), not a fixed report
-  // layout. A template with no fields shaped like Case Status/NABITA Risk
-  // simply produces no section for them; nothing here assumes they exist.
   function renderDashboardView() {
     var d = STATE.dashboard;
     if (!d) return emptyState('Loading…', '');
@@ -440,13 +451,6 @@
       counselors.map(function (name) { return '<option value="' + escapeHtml(name) + '"' + (STATE.dashCounselor === name ? ' selected' : '') + '>' + escapeHtml(name) + '</option>'; }).join('') +
       '</select>';
 
-    var sectionCards = d.sections.map(function (sec) {
-      if (sec.type === 'select') return dashCard(sec.label, 'every logged entry', barList(sec.counts, { limit: 12 }));
-      if (sec.type === 'number') return dashCard(sec.label, 'sum / average, every logged entry', numberBody(sec));
-      if (sec.type === 'date') return dashCard(sec.label + ' by Month', 'selected period', monthChart(sec.monthCounts));
-      return '';
-    }).join('');
-
     return '' +
       '<div class="page-head"><div><div class="page-title">Dashboard</div><div class="page-sub">' + escapeHtml(currentSemesterLabel) + ' · ' + escapeHtml(rangeLabel) + '</div></div>' +
         '<button class="btn" id="exportDashboardBtn">Export Dashboard…</button>' +
@@ -456,20 +460,43 @@
       '</div>' +
       '<div class="stat-grid">' +
         statCard('Unique Students', d.totals.uniqueStudents, 'in selected period') +
+        statCard('Active Cases', d.totals.activeCases, 'case status = Active') +
         statCard('Total Entries Logged', d.totals.totalEntries, '') +
+        statCard('Wellness Hours', d.totalHours, 'total logged, all categories') +
       '</div>' +
-      (d.sections.length ? '<div class="dash-grid">' + sectionCards + '</div>' :
-        emptyState('No breakdown sections yet', 'Add select, number, or date fields to a template to see them charted here.'));
+      '<div class="dash-grid">' +
+        dashCard('Student Status', 'unique students, most recent record', studentStatusBody(d.studentStatus)) +
+        dashCard('Case Status', 'unique students, current status', barList(d.caseStatus, { cls: 'success' })) +
+        dashCard('Program Breakdown', 'MS Degree Seeking vs. Non-Degree', barList(d.program.buckets)) +
+        dashCard('Case Type — NABITA Risk Rubric', 'unique students, current risk level', barList(d.caseType, { cls: 'danger' })) +
+        dashCard('Referral Source', 'every logged entry', barList(d.referralSource)) +
+        dashCard('Referrals Made', 'Columbia / External / Both', barList(d.referralsMade)) +
+        dashCard('Wellness Hours by Category', 'minutes ÷ 60, every logged entry', hoursBody(d.hours, d.totalHours)) +
+        dashCard('Outreach Method', 'every logged entry', barList(d.outreachMethod, { limit: 7 })) +
+      '</div>' +
+      '<div class="dash-section-title" style="margin-top:6px">Wellness Concern Category <span class="hint">counts every Primary + Secondary + Tertiary concern logged</span></div>' +
+      '<div class="card card-pad" style="margin-bottom:22px">' + barList(d.concerns) + '</div>' +
+      '<div class="dash-section-title">Referral Type <span class="hint">where cases were referred to — every logged entry</span></div>' +
+      '<div class="card card-pad" style="margin-bottom:22px">' + barList(d.referralType, { limit: 12 }) + '</div>' +
+      '<div class="dash-section-title">Referral Date by Month <span class="hint">referral date, selected period</span></div>' +
+      '<div class="card card-pad">' + monthChart(d.referralDateByMonth) + '</div>';
   }
 
   function statCard(label, value, foot) {
     return '<div class="card stat-card"><div class="stat-label">' + escapeHtml(label) + '</div><div class="stat-value">' + value + '</div><div class="stat-foot">' + escapeHtml(foot) + '</div></div>';
   }
 
-  function numberBody(sec) {
-    return '<div class="stat-grid" style="grid-template-columns:repeat(2,1fr);margin-bottom:0">' +
-      statCard('Sum', sec.sum, sec.count + ' logged') + statCard('Average', sec.average, '') +
-    '</div>';
+  function studentStatusBody(s) {
+    var counts = {
+      'Full-Time': s.fullTime, 'Part-Time': s.partTime, 'Not Currently Enrolled': s.notCurrentlyEnrolled, 'Non-Affiliate': s.nonAffiliate,
+      'International': s.international, 'Domestic': s.domestic,
+      'In Person': s.inPerson, 'Online Only': s.onlineOnly, 'Mode N/A': s.modalityNA,
+    };
+    return barList(counts);
+  }
+
+  function hoursBody(hours, total) {
+    return barList(hours, { cls: 'success' }) + '<div class="section-divider"></div><div class="flex-between"><span class="small-muted">Total</span><b>' + total + ' hrs</b></div>';
   }
 
   // ---------------- Drawer: entry form ----------------
@@ -524,30 +551,13 @@
     '</div>';
   }
 
-  // First/Last Name (+ optional Student ID) are the only guaranteed fields —
-  // structural columns, not part of a template's dynamic field list — so
-  // they're always rendered, independent of which template is selected.
-  function coreIdentityFieldsHtml(entry) {
-    return '<div class="form-section"><div class="form-section-title">Identity</div><div class="form-grid">' +
-      fieldInputHtml({ key: 'firstName', label: 'First Name', type: 'text', required: true }, entry ? entry.firstName : '') +
-      fieldInputHtml({ key: 'lastName', label: 'Last Name', type: 'text', required: true }, entry ? entry.lastName : '') +
-      fieldInputHtml({ key: 'studentIdExternal', label: 'Student ID (optional)', type: 'text' }, entry ? entry.studentIdExternal : '') +
-    '</div></div>';
-  }
-
-  // Renders one form-section per section in the given template config
-  // (fetched from GET /api/templates/:id/fields) — everything past Identity/
-  // Semester/Template is fully dynamic and driven by that template's field
-  // list, not a fixed schema.
-  function buildDynamicSectionsHtml(config, entry) {
-    return (config.SECTIONS || []).map(function (sec) {
-      var fields = (config.FIELDS || []).filter(function (f) { return f.section === sec.key; });
+  function entryFormHtml(entry, isNew) {
+    var sectionsHtml = getSections().map(function (sec) {
+      var fields = getFields().filter(function (f) { return f.section === sec.key; });
       var html = fields.map(function (f) { return fieldInputHtml(f, entry ? entry[f.key] : (f.default || '')); }).join('');
       return '<div class="form-section"><div class="form-section-title">' + escapeHtml(sec.label) + '</div><div class="form-grid">' + html + '</div></div>';
     }).join('');
-  }
 
-  function entryFormHtml(entry, isNew, config) {
     var linkBox = '';
     if (isNew) {
       linkBox = '<div class="linked-student-box">' +
@@ -559,25 +569,34 @@
       '</div>';
     }
 
-    return '<form id="entryForm"><div id="formErrors"></div>' + linkBox + coreIdentityFieldsHtml(entry) + semesterFieldHtml(entry) + templateFieldHtml(entry) +
-      '<div id="entryDynamicSections">' + buildDynamicSectionsHtml(config, entry) + '</div></form>';
+    return '<form id="entryForm"><div id="formErrors"></div>' + linkBox + semesterFieldHtml(entry) + templateFieldHtml(entry) + sectionsHtml + '</form>';
   }
 
-  // Swaps in a different template's whole field set (not just its option
-  // values — templates can have entirely different fields now). Cached per
-  // template so switching back and forth doesn't re-fetch; the Template admin
-  // page invalidates this cache (STATE.templateOptionsCache) when a
-  // template's fields/options change.
-  function applyTemplateFields(templateId, entryForPrefill) {
+  // Re-populates every select-type field's options from the given template,
+  // preserving whatever is currently chosen even if that value isn't part of
+  // this template's list (e.g. editing an entry created under a different
+  // template) — never silently blanks out existing data.
+  function applyTemplateOptions(templateId) {
     if (!templateId || templateId === CREATE_TEMPLATE_VALUE) return Promise.resolve();
     var cached = STATE.templateOptionsCache[templateId];
-    var fetchP = cached ? Promise.resolve(cached) : api('/api/templates/' + templateId + '/fields').then(function (config) {
-      STATE.templateOptionsCache[templateId] = config;
-      return config;
+    var fetchP = cached ? Promise.resolve(cached) : api('/api/templates/' + templateId + '/options').then(function (d) {
+      var byGroup = {};
+      d.groups.forEach(function (g) { byGroup[g.key] = g.options.filter(function (o) { return o.active; }).map(function (o) { return o.value; }); });
+      STATE.templateOptionsCache[templateId] = byGroup;
+      return byGroup;
     });
-    return fetchP.then(function (config) {
-      var container = document.getElementById('entryDynamicSections');
-      if (container) container.innerHTML = buildDynamicSectionsHtml(config, entryForPrefill || null);
+    return fetchP.then(function (byGroup) {
+      getFields().forEach(function (f) {
+        if (f.type !== 'select') return;
+        var el = document.querySelector('#entryForm [name="' + f.key + '"]');
+        if (!el) return;
+        var currentValue = el.value;
+        var options = byGroup[f.optionGroup] || [];
+        if (currentValue && options.indexOf(currentValue) === -1) options = options.concat([currentValue]);
+        el.innerHTML = '<option value="">— Select —</option>' + options.map(function (o) {
+          return '<option value="' + escapeHtml(o) + '"' + (o === currentValue ? ' selected' : '') + '>' + escapeHtml(o) + '</option>';
+        }).join('');
+      });
     });
   }
 
@@ -587,33 +606,25 @@
     STATE.editingId = isNew ? null : entryId;
     STATE.drawerMode = 'entry';
 
-    var initialTemplateId = (entry && entry.templateId) ? entry.templateId : (window.WELLNESS_CONFIG.DEFAULT_TEMPLATE_ID || '');
-    var cached = initialTemplateId ? STATE.templateOptionsCache[initialTemplateId] : null;
-    var configPromise = !initialTemplateId ? Promise.resolve({ FIELDS: [], SECTIONS: [] }) :
-      cached ? Promise.resolve(cached) :
-      api('/api/templates/' + initialTemplateId + '/fields').then(function (config) { STATE.templateOptionsCache[initialTemplateId] = config; return config; });
+    var drawer = document.getElementById('drawer');
+    var attribution = (!isNew && (entry.createdByName || entry.updatedByName)) ?
+      '<div class="drawer-sub">Logged by ' + escapeHtml(entry.createdByName || '—') + (entry.updatedByName && entry.updatedByName !== entry.createdByName ? ' · last edited by ' + escapeHtml(entry.updatedByName) : '') + '</div>' : '';
 
-    configPromise.then(function (config) {
-      var drawer = document.getElementById('drawer');
-      var attribution = (!isNew && (entry.createdByName || entry.updatedByName)) ?
-        '<div class="drawer-sub">Logged by ' + escapeHtml(entry.createdByName || '—') + (entry.updatedByName && entry.updatedByName !== entry.createdByName ? ' · last edited by ' + escapeHtml(entry.updatedByName) : '') + '</div>' : '';
-
-      drawer.innerHTML = '' +
-        '<div class="drawer-head">' +
-          '<div><div class="drawer-title">' + (isNew ? 'New Entry' : 'Edit Entry') + '</div>' +
-          (isNew ? '<div class="drawer-sub">Fill in a new interaction.</div>' : '<div class="drawer-sub">' + escapeHtml((entry.firstName || '') + ' ' + (entry.lastName || '')) + '</div>' + attribution) +
-          '</div>' +
-          '<button class="drawer-close" id="drawerClose">&times;</button>' +
+    drawer.innerHTML = '' +
+      '<div class="drawer-head">' +
+        '<div><div class="drawer-title">' + (isNew ? 'New Entry' : 'Edit Entry') + '</div>' +
+        (isNew ? '<div class="drawer-sub">Mirrors copying row 2 and filling it in for a new interaction.</div>' : '<div class="drawer-sub">' + escapeHtml((entry.firstName || '') + ' ' + (entry.lastName || '')) + '</div>' + attribution) +
         '</div>' +
-        '<div class="drawer-body">' + entryFormHtml(entry, isNew, config) + '</div>' +
-        '<div class="drawer-foot">' +
-          (isNew ? '<span></span>' : '<button class="btn danger" id="deleteEntryBtn">Delete Entry</button>') +
-          '<div style="display:flex;gap:8px"><button class="btn" id="cancelEntryBtn">Cancel</button><button class="btn primary" id="saveEntryBtn">' + (isNew ? 'Create Entry' : 'Save Changes') + '</button></div>' +
-        '</div>';
+        '<button class="drawer-close" id="drawerClose">&times;</button>' +
+      '</div>' +
+      '<div class="drawer-body">' + entryFormHtml(entry, isNew) + '</div>' +
+      '<div class="drawer-foot">' +
+        (isNew ? '<span></span>' : '<button class="btn danger" id="deleteEntryBtn">Delete Entry</button>') +
+        '<div style="display:flex;gap:8px"><button class="btn" id="cancelEntryBtn">Cancel</button><button class="btn primary" id="saveEntryBtn">' + (isNew ? 'Create Entry' : 'Save Changes') + '</button></div>' +
+      '</div>';
 
-      openDrawer();
-      bindEntryFormEvents(isNew);
-    });
+    openDrawer();
+    bindEntryFormEvents(isNew);
   }
 
   function bindEntryFormEvents(isNew) {
@@ -642,13 +653,16 @@
     }
     var templateSelect = document.getElementById('entryTemplateSelect');
     var activeTemplateId = templateSelect.value;
+    applyTemplateOptions(activeTemplateId);
     templateSelect.addEventListener('change', function () {
       if (templateSelect.value === CREATE_TEMPLATE_VALUE) {
         var name = prompt('New template name (e.g. "Undergrad Wellness"):');
         if (!name || !name.trim()) { templateSelect.value = activeTemplateId; return; }
         api('/api/templates', { method: 'POST', body: { name: name.trim() } }).then(function (d) {
           STATE.templates.push(d.template);
-          STATE.templateOptionsCache[d.template.id] = d.config;
+          var byGroup = {};
+          d.groups.forEach(function (g) { byGroup[g.key] = g.options.filter(function (o) { return o.active; }).map(function (o) { return o.value; }); });
+          STATE.templateOptionsCache[d.template.id] = byGroup;
           var newOpt = document.createElement('option');
           newOpt.value = d.template.id;
           newOpt.textContent = d.template.name;
@@ -656,11 +670,11 @@
           templateSelect.value = d.template.id;
           activeTemplateId = d.template.id;
           toast('Template "' + d.template.name + '" created', 'ok');
-          return applyTemplateFields(d.template.id);
+          return applyTemplateOptions(d.template.id);
         }).catch(function (err) { toast(err.message, 'err'); templateSelect.value = activeTemplateId; });
       } else {
         activeTemplateId = templateSelect.value;
-        applyTemplateFields(activeTemplateId);
+        applyTemplateOptions(activeTemplateId);
       }
     });
 
@@ -672,22 +686,19 @@
   }
 
   function fillIdentityFields(s) {
-    var fnEl = document.querySelector('[name="firstName"]'); if (fnEl) fnEl.value = s.firstName || '';
-    var lnEl = document.querySelector('[name="lastName"]'); if (lnEl) lnEl.value = s.lastName || '';
-    var idEl = document.querySelector('[name="studentIdExternal"]'); if (idEl) idEl.value = s.studentIdExternal || '';
-    document.querySelectorAll('#entryDynamicSections [name]').forEach(function (el) {
-      if (s[el.name] !== undefined) el.value = s[el.name] || '';
+    ['firstName', 'lastName', 'pronouns', 'international', 'program', 'modality', 'enrollmentStatus', 'columbiaOfficer'].forEach(function (key) {
+      var el = document.querySelector('[name="' + key + '"]');
+      if (el) el.value = s[key] || '';
     });
   }
 
   function collectFormData() {
     var form = document.getElementById('entryForm');
     var data = {};
-    ['firstName', 'lastName', 'studentIdExternal'].forEach(function (key) {
-      var el = form.querySelector('[name="' + key + '"]');
-      data[key] = el ? el.value : '';
+    getFields().forEach(function (f) {
+      var el = form.querySelector('[name="' + f.key + '"]');
+      data[f.key] = el ? el.value : '';
     });
-    form.querySelectorAll('#entryDynamicSections [name]').forEach(function (el) { data[el.name] = el.value; });
     var semesterEl = form.querySelector('[name="semesterId"]');
     data.semesterId = semesterEl ? semesterEl.value : '';
     var templateEl = form.querySelector('[name="templateId"]');
@@ -699,9 +710,7 @@
     var data = collectFormData();
     var errBox = document.getElementById('formErrors');
     errBox.innerHTML = '';
-    var missing = [];
-    if (!data.firstName) missing.push({ label: 'First Name' });
-    if (!data.lastName) missing.push({ label: 'Last Name' });
+    var missing = getFields().filter(function (f) { return f.required && !data[f.key]; });
     if (!data.semesterId) missing.push({ label: 'Semester' });
     if (!data.templateId || data.templateId === CREATE_TEMPLATE_VALUE) missing.push({ label: 'Template' });
     if (missing.length) {
@@ -734,14 +743,13 @@
     STATE.drawerMode = 'student';
     var drawer = document.getElementById('drawer');
 
-    // Each entry's own template defines its fields — shows a handful of
-    // whatever values that entry actually has (as tags) plus which template
-    // it used, rather than assuming specific fields like Outreach Method.
     var items = s.entries.map(function (e) {
-      var tags = Object.keys(e.fields || {}).map(function (k) { return e.fields[k]; }).filter(Boolean).slice(0, 4);
+      var tags = [e.outreachConducted, e.concernPrimary, e.referralSource].filter(Boolean);
       return '<div class="timeline-item">' +
-        '<div class="timeline-date">' + fmtDateTime(e.createdAt) + ' · <span class="tag" style="margin-left:2px">' + escapeHtml(templateNameFor(e.templateId)) + '</span></div>' +
+        '<div class="timeline-date">' + fmtDate(e.outreachDate || e.referralDate || e.createdAt) + ' · <span class="badge ' + caseStatusBadgeClass(e.caseStatus) + '" style="margin-left:2px">' + escapeHtml(e.caseStatus || '—') + '</span></div>' +
+        '<div class="timeline-body">' + escapeHtml(e.outreachType || '') + (e.outreachMethod ? ' via ' + escapeHtml(e.outreachMethod) : '') + (e.durationMinutes ? ' · ' + e.durationMinutes + ' min' : '') + '</div>' +
         '<div class="timeline-tags">' + tags.map(function (t) { return '<span class="tag">' + escapeHtml(t) + '</span>'; }).join('') + '</div>' +
+        (e.notes ? '<div class="timeline-notes">' + escapeHtml(e.notes) + '</div>' : '') +
         '<div class="timeline-notes">Logged by ' + escapeHtml(e.createdByName || '—') + '</div>' +
         '<div class="timeline-actions"><button class="btn small" data-edit-entry="' + e.id + '">Edit</button></div>' +
       '</div>';
@@ -750,12 +758,12 @@
     drawer.innerHTML = '' +
       '<div class="drawer-head">' +
         '<div><div class="drawer-title">' + escapeHtml(s.firstName) + ' ' + escapeHtml(s.lastName) + '</div>' +
-        '<div class="drawer-sub">' + escapeHtml(s.studentIdExternal || 'No student ID on file') + '</div></div>' +
+        '<div class="drawer-sub">' + escapeHtml(s.program || 'No program on file') + (s.pronouns ? ' · ' + escapeHtml(s.pronouns) : '') + '</div></div>' +
         '<button class="drawer-close" id="drawerClose">&times;</button>' +
       '</div>' +
       '<div class="drawer-body">' +
-        '<div class="stat-grid" style="grid-template-columns:repeat(2,1fr);margin-bottom:18px">' +
-          statCard('Entries', s.entryCount, '') + statCard('Last Contact', fmtDate(s.lastContact), '') +
+        '<div class="stat-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:18px">' +
+          statCard('Entries', s.entryCount, '') + statCard('Minutes Logged', Math.round(s.totalMinutes), '') + statCard('Current Risk', s.nabitaRisk || '—', '') +
         '</div>' +
         '<div class="dash-section-title">Case History</div>' +
         '<div class="timeline">' + items + '</div>' +
@@ -765,11 +773,11 @@
     openDrawer();
     document.getElementById('drawerClose').addEventListener('click', closeDrawer);
     document.getElementById('addFollowupBtn').addEventListener('click', function () {
-      var latest = s.entries && s.entries[0];
-      STATE.linkedStudentPrefill = Object.assign(
-        { firstName: s.firstName, lastName: s.lastName, studentIdExternal: latest ? latest.studentIdExternal : '' },
-        latest && latest.fields ? latest.fields : {}
-      );
+      STATE.linkedStudentPrefill = {
+        firstName: s.firstName, lastName: s.lastName, pronouns: s.pronouns, international: s.international,
+        program: s.program, modality: s.modality, enrollmentStatus: s.enrollmentStatus, columbiaOfficer: s.columbiaOfficer,
+        caseStatus: s.caseStatus,
+      };
       openEntryDrawer(null);
     });
     drawer.querySelectorAll('[data-edit-entry]').forEach(function (btn) {
@@ -1038,12 +1046,11 @@
         return '<option value="' + t.id + '"' + (t.id === STATE.templateView.selectedId ? ' selected' : '') + '>' + escapeHtml(t.name) + (t.isDefault ? ' (Default)' : '') + '</option>';
       }).join('') + '</select>';
 
-    var selected = STATE.templates.find(function (t) { return t.id === STATE.templateView.selectedId; });
-    var canDelete = selected && !selected.isDefault && STATE.currentUser && STATE.currentUser.role === 'admin';
+    var isAdmin = STATE.currentUser && STATE.currentUser.role === 'admin';
 
     return '<div class="page-head"><div><div class="page-title">Template</div><div class="page-sub">Add or remove the choices available in each dropdown. "Default" is what "(Do Not Disturb) Main template" started as — create additional templates for other contexts.</div></div></div>' +
       '<div class="filter-bar">' + templateSelect + '<button class="btn small ghost" id="newTemplateBtn">+ New Template</button>' +
-        (canDelete ? '<button class="btn small danger" id="deleteTemplateBtn">Delete Template</button>' : '') +
+        (isAdmin ? '<button class="btn small danger" id="deleteTemplateBtn">Delete Template</button>' : '') +
       '</div>' +
       '<div id="templateGroups">' + emptyState('Loading…', '') + '</div>';
   }
@@ -1122,35 +1129,56 @@
         }).then(function () { toast('Restored', 'ok'); });
       });
     });
-    var templateViewSelect = document.getElementById('templateViewSelect');
-    if (templateViewSelect) templateViewSelect.addEventListener('change', function () {
-      STATE.templateView.selectedId = templateViewSelect.value;
-      loadTemplateData();
-    });
+    // templateViewSelect / deleteTemplateBtn / newTemplateBtn live in the
+    // outer filter-bar, which (unlike #templateGroups) is not rebuilt on
+    // every loadTemplateData() call — bindTemplateEvents() itself runs on
+    // every call, though, so a dataset flag guards against attaching a
+    // duplicate listener to the same persistent element each time. (Cloning
+    // the node to strip listeners was tried and reverted: cloning a <select>
+    // snaps its displayed value back to the original HTML `selected`
+    // attribute, undoing whatever the user had just picked.)
     var deleteTemplateBtn = document.getElementById('deleteTemplateBtn');
-    if (deleteTemplateBtn) deleteTemplateBtn.addEventListener('click', function () {
-      var t = STATE.templates.find(function (x) { return x.id === templateId; });
-      if (!t) return;
-      if (!confirm('Delete template "' + t.name + '"? This only works if no entries use it, and cannot be undone.')) return;
-      api('/api/templates/' + templateId, { method: 'DELETE' }).then(function () {
-        STATE.templates = STATE.templates.filter(function (x) { return x.id !== templateId; });
-        delete STATE.templateOptionsCache[templateId];
-        STATE.templateView.selectedId = null;
-        toast('Template "' + t.name + '" deleted', 'ok');
-        render();
-      }).catch(function (err) { toast(err.message, 'err'); });
-    });
+    if (deleteTemplateBtn) {
+      var selectedNow = STATE.templates.find(function (x) { return x.id === templateId; });
+      deleteTemplateBtn.style.display = selectedNow && !selectedNow.isDefault ? '' : 'none';
+      if (!deleteTemplateBtn.dataset.bound) {
+        deleteTemplateBtn.dataset.bound = '1';
+        deleteTemplateBtn.addEventListener('click', function () {
+          var t = STATE.templates.find(function (x) { return x.id === STATE.templateView.selectedId; });
+          if (!t) return;
+          if (!confirm('Delete template "' + t.name + '"? This only works if no entries use it, and cannot be undone.')) return;
+          api('/api/templates/' + t.id, { method: 'DELETE' }).then(function () {
+            STATE.templates = STATE.templates.filter(function (x) { return x.id !== t.id; });
+            delete STATE.templateOptionsCache[t.id];
+            STATE.templateView.selectedId = null;
+            toast('Template "' + t.name + '" deleted', 'ok');
+            render();
+          }).catch(function (err) { toast(err.message, 'err'); });
+        });
+      }
+    }
+    var templateViewSelect = document.getElementById('templateViewSelect');
+    if (templateViewSelect && !templateViewSelect.dataset.bound) {
+      templateViewSelect.dataset.bound = '1';
+      templateViewSelect.addEventListener('change', function () {
+        STATE.templateView.selectedId = templateViewSelect.value;
+        loadTemplateData();
+      });
+    }
     var newTemplateBtn = document.getElementById('newTemplateBtn');
-    if (newTemplateBtn) newTemplateBtn.addEventListener('click', function () {
-      var name = prompt('New template name (e.g. "Undergrad Wellness"):');
-      if (!name || !name.trim()) return;
-      api('/api/templates', { method: 'POST', body: { name: name.trim() } }).then(function (d) {
-        STATE.templates.push(d.template);
-        STATE.templateView.selectedId = d.template.id;
-        toast('Template "' + d.template.name + '" created', 'ok');
-        render();
-      }).catch(function (err) { toast(err.message, 'err'); });
-    });
+    if (newTemplateBtn && !newTemplateBtn.dataset.bound) {
+      newTemplateBtn.dataset.bound = '1';
+      newTemplateBtn.addEventListener('click', function () {
+        var name = prompt('New template name (e.g. "Undergrad Wellness"):');
+        if (!name || !name.trim()) return;
+        api('/api/templates', { method: 'POST', body: { name: name.trim() } }).then(function (d) {
+          STATE.templates.push(d.template);
+          STATE.templateView.selectedId = d.template.id;
+          toast('Template "' + d.template.name + '" created', 'ok');
+          render();
+        }).catch(function (err) { toast(err.message, 'err'); });
+      });
+    }
   }
 
   // ---------------- Drawer open/close ----------------
@@ -1179,8 +1207,8 @@
         render();
       });
     });
-    root.querySelectorAll('[data-dynamic-filter]').forEach(function (sel) {
-      sel.addEventListener('change', function () { STATE.filters[sel.getAttribute('data-dynamic-filter')] = sel.value; render(); });
+    root.querySelectorAll('[data-filter]').forEach(function (chip) {
+      chip.addEventListener('click', function () { STATE.filters[chip.getAttribute('data-filter')] = chip.getAttribute('data-value'); render(); });
     });
     root.querySelectorAll('[data-student]').forEach(function (card) {
       card.addEventListener('click', function () { openStudentDrawer(card.getAttribute('data-student')); });
