@@ -114,7 +114,7 @@
     program: ['program', 'major'],
     modality: ['modality', 'in person or online only', 'in person online', 'mode'],
     enrollmentStatus: ['enrollment status', 'enrollment'],
-    columbiaOfficer: ['columbia officer'],
+    columbiaOfficer: ['columbia officer', 'university officer'],
     nabitaRisk: ['nabita risk rubric', 'nabita risk', 'risk', 'risk level', 'risk rubric'],
     referralSource: ['referral source'],
     referralDate: ['referral date'],
@@ -188,7 +188,17 @@
       return { index: i, header: label, mappedTo: suggestFieldForHeader(label, mappableFields) };
     }).filter(Boolean);
 
-    var rows = [], skippedNoContext = 0, currentIdentity = null;
+    // A student's row block in these sheets often carries case-level info
+    // (Case Status, Program, NABITA Risk, ...) only on the first row, with
+    // follow-up rows underneath left blank for those columns — they exist
+    // only to log another outreach event for the same case. "Case" and
+    // "referral" section fields are carried forward from the block's first
+    // row when a follow-up row leaves them blank; per-event fields
+    // (outreach/concerns/referrals/notes) are always read fresh per row,
+    // since those genuinely differ event to event.
+    var CARRY_SECTIONS = { case: true, referral: true };
+
+    var rows = [], skippedNoContext = 0, currentIdentity = null, carried = {};
     for (var r = 0; r < formattedRows.length; r++) {
       var row = formattedRows[r] || [];
       var hasAnything = row.some(function (v) { return v !== null && v !== undefined && String(v).trim() !== ''; });
@@ -206,7 +216,10 @@
       }
       if (ident.idIdx !== -1) studentId = String(row[ident.idIdx] || '').trim();
 
-      if (firstName || lastName) currentIdentity = { firstName: firstName, lastName: lastName, studentId: studentId };
+      if (firstName || lastName) {
+        currentIdentity = { firstName: firstName, lastName: lastName, studentId: studentId };
+        carried = {};
+      }
       if (!currentIdentity) { skippedNoContext++; continue; }
 
       var fields = { firstName: currentIdentity.firstName, lastName: currentIdentity.lastName, studentIdExternal: currentIdentity.studentId };
@@ -215,11 +228,18 @@
         var fieldDef = mappableFields.find(function (f) { return f.key === c.mappedTo; });
         var rawVal = rawRows[r] ? rawRows[r][c.index] : undefined;
         var formattedVal = row[c.index];
-        if (fieldDef && fieldDef.type === 'date') fields[c.mappedTo] = normalizeDateValue(rawVal, formattedVal);
+        var value;
+        if (fieldDef && fieldDef.type === 'date') value = normalizeDateValue(rawVal, formattedVal);
         else if (fieldDef && fieldDef.type === 'number') {
           var n = Number(rawVal !== undefined && rawVal !== null && rawVal !== '' ? rawVal : formattedVal);
-          fields[c.mappedTo] = isNaN(n) ? '' : n;
-        } else fields[c.mappedTo] = formattedVal === null || formattedVal === undefined ? '' : String(formattedVal).trim();
+          value = isNaN(n) ? '' : n;
+        } else value = formattedVal === null || formattedVal === undefined ? '' : String(formattedVal).trim();
+
+        if (fieldDef && CARRY_SECTIONS[fieldDef.section]) {
+          if (value === '' || value === null) value = carried.hasOwnProperty(c.mappedTo) ? carried[c.mappedTo] : value;
+          else carried[c.mappedTo] = value;
+        }
+        fields[c.mappedTo] = value;
       });
 
       rows.push(fields);
