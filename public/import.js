@@ -487,22 +487,53 @@
     return chain.then(function () { return sheetToTemplateId; });
   }
 
-  // Fields (and each select field's options) are created in parallel rather
-  // than one-request-at-a-time — a sheet with 27 columns was previously 27+
-  // sequential round trips before the actual import could even start.
+  // Runs `worker` over `items` with at most `limit` requests in flight at
+  // once — a wide sheet (20+ fields, each with its own set of select
+  // options) firing every request via Promise.all at once was found to be
+  // the real cause of a "template created, zero entries" failure on a real
+  // large file: unbounded parallel requests overwhelming Render's free tier
+  // and/or Neon's connection pool (db/pool.js caps at 10 connections), some
+  // of which then failed outright. This keeps the speed benefit of
+  // parallelism without the burst. Per-item failures are collected rather
+  // than aborting everything else in flight.
+  function runWithConcurrency(items, limit, worker) {
+    var errors = [];
+    var idx = 0;
+    function next() {
+      if (idx >= items.length) return Promise.resolve();
+      var i = idx++;
+      return worker(items[i], i).catch(function (err) {
+        errors.push({ item: items[i], error: err });
+      }).then(next);
+    }
+    var runners = [];
+    for (var k = 0; k < Math.min(limit, items.length); k++) runners.push(next());
+    return Promise.all(runners).then(function () { return errors; });
+  }
+
+  var CREATE_CONCURRENCY = 4;
+
   function createTemplateForFields(name, fields) {
     var templateName = (name || 'Import') + ' — ' + new Date().toISOString().slice(0, 10);
     return window.WCT_APP.api('/api/templates', { method: 'POST', body: { name: templateName, blank: true } }).then(function (d) {
       var templateId = d.template.id;
-      return Promise.all(fields.map(function (f) {
+      return runWithConcurrency(fields, CREATE_CONCURRENCY, function (f) {
         return window.WCT_APP.api('/api/templates/' + templateId + '/fields', { method: 'POST', body: { fieldKey: f.key, label: f.label, fieldType: f.type, section: 'Imported Fields' } })
           .then(function () {
-            if (f.type !== 'select') return;
-            return Promise.all((f.options || []).map(function (opt) {
+            if (f.type !== 'select' || !f.options || !f.options.length) return;
+            return runWithConcurrency(f.options, CREATE_CONCURRENCY, function (opt) {
               return window.WCT_APP.api('/api/templates/' + templateId + '/options/' + f.key, { method: 'POST', body: { value: opt } });
-            }));
+            }).then(function (optionErrors) {
+              if (optionErrors.length) console.error('Import: failed to create ' + optionErrors.length + ' option(s) for field "' + f.key + '"', optionErrors);
+            });
           });
-      })).then(function () { return templateId; });
+      }).then(function (fieldErrors) {
+        if (fieldErrors.length) {
+          console.error('Import: failed to create ' + fieldErrors.length + ' field(s) on template "' + templateName + '"', fieldErrors);
+          window.WCT_APP.toast(fieldErrors.length + ' field(s) in "' + name + '" failed to set up — check the console for detail. Continuing with the rest.', 'err');
+        }
+        return templateId;
+      });
     });
   }
 
@@ -568,6 +599,7 @@
       rerender();
       window.WCT_APP.toast('Imported ' + result.entriesImported + ' entries.', 'ok');
     }).catch(function (err) {
+      console.error('Import failed', err, err && err.data);
       STATE.importing = false;
       rerender();
       window.WCT_APP.toast('Import failed: ' + err.message, 'err');
