@@ -13,6 +13,7 @@ require('../lib/env');
 const db = require('./pool');
 const cfg = require('../lib/config');
 const { uuid } = require('../lib/id');
+const { parseCSV } = require('../lib/csv');
 
 async function run() {
   const schema = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8');
@@ -67,6 +68,8 @@ async function run() {
     console.log('Seeded ' + group.defaults.length + ' default options for "' + group.key + '".');
   }
 
+  await importStudentRecords();
+
   const legacyPath = path.join(__dirname, '..', 'data', 'db.json');
   if (fs.existsSync(legacyPath)) {
     const legacy = JSON.parse(fs.readFileSync(legacyPath, 'utf8'));
@@ -91,6 +94,90 @@ async function run() {
 
   console.log('Migration complete.');
   process.exit(0);
+}
+
+// ---------------------------------------------------------------------------
+// Student Records seed import — one-time, idempotent (skipped if the
+// students table already has rows). Loads the five CSVs in
+// data/student_records/ into their matching tables, batching inserts since
+// students.csv alone is ~10,000 rows. Order matters: students first (every
+// other table has a foreign key into it).
+// ---------------------------------------------------------------------------
+
+function emptyToNull(v) { return v === undefined || v === '' ? null : v; }
+
+function loadCSV(filename) {
+  const filePath = path.join(__dirname, '..', 'data', 'student_records', filename);
+  if (!fs.existsSync(filePath)) return null;
+  return parseCSV(fs.readFileSync(filePath, 'utf8'));
+}
+
+const IMPORT_BATCH_SIZE = 500;
+
+async function bulkInsert(table, columns, rows, mapRow) {
+  for (let i = 0; i < rows.length; i += IMPORT_BATCH_SIZE) {
+    const batch = rows.slice(i, i + IMPORT_BATCH_SIZE);
+    const values = [];
+    const placeholders = batch.map(function (row, rowIdx) {
+      const mapped = mapRow(row);
+      values.push.apply(values, mapped);
+      const base = rowIdx * columns.length;
+      return '(' + mapped.map(function (_, ci) { return '$' + (base + ci + 1); }).join(',') + ')';
+    });
+    await db.query('INSERT INTO ' + table + ' (' + columns.join(',') + ') VALUES ' + placeholders.join(',') + ' ON CONFLICT DO NOTHING', values);
+  }
+}
+
+async function importStudentRecords() {
+  const already = await db.query('SELECT COUNT(*)::int AS n FROM students');
+  if (already.rows[0].n > 0) { console.log('Student Records already seeded — skipped.'); return; }
+
+  const students = loadCSV('students.csv');
+  if (!students) { console.log('No data/student_records/students.csv found — skipping Student Records seed.'); return; }
+
+  await bulkInsert(
+    'students',
+    ['student_id', 'first_name', 'last_name', 'email', 'dob', 'major', 'academic_year', 'enrollment_status', 'advisor', 'phone', 'address', 'enrollment_date'],
+    students,
+    function (r) { return [r.student_id, r.first_name, r.last_name, r.email, emptyToNull(r.dob), r.major, r.academic_year, r.enrollment_status, r.advisor, r.phone, r.address, emptyToNull(r.enrollment_date)]; }
+  );
+  console.log('Imported ' + students.length + ' students.');
+
+  const housing = loadCSV('housing.csv') || [];
+  await bulkInsert(
+    'housing',
+    ['housing_id', 'student_id', 'residence_hall', 'room_number', 'move_in_date', 'move_out_date', 'housing_status'],
+    housing,
+    function (r) { return [r.housing_id, r.student_id, r.residence_hall, r.room_number, emptyToNull(r.move_in_date), emptyToNull(r.move_out_date), r.housing_status]; }
+  );
+  console.log('Imported ' + housing.length + ' housing records.');
+
+  const campusSafety = loadCSV('campus_safety.csv') || [];
+  await bulkInsert(
+    'campus_safety',
+    ['report_id', 'student_id', 'incident_date', 'location', 'incident_type', 'severity', 'status', 'narrative'],
+    campusSafety,
+    function (r) { return [r.report_id, r.student_id, emptyToNull(r.incident_date), r.location, r.incident_type, r.severity, r.status, r.narrative]; }
+  );
+  console.log('Imported ' + campusSafety.length + ' campus safety reports.');
+
+  const academicIntegrity = loadCSV('academic_integrity.csv') || [];
+  await bulkInsert(
+    'academic_integrity',
+    ['case_id', 'student_id', 'course_code', 'course_name', 'faculty_name', 'incident_date', 'violation_type', 'severity', 'status', 'description'],
+    academicIntegrity,
+    function (r) { return [r.case_id, r.student_id, r.course_code, r.course_name, r.faculty_name, emptyToNull(r.incident_date), r.violation_type, r.severity, r.status, r.description]; }
+  );
+  console.log('Imported ' + academicIntegrity.length + ' academic integrity cases.');
+
+  const reports = loadCSV('reports.csv') || [];
+  await bulkInsert(
+    'student_reports',
+    ['report_id', 'reported_student_id', 'reporter_type', 'submitted_date', 'category', 'location', 'priority', 'description', 'anonymous'],
+    reports,
+    function (r) { return [r.report_id, emptyToNull(r.reported_student_id), r.reporter_type, emptyToNull(r.submitted_date), r.category, r.location, r.priority, r.description, r.anonymous === 'True']; }
+  );
+  console.log('Imported ' + reports.length + ' web/anonymous reports.');
 }
 
 run().catch(function (err) {

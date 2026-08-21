@@ -51,6 +51,30 @@ persistent, internet-hosted web app instead of a row-per-case spreadsheet.
   from the top bar's **Export CSV**, which downloads the raw case log rows rather than the
   aggregated metrics.
 
+## Student Records (separate from the Wellness case tracker)
+
+A second top-level section, switched to via the **Wellness / Student Records** toggle above the
+sidebar nav. It's a read-only lookup over a synthetic demo roster ("Alderbrook University") joined
+across four source systems — SIS, Housing, Campus Safety, Academic Integrity, and the Web/Anonymous
+Reporting Portal — seeded once from the CSVs in `data/student_records/` (see that folder's
+`README.md` for column definitions and provenance) into their own Postgres tables (`students`,
+`housing`, `campus_safety`, `academic_integrity`, `student_reports` in `db/schema.sql`), imported by
+`db/migrate.js` the first time it runs against an empty `students` table. This dataset is entirely
+separate from the Wellness `entries` table above — no data flows between the two.
+
+Search by name or student ID (`Student Records → Search & Priors`) to open a profile with five tabs:
+
+- **Demographics** — identification and academic standing (major, class, advisor, enrollment date).
+- **Contact & Housing** — email/phone/address, current housing assignment, and full housing history.
+- **Incidents & Case Reports** — filterable by source: General Reports, Campus Safety, Academic
+  Integrity, each shown with its own fields and narrative.
+- **Resolution & Status** — Campus Safety and Academic Integrity cases in one table, with status and
+  severity badges.
+- **Priors & Case History** — per-student counters (report/incident/violation counts) plus a unified
+  chronological timeline merging housing tenure with every incident, violation, and report on file.
+
+Every profile view is written to the Audit Log (`student_record.view`), same as Wellness entry views.
+
 ## Security controls
 
 These are real, verified technical controls — not a claim of FERPA/HIPAA/SOC 2 *certification*,

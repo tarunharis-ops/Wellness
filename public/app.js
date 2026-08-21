@@ -22,9 +22,11 @@
   }
 
   var SEMESTER_STORAGE_KEY = 'wct_semester_id';
+  var APP_MODE_STORAGE_KEY = 'wct_app_mode';
 
   var STATE = {
     currentUser: null,
+    appMode: localStorage.getItem(APP_MODE_STORAGE_KEY) || 'wellness',
     view: 'log',
     entries: [],
     students: [],
@@ -226,7 +228,22 @@
     else if (STATE.view === 'import') { window.WCT_IMPORT.render(root); }
     else if (STATE.view === 'audit') { root.innerHTML = renderAuditView(); loadAuditData(); }
     else if (STATE.view === 'appearance') { root.innerHTML = renderAppearanceView(); }
+    else if (STATE.view === 'recordsSearch') { window.WCT_RECORDS.renderSearch(root); }
+    else if (STATE.view === 'recordsProfile') { window.WCT_RECORDS.renderProfile(root); }
     bindViewEvents();
+  }
+
+  // ---------------- App mode (Wellness vs. Student Records) ----------------
+  function setAppMode(mode) {
+    STATE.appMode = mode;
+    localStorage.setItem(APP_MODE_STORAGE_KEY, mode);
+    document.querySelectorAll('.mode-tab').forEach(function (t) { t.classList.toggle('active', t.getAttribute('data-mode') === mode); });
+    document.getElementById('nav').style.display = mode === 'wellness' ? '' : 'none';
+    document.getElementById('navRecords').style.display = mode === 'records' ? '' : 'none';
+    document.querySelector('.semester-wrap').style.display = mode === 'wellness' ? '' : 'none';
+    document.querySelector('.search-wrap').style.display = mode === 'wellness' ? '' : 'none';
+    document.querySelector('.topbar-actions').style.display = mode === 'wellness' ? '' : 'none';
+    setView(mode === 'wellness' ? 'log' : 'recordsSearch');
   }
 
   // ---------------- Appearance ----------------
@@ -964,7 +981,7 @@
     'user.role_change', 'user.deactivate', 'user.reactivate',
     'entry.create', 'entry.update', 'entry.delete', 'entry.view', 'entry.export',
     'semester.create', 'template.create', 'template.option_add', 'template.option_archive', 'template.option_restore',
-    'dashboard.export', 'data.purge',
+    'dashboard.export', 'data.purge', 'student_record.view',
   ];
 
   function renderAuditView() {
@@ -1230,6 +1247,14 @@
       var btn = e.target.closest('.nav-item');
       if (btn) setView(btn.getAttribute('data-view'));
     });
+    document.getElementById('navRecords').addEventListener('click', function (e) {
+      var btn = e.target.closest('.nav-item');
+      if (btn) setView(btn.getAttribute('data-view'));
+    });
+    document.getElementById('modeSwitch').addEventListener('click', function (e) {
+      var btn = e.target.closest('.mode-tab');
+      if (btn) setAppMode(btn.getAttribute('data-mode'));
+    });
     document.getElementById('search').addEventListener('input', debounce(function (e) { STATE.search = e.target.value; render(); }, 120));
     document.getElementById('newEntryBtn').addEventListener('click', function () { STATE.linkedStudentPrefill = null; openEntryDrawer(null); });
     document.getElementById('exportBtn').addEventListener('click', function () {
@@ -1276,7 +1301,7 @@
     }
     bindGlobalEvents();
     initIdleTimer();
-    setView('log');
+    setAppMode(STATE.appMode);
     loadAll().then(render).catch(function (err) { toast('Failed to load data: ' + err.message, 'err'); });
   }
 
@@ -1337,8 +1362,10 @@
     api: api,
     toast: toast,
     escapeHtml: escapeHtml,
+    fmtDate: fmtDate,
     getFields: getFields,
     getState: function () { return STATE; },
+    setView: setView,
     refreshAfterImport: function () { return loadAll().then(render); },
   };
 })();

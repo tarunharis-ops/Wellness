@@ -1,0 +1,825 @@
+report_id,student_id,incident_date,location,incident_type,severity,status,narrative
+CS000001,S001307,2024-08-02,Fine Arts Center,Noise Complaint,High,Under Investigation,Student was involved in a noise complaint reported near Fine Arts Center.
+CS000002,S001092,2024-08-02,Lakeside Terrace,Harassment,Low,Closed,Incident occurred at Lakeside Terrace. Responding staff documented a harassment.
+CS000003,S000388,2024-08-03,Willow Creek Hall,Theft,High,Under Investigation,A theft was observed and documented at Willow Creek Hall.
+CS000004,S004996,2024-08-03,Meadowbrook Hall,Theft,Medium,Closed,Incident occurred at Meadowbrook Hall. Responding staff documented a theft.
+CS000005,S002463,2024-08-04,Birchwood Hall,Trespassing,Low,Closed,Student was involved in a trespassing reported near Birchwood Hall.
+CS000006,S004903,2024-08-04,Bellview Hall,Physical Altercation,Low,Under Investigation,A physical altercation was observed and documented at Bellview Hall.
+CS000007,S004370,2024-08-04,Bellview Hall,Medical Emergency,Low,Closed,Incident occurred at Bellview Hall. Responding staff documented a medical emergency.
+CS000008,S000343,2024-08-04,Recreation Center,Disorderly Conduct,Low,Under Investigation,Campus Safety was dispatched to Recreation Center after a report of disorderly conduct.
+CS000009,S000246,2024-08-06,Founders Hall,Physical Altercation,High,Referred to Conduct Board,Campus Safety was dispatched to Founders Hall after a report of physical altercation.
+CS000010,S001397,2024-08-06,Aspen Court,Trespassing,Low,Closed,Campus Safety was dispatched to Aspen Court after a report of trespassing.
+CS000011,S000882,2024-08-08,East Lot,Alcohol Policy Violation,High,Open,Incident occurred at East Lot. Responding staff documented a alcohol policy violation.
+CS000012,S006881,2024-08-09,Lakeside Terrace,Alcohol Policy Violation,Medium,Referred to Conduct Board,A alcohol policy violation was observed and documented at Lakeside Terrace.
+CS000013,S008234,2024-08-09,Harborview Hall,Vandalism,Low,Open,Reporting officer responded to Harborview Hall regarding a vandalism involving the listed student.
+CS000014,S006345,2024-08-10,Highland Hall,Medical Emergency,Low,Open,Incident occurred at Highland Hall. Responding staff documented a medical emergency.
+CS000015,S008153,2024-08-11,Riverbend Hall,Medical Emergency,Low,Under Investigation,Incident occurred at Riverbend Hall. Responding staff documented a medical emergency.
+CS000016,S004394,2024-08-12,Engineering Annex,Noise Complaint,Low,Closed,Reporting officer responded to Engineering Annex regarding a noise complaint involving the listed student.
+CS000017,S001485,2024-08-13,Birchwood Hall,Suspicious Activity,Medium,Under Investigation,Campus Safety was dispatched to Birchwood Hall after a report of suspicious activity.
+CS000018,S007190,2024-08-14,Maple Ridge Hall,Harassment,Low,Closed,A harassment was observed and documented at Maple Ridge Hall.
+CS000019,S001412,2024-08-14,Student Union,Physical Altercation,Medium,Closed,A physical altercation was observed and documented at Student Union.
+CS000020,S009009,2024-08-14,Library,Vandalism,Medium,Closed,Student was involved in a vandalism reported near Library.
+CS000021,S007197,2024-08-16,Northgate Hall,Disorderly Conduct,Low,Under Investigation,A disorderly conduct was observed and documented at Northgate Hall.
+CS000022,S000928,2024-08-17,Fine Arts Center,Vandalism,High,Closed,A vandalism was observed and documented at Fine Arts Center.
+CS000023,S008910,2024-08-18,Birchwood Hall,Medical Emergency,Low,Under Investigation,Student was involved in a medical emergency reported near Birchwood Hall.
+CS000024,S000337,2024-08-18,Off-Campus Housing,Disorderly Conduct,Medium,Referred to Conduct Board,Campus Safety was dispatched to Off-Campus Housing after a report of disorderly conduct.
+CS000025,S004023,2024-08-18,Cedar Crest Hall,Harassment,Low,Open,Incident occurred at Cedar Crest Hall. Responding staff documented a harassment.
+CS000026,S008812,2024-08-19,Cedar Crest Hall,Drug Policy Violation,Low,Closed,Reporting officer responded to Cedar Crest Hall regarding a drug policy violation involving the listed student.
+CS000027,S001960,2024-08-19,Cedar Crest Hall,Suspicious Activity,Low,Closed,A suspicious activity was observed and documented at Cedar Crest Hall.
+CS000028,S009571,2024-08-21,Meadowbrook Hall,Weapons Policy Violation,Low,Closed,Campus Safety was dispatched to Meadowbrook Hall after a report of weapons policy violation.
+CS000029,S004529,2024-08-22,Fine Arts Center,Vandalism,High,Closed,Incident occurred at Fine Arts Center. Responding staff documented a vandalism.
+CS000030,S003856,2024-08-22,Stadium,Drug Policy Violation,High,Closed,Incident occurred at Stadium. Responding staff documented a drug policy violation.
+CS000031,S009189,2024-08-23,Aspen Court,Medical Emergency,Low,Closed,Student was involved in a medical emergency reported near Aspen Court.
+CS000032,S006650,2024-08-24,Stadium,Trespassing,Medium,Closed,A trespassing was observed and documented at Stadium.
+CS000033,S004805,2024-08-24,Cedar Crest Hall,Theft,Low,Closed,Reporting officer responded to Cedar Crest Hall regarding a theft involving the listed student.
+CS000034,S001931,2024-08-27,Summit House,Medical Emergency,Low,Under Investigation,A medical emergency was observed and documented at Summit House.
+CS000035,S000034,2024-08-27,Stadium,Medical Emergency,Low,Closed,Incident occurred at Stadium. Responding staff documented a medical emergency.
+CS000036,S004396,2024-08-27,Founders Hall,Fire Alarm Activation,Medium,Closed,Campus Safety was dispatched to Founders Hall after a report of fire alarm activation.
+CS000037,S008906,2024-08-29,Science Building,Harassment,Medium,Closed,Incident occurred at Science Building. Responding staff documented a harassment.
+CS000038,S006557,2024-08-30,Bike Path,Disorderly Conduct,Medium,Closed,A disorderly conduct was observed and documented at Bike Path.
+CS000039,S008239,2024-08-31,Science Building,Trespassing,High,Under Investigation,Incident occurred at Science Building. Responding staff documented a trespassing.
+CS000040,S009891,2024-08-31,Harborview Hall,Vandalism,Low,Open,Student was involved in a vandalism reported near Harborview Hall.
+CS000041,S003759,2024-08-31,Bellview Hall,Trespassing,Critical,Closed,A trespassing was observed and documented at Bellview Hall.
+CS000042,S009145,2024-09-01,Recreation Center,Fire Alarm Activation,Medium,Closed,A fire alarm activation was observed and documented at Recreation Center.
+CS000043,S008594,2024-09-01,Willow Creek Hall,Theft,High,Closed,Campus Safety was dispatched to Willow Creek Hall after a report of theft.
+CS000044,S005430,2024-09-04,Library,Harassment,Low,Closed,Student was involved in a harassment reported near Library.
+CS000045,S009206,2024-09-05,Summit House,Medical Emergency,Low,Closed,A medical emergency was observed and documented at Summit House.
+CS000046,S007440,2024-09-08,Student Union,Medical Emergency,High,Referred to Conduct Board,Incident occurred at Student Union. Responding staff documented a medical emergency.
+CS000047,S000034,2024-09-08,Lakeside Terrace,Theft,Low,Open,Campus Safety was dispatched to Lakeside Terrace after a report of theft.
+CS000048,S009739,2024-09-08,Birchwood Hall,Suspicious Activity,Low,Under Investigation,Campus Safety was dispatched to Birchwood Hall after a report of suspicious activity.
+CS000049,S009675,2024-09-09,Aspen Court,Weapons Policy Violation,Low,Referred to Conduct Board,Student was involved in a weapons policy violation reported near Aspen Court.
+CS000050,S009011,2024-09-10,Bike Path,Weapons Policy Violation,High,Open,A weapons policy violation was observed and documented at Bike Path.
+CS000051,S003242,2024-09-11,Northgate Hall,Disorderly Conduct,Low,Referred to Conduct Board,Student was involved in a disorderly conduct reported near Northgate Hall.
+CS000052,S005392,2024-09-11,Summit House,Vandalism,Low,Closed,A vandalism was observed and documented at Summit House.
+CS000053,S000741,2024-09-11,Student Union,Trespassing,Medium,Referred to Conduct Board,Student was involved in a trespassing reported near Student Union.
+CS000054,S008232,2024-09-11,Founders Hall,Harassment,Low,Under Investigation,A harassment was observed and documented at Founders Hall.
+CS000055,S001322,2024-09-12,Cedar Crest Hall,Alcohol Policy Violation,Low,Under Investigation,Reporting officer responded to Cedar Crest Hall regarding a alcohol policy violation involving the listed student.
+CS000056,S002624,2024-09-12,Lakeside Terrace,Vandalism,Low,Closed,Student was involved in a vandalism reported near Lakeside Terrace.
+CS000057,S008305,2024-09-12,Bellview Hall,Harassment,Low,Closed,Incident occurred at Bellview Hall. Responding staff documented a harassment.
+CS000058,S005607,2024-09-16,Riverbend Hall,Drug Policy Violation,Low,Closed,Campus Safety was dispatched to Riverbend Hall after a report of drug policy violation.
+CS000059,S005049,2024-09-16,Science Building,Theft,High,Closed,Reporting officer responded to Science Building regarding a theft involving the listed student.
+CS000060,S002793,2024-09-16,Library,Alcohol Policy Violation,High,Closed,Reporting officer responded to Library regarding a alcohol policy violation involving the listed student.
+CS000061,S007720,2024-09-19,Highland Hall,Disorderly Conduct,Critical,Closed,Student was involved in a disorderly conduct reported near Highland Hall.
+CS000062,S007535,2024-09-19,Engineering Annex,Fire Alarm Activation,Medium,Closed,Incident occurred at Engineering Annex. Responding staff documented a fire alarm activation.
+CS000063,S001389,2024-09-19,Science Building,Vandalism,Low,Referred to Conduct Board,Campus Safety was dispatched to Science Building after a report of vandalism.
+CS000064,S000928,2024-09-24,Sunrise Commons,Weapons Policy Violation,Low,Closed,Reporting officer responded to Sunrise Commons regarding a weapons policy violation involving the listed student.
+CS000065,S007580,2024-09-25,Bellview Hall,Fire Alarm Activation,Medium,Closed,Campus Safety was dispatched to Bellview Hall after a report of fire alarm activation.
+CS000066,S006947,2024-09-26,Sunrise Commons,Harassment,Medium,Open,Reporting officer responded to Sunrise Commons regarding a harassment involving the listed student.
+CS000067,S008034,2024-09-26,Bike Path,Weapons Policy Violation,Low,Closed,Incident occurred at Bike Path. Responding staff documented a weapons policy violation.
+CS000068,S008648,2024-09-27,Highland Hall,Alcohol Policy Violation,Medium,Closed,Reporting officer responded to Highland Hall regarding a alcohol policy violation involving the listed student.
+CS000069,S004366,2024-09-28,Off-Campus Housing,Medical Emergency,Low,Open,Reporting officer responded to Off-Campus Housing regarding a medical emergency involving the listed student.
+CS000070,S004921,2024-09-29,Founders Hall,Physical Altercation,Medium,Closed,A physical altercation was observed and documented at Founders Hall.
+CS000071,S005819,2024-09-29,Riverbend Hall,Fire Alarm Activation,High,Under Investigation,Campus Safety was dispatched to Riverbend Hall after a report of fire alarm activation.
+CS000072,S009040,2024-10-01,Willow Creek Hall,Vandalism,Low,Closed,Incident occurred at Willow Creek Hall. Responding staff documented a vandalism.
+CS000073,S009646,2024-10-01,Lakeside Terrace,Medical Emergency,Low,Closed,Reporting officer responded to Lakeside Terrace regarding a medical emergency involving the listed student.
+CS000074,S008556,2024-10-01,Meadowbrook Hall,Harassment,Low,Under Investigation,Student was involved in a harassment reported near Meadowbrook Hall.
+CS000075,S002139,2024-10-01,Founders Hall,Trespassing,Low,Under Investigation,Reporting officer responded to Founders Hall regarding a trespassing involving the listed student.
+CS000076,S008944,2024-10-02,Birchwood Hall,Medical Emergency,Low,Closed,A medical emergency was observed and documented at Birchwood Hall.
+CS000077,S003230,2024-10-03,West Parking Garage,Vandalism,Low,Closed,Reporting officer responded to West Parking Garage regarding a vandalism involving the listed student.
+CS000078,S002397,2024-10-04,East Lot,Harassment,Low,Open,A harassment was observed and documented at East Lot.
+CS000079,S001330,2024-10-06,Highland Hall,Physical Altercation,Low,Under Investigation,A physical altercation was observed and documented at Highland Hall.
+CS000080,S001701,2024-10-06,Main Quad,Medical Emergency,Low,Closed,Incident occurred at Main Quad. Responding staff documented a medical emergency.
+CS000081,S004555,2024-10-07,Highland Hall,Medical Emergency,Medium,Closed,Student was involved in a medical emergency reported near Highland Hall.
+CS000082,S001206,2024-10-08,Meadowbrook Hall,Suspicious Activity,Medium,Closed,Student was involved in a suspicious activity reported near Meadowbrook Hall.
+CS000083,S003166,2024-10-08,Founders Hall,Trespassing,Medium,Closed,Campus Safety was dispatched to Founders Hall after a report of trespassing.
+CS000084,S009550,2024-10-10,Summit House,Vandalism,Critical,Closed,Reporting officer responded to Summit House regarding a vandalism involving the listed student.
+CS000085,S009718,2024-10-12,Sunrise Commons,Harassment,Medium,Open,Incident occurred at Sunrise Commons. Responding staff documented a harassment.
+CS000086,S009805,2024-10-12,Bike Path,Noise Complaint,Low,Closed,Incident occurred at Bike Path. Responding staff documented a noise complaint.
+CS000087,S004625,2024-10-15,Recreation Center,Noise Complaint,Medium,Closed,Reporting officer responded to Recreation Center regarding a noise complaint involving the listed student.
+CS000088,S004805,2024-10-15,Recreation Center,Fire Alarm Activation,Low,Closed,Student was involved in a fire alarm activation reported near Recreation Center.
+CS000089,S002051,2024-10-15,Fine Arts Center,Trespassing,Low,Referred to Conduct Board,Campus Safety was dispatched to Fine Arts Center after a report of trespassing.
+CS000090,S008101,2024-10-16,Off-Campus Housing,Vandalism,High,Open,Student was involved in a vandalism reported near Off-Campus Housing.
+CS000091,S008931,2024-10-19,Maple Ridge Hall,Disorderly Conduct,Low,Closed,Incident occurred at Maple Ridge Hall. Responding staff documented a disorderly conduct.
+CS000092,S000005,2024-10-19,Recreation Center,Vandalism,High,Referred to Conduct Board,Incident occurred at Recreation Center. Responding staff documented a vandalism.
+CS000093,S008138,2024-10-19,West Parking Garage,Harassment,High,Closed,Reporting officer responded to West Parking Garage regarding a harassment involving the listed student.
+CS000094,S008960,2024-10-21,Maple Ridge Hall,Physical Altercation,Low,Closed,Incident occurred at Maple Ridge Hall. Responding staff documented a physical altercation.
+CS000095,S008163,2024-10-21,Aspen Court,Suspicious Activity,High,Closed,Reporting officer responded to Aspen Court regarding a suspicious activity involving the listed student.
+CS000096,S002014,2024-10-23,Summit House,Disorderly Conduct,Low,Open,Campus Safety was dispatched to Summit House after a report of disorderly conduct.
+CS000097,S003557,2024-10-23,Engineering Annex,Alcohol Policy Violation,Low,Closed,Student was involved in a alcohol policy violation reported near Engineering Annex.
+CS000098,S008490,2024-10-25,Fine Arts Center,Disorderly Conduct,Low,Closed,Campus Safety was dispatched to Fine Arts Center after a report of disorderly conduct.
+CS000099,S009522,2024-10-26,Engineering Annex,Noise Complaint,Low,Closed,Student was involved in a noise complaint reported near Engineering Annex.
+CS000100,S006647,2024-10-27,Birchwood Hall,Medical Emergency,Medium,Closed,A medical emergency was observed and documented at Birchwood Hall.
+CS000101,S003945,2024-10-27,Maple Ridge Hall,Alcohol Policy Violation,High,Referred to Conduct Board,A alcohol policy violation was observed and documented at Maple Ridge Hall.
+CS000102,S004448,2024-10-28,Highland Hall,Trespassing,Medium,Open,Campus Safety was dispatched to Highland Hall after a report of trespassing.
+CS000103,S002976,2024-10-30,West Parking Garage,Alcohol Policy Violation,Medium,Referred to Conduct Board,Campus Safety was dispatched to West Parking Garage after a report of alcohol policy violation.
+CS000104,S001427,2024-10-30,Meadowbrook Hall,Noise Complaint,Medium,Closed,Student was involved in a noise complaint reported near Meadowbrook Hall.
+CS000105,S000294,2024-10-31,Northgate Hall,Theft,Medium,Closed,Reporting officer responded to Northgate Hall regarding a theft involving the listed student.
+CS000106,S000444,2024-11-02,Highland Hall,Theft,Critical,Closed,Incident occurred at Highland Hall. Responding staff documented a theft.
+CS000107,S009301,2024-11-03,Maple Ridge Hall,Theft,Medium,Closed,A theft was observed and documented at Maple Ridge Hall.
+CS000108,S000619,2024-11-05,Fine Arts Center,Noise Complaint,Low,Closed,A noise complaint was observed and documented at Fine Arts Center.
+CS000109,S009663,2024-11-05,Founders Hall,Theft,Low,Closed,Campus Safety was dispatched to Founders Hall after a report of theft.
+CS000110,S005215,2024-11-07,Northgate Hall,Noise Complaint,Medium,Closed,A noise complaint was observed and documented at Northgate Hall.
+CS000111,S005687,2024-11-08,Fine Arts Center,Alcohol Policy Violation,Low,Closed,A alcohol policy violation was observed and documented at Fine Arts Center.
+CS000112,S002061,2024-11-09,Maple Ridge Hall,Suspicious Activity,Low,Closed,A suspicious activity was observed and documented at Maple Ridge Hall.
+CS000113,S005596,2024-11-09,Fine Arts Center,Medical Emergency,Low,Closed,Incident occurred at Fine Arts Center. Responding staff documented a medical emergency.
+CS000114,S008679,2024-11-09,Lakeside Terrace,Harassment,Low,Closed,Reporting officer responded to Lakeside Terrace regarding a harassment involving the listed student.
+CS000115,S001610,2024-11-09,Birchwood Hall,Weapons Policy Violation,High,Closed,Reporting officer responded to Birchwood Hall regarding a weapons policy violation involving the listed student.
+CS000116,S008093,2024-11-10,Aspen Court,Fire Alarm Activation,Medium,Open,Reporting officer responded to Aspen Court regarding a fire alarm activation involving the listed student.
+CS000117,S006252,2024-11-10,Cedar Crest Hall,Physical Altercation,Medium,Closed,Incident occurred at Cedar Crest Hall. Responding staff documented a physical altercation.
+CS000118,S004848,2024-11-10,Cedar Crest Hall,Alcohol Policy Violation,Medium,Closed,Student was involved in a alcohol policy violation reported near Cedar Crest Hall.
+CS000119,S001767,2024-11-11,Riverbend Hall,Fire Alarm Activation,Medium,Referred to Conduct Board,Incident occurred at Riverbend Hall. Responding staff documented a fire alarm activation.
+CS000120,S007845,2024-11-11,Highland Hall,Weapons Policy Violation,Low,Closed,A weapons policy violation was observed and documented at Highland Hall.
+CS000121,S008886,2024-11-12,Harborview Hall,Fire Alarm Activation,Low,Closed,A fire alarm activation was observed and documented at Harborview Hall.
+CS000122,S003493,2024-11-12,Willow Creek Hall,Alcohol Policy Violation,Medium,Closed,Incident occurred at Willow Creek Hall. Responding staff documented a alcohol policy violation.
+CS000123,S003095,2024-11-13,Meadowbrook Hall,Fire Alarm Activation,Low,Closed,Incident occurred at Meadowbrook Hall. Responding staff documented a fire alarm activation.
+CS000124,S009440,2024-11-13,Library,Fire Alarm Activation,Low,Closed,A fire alarm activation was observed and documented at Library.
+CS000125,S004806,2024-11-16,Willow Creek Hall,Noise Complaint,Low,Closed,Student was involved in a noise complaint reported near Willow Creek Hall.
+CS000126,S004008,2024-11-17,Cedar Crest Hall,Harassment,High,Closed,Student was involved in a harassment reported near Cedar Crest Hall.
+CS000127,S002014,2024-11-17,Maple Ridge Hall,Noise Complaint,Critical,Referred to Conduct Board,Reporting officer responded to Maple Ridge Hall regarding a noise complaint involving the listed student.
+CS000128,S002513,2024-11-18,Founders Hall,Disorderly Conduct,Low,Closed,Incident occurred at Founders Hall. Responding staff documented a disorderly conduct.
+CS000129,S007968,2024-11-20,Maple Ridge Hall,Fire Alarm Activation,Medium,Closed,Student was involved in a fire alarm activation reported near Maple Ridge Hall.
+CS000130,S007444,2024-11-21,Engineering Annex,Suspicious Activity,Low,Closed,Campus Safety was dispatched to Engineering Annex after a report of suspicious activity.
+CS000131,S009489,2024-11-22,Lakeside Terrace,Drug Policy Violation,Low,Closed,Reporting officer responded to Lakeside Terrace regarding a drug policy violation involving the listed student.
+CS000132,S007479,2024-11-22,Founders Hall,Alcohol Policy Violation,Low,Under Investigation,Student was involved in a alcohol policy violation reported near Founders Hall.
+CS000133,S008528,2024-11-23,Library,Alcohol Policy Violation,Low,Closed,Incident occurred at Library. Responding staff documented a alcohol policy violation.
+CS000134,S009487,2024-11-24,Highland Hall,Vandalism,Medium,Closed,Student was involved in a vandalism reported near Highland Hall.
+CS000135,S002124,2024-11-24,Student Union,Noise Complaint,Low,Under Investigation,Student was involved in a noise complaint reported near Student Union.
+CS000136,S001966,2024-11-25,Fine Arts Center,Medical Emergency,Medium,Closed,Incident occurred at Fine Arts Center. Responding staff documented a medical emergency.
+CS000137,S006665,2024-11-26,Recreation Center,Suspicious Activity,Low,Closed,Campus Safety was dispatched to Recreation Center after a report of suspicious activity.
+CS000138,S007860,2024-11-28,Engineering Annex,Drug Policy Violation,Low,Closed,Student was involved in a drug policy violation reported near Engineering Annex.
+CS000139,S002014,2024-11-30,Sunrise Commons,Suspicious Activity,Low,Closed,A suspicious activity was observed and documented at Sunrise Commons.
+CS000140,S002824,2024-12-01,Stadium,Drug Policy Violation,High,Open,Incident occurred at Stadium. Responding staff documented a drug policy violation.
+CS000141,S007181,2024-12-01,Cedar Crest Hall,Theft,Medium,Referred to Conduct Board,A theft was observed and documented at Cedar Crest Hall.
+CS000142,S007267,2024-12-03,East Lot,Alcohol Policy Violation,High,Closed,Incident occurred at East Lot. Responding staff documented a alcohol policy violation.
+CS000143,S001664,2024-12-03,Library,Theft,Medium,Referred to Conduct Board,Reporting officer responded to Library regarding a theft involving the listed student.
+CS000144,S006094,2024-12-03,Bellview Hall,Noise Complaint,High,Closed,Reporting officer responded to Bellview Hall regarding a noise complaint involving the listed student.
+CS000145,S005687,2024-12-04,Sunrise Commons,Alcohol Policy Violation,Medium,Closed,Campus Safety was dispatched to Sunrise Commons after a report of alcohol policy violation.
+CS000146,S003793,2024-12-04,Recreation Center,Theft,Low,Referred to Conduct Board,Incident occurred at Recreation Center. Responding staff documented a theft.
+CS000147,S001980,2024-12-05,Engineering Annex,Harassment,Low,Closed,Reporting officer responded to Engineering Annex regarding a harassment involving the listed student.
+CS000148,S007520,2024-12-07,Main Quad,Noise Complaint,Low,Closed,Student was involved in a noise complaint reported near Main Quad.
+CS000149,S009489,2024-12-07,Birchwood Hall,Drug Policy Violation,Low,Open,Campus Safety was dispatched to Birchwood Hall after a report of drug policy violation.
+CS000150,S008717,2024-12-07,Main Quad,Theft,Low,Open,Incident occurred at Main Quad. Responding staff documented a theft.
+CS000151,S000773,2024-12-15,Fine Arts Center,Suspicious Activity,Low,Closed,Campus Safety was dispatched to Fine Arts Center after a report of suspicious activity.
+CS000152,S008671,2024-12-17,Maple Ridge Hall,Disorderly Conduct,Low,Closed,Incident occurred at Maple Ridge Hall. Responding staff documented a disorderly conduct.
+CS000153,S007438,2024-12-21,Library,Disorderly Conduct,Low,Closed,Campus Safety was dispatched to Library after a report of disorderly conduct.
+CS000154,S001210,2024-12-22,Bellview Hall,Drug Policy Violation,Medium,Referred to Conduct Board,A drug policy violation was observed and documented at Bellview Hall.
+CS000155,S003111,2024-12-25,Student Union,Suspicious Activity,High,Under Investigation,Campus Safety was dispatched to Student Union after a report of suspicious activity.
+CS000156,S003150,2024-12-26,Riverbend Hall,Weapons Policy Violation,Medium,Closed,Incident occurred at Riverbend Hall. Responding staff documented a weapons policy violation.
+CS000157,S008926,2024-12-27,Fine Arts Center,Suspicious Activity,Low,Referred to Conduct Board,A suspicious activity was observed and documented at Fine Arts Center.
+CS000158,S002259,2024-12-27,Lakeside Terrace,Fire Alarm Activation,Low,Referred to Conduct Board,Campus Safety was dispatched to Lakeside Terrace after a report of fire alarm activation.
+CS000159,S000518,2024-12-30,Student Union,Trespassing,Critical,Under Investigation,Student was involved in a trespassing reported near Student Union.
+CS000160,S005659,2024-12-30,Riverbend Hall,Harassment,High,Closed,Incident occurred at Riverbend Hall. Responding staff documented a harassment.
+CS000161,S000484,2024-12-31,Sunrise Commons,Suspicious Activity,Medium,Under Investigation,Student was involved in a suspicious activity reported near Sunrise Commons.
+CS000162,S003567,2025-01-01,Main Quad,Alcohol Policy Violation,Low,Referred to Conduct Board,Campus Safety was dispatched to Main Quad after a report of alcohol policy violation.
+CS000163,S004049,2025-01-04,Student Union,Weapons Policy Violation,Medium,Closed,Incident occurred at Student Union. Responding staff documented a weapons policy violation.
+CS000164,S005871,2025-01-04,Off-Campus Housing,Noise Complaint,Medium,Closed,Reporting officer responded to Off-Campus Housing regarding a noise complaint involving the listed student.
+CS000165,S000296,2025-01-05,Aspen Court,Fire Alarm Activation,Low,Referred to Conduct Board,Incident occurred at Aspen Court. Responding staff documented a fire alarm activation.
+CS000166,S002069,2025-01-05,Birchwood Hall,Vandalism,Critical,Closed,Campus Safety was dispatched to Birchwood Hall after a report of vandalism.
+CS000167,S009882,2025-01-06,Student Union,Disorderly Conduct,Medium,Closed,Reporting officer responded to Student Union regarding a disorderly conduct involving the listed student.
+CS000168,S001057,2025-01-06,Sunrise Commons,Drug Policy Violation,Low,Closed,Incident occurred at Sunrise Commons. Responding staff documented a drug policy violation.
+CS000169,S007763,2025-01-07,Bellview Hall,Harassment,Low,Closed,Campus Safety was dispatched to Bellview Hall after a report of harassment.
+CS000170,S000847,2025-01-07,Willow Creek Hall,Noise Complaint,Low,Closed,Campus Safety was dispatched to Willow Creek Hall after a report of noise complaint.
+CS000171,S007410,2025-01-10,Stadium,Fire Alarm Activation,Low,Closed,Reporting officer responded to Stadium regarding a fire alarm activation involving the listed student.
+CS000172,S000546,2025-01-10,Cedar Crest Hall,Weapons Policy Violation,Medium,Closed,Campus Safety was dispatched to Cedar Crest Hall after a report of weapons policy violation.
+CS000173,S002513,2025-01-13,Founders Hall,Drug Policy Violation,Medium,Under Investigation,A drug policy violation was observed and documented at Founders Hall.
+CS000174,S002463,2025-01-13,Fine Arts Center,Disorderly Conduct,Low,Open,Campus Safety was dispatched to Fine Arts Center after a report of disorderly conduct.
+CS000175,S009007,2025-01-14,Recreation Center,Harassment,Low,Closed,Campus Safety was dispatched to Recreation Center after a report of harassment.
+CS000176,S003917,2025-01-14,Main Quad,Fire Alarm Activation,Low,Closed,Campus Safety was dispatched to Main Quad after a report of fire alarm activation.
+CS000177,S004142,2025-01-15,Off-Campus Housing,Disorderly Conduct,Low,Closed,Incident occurred at Off-Campus Housing. Responding staff documented a disorderly conduct.
+CS000178,S005687,2025-01-15,Cedar Crest Hall,Disorderly Conduct,High,Under Investigation,A disorderly conduct was observed and documented at Cedar Crest Hall.
+CS000179,S006604,2025-01-15,Meadowbrook Hall,Weapons Policy Violation,Critical,Open,Reporting officer responded to Meadowbrook Hall regarding a weapons policy violation involving the listed student.
+CS000180,S005926,2025-01-16,East Lot,Physical Altercation,Low,Closed,Incident occurred at East Lot. Responding staff documented a physical altercation.
+CS000181,S000467,2025-01-16,Bike Path,Fire Alarm Activation,High,Under Investigation,Reporting officer responded to Bike Path regarding a fire alarm activation involving the listed student.
+CS000182,S004625,2025-01-17,Student Union,Physical Altercation,High,Closed,Student was involved in a physical altercation reported near Student Union.
+CS000183,S007183,2025-01-17,Bellview Hall,Trespassing,Low,Closed,A trespassing was observed and documented at Bellview Hall.
+CS000184,S003202,2025-01-18,Lakeside Terrace,Disorderly Conduct,High,Under Investigation,Incident occurred at Lakeside Terrace. Responding staff documented a disorderly conduct.
+CS000185,S009805,2025-01-18,Recreation Center,Suspicious Activity,Medium,Closed,A suspicious activity was observed and documented at Recreation Center.
+CS000186,S004481,2025-01-18,Northgate Hall,Fire Alarm Activation,Medium,Closed,Reporting officer responded to Northgate Hall regarding a fire alarm activation involving the listed student.
+CS000187,S007763,2025-01-19,Meadowbrook Hall,Disorderly Conduct,Medium,Closed,Student was involved in a disorderly conduct reported near Meadowbrook Hall.
+CS000188,S001380,2025-01-21,Science Building,Physical Altercation,Low,Open,Student was involved in a physical altercation reported near Science Building.
+CS000189,S006770,2025-01-22,Recreation Center,Medical Emergency,Low,Closed,Reporting officer responded to Recreation Center regarding a medical emergency involving the listed student.
+CS000190,S003891,2025-01-23,Aspen Court,Drug Policy Violation,Low,Closed,A drug policy violation was observed and documented at Aspen Court.
+CS000191,S006425,2025-01-24,West Parking Garage,Noise Complaint,Low,Closed,Incident occurred at West Parking Garage. Responding staff documented a noise complaint.
+CS000192,S000641,2025-01-25,Northgate Hall,Harassment,Medium,Closed,Reporting officer responded to Northgate Hall regarding a harassment involving the listed student.
+CS000193,S008491,2025-01-27,Meadowbrook Hall,Harassment,Medium,Closed,Campus Safety was dispatched to Meadowbrook Hall after a report of harassment.
+CS000194,S002583,2025-01-29,Student Union,Vandalism,Low,Open,Campus Safety was dispatched to Student Union after a report of vandalism.
+CS000195,S007431,2025-01-29,Recreation Center,Drug Policy Violation,Low,Under Investigation,Reporting officer responded to Recreation Center regarding a drug policy violation involving the listed student.
+CS000196,S003174,2025-01-29,East Lot,Alcohol Policy Violation,Medium,Closed,Student was involved in a alcohol policy violation reported near East Lot.
+CS000197,S001701,2025-01-31,Library,Alcohol Policy Violation,Medium,Under Investigation,Campus Safety was dispatched to Library after a report of alcohol policy violation.
+CS000198,S009189,2025-01-31,Library,Vandalism,Medium,Closed,Campus Safety was dispatched to Library after a report of vandalism.
+CS000199,S004051,2025-02-01,Science Building,Trespassing,Medium,Closed,Campus Safety was dispatched to Science Building after a report of trespassing.
+CS000200,S001956,2025-02-01,Riverbend Hall,Vandalism,High,Closed,Reporting officer responded to Riverbend Hall regarding a vandalism involving the listed student.
+CS000201,S004341,2025-02-03,Main Quad,Medical Emergency,Low,Closed,Campus Safety was dispatched to Main Quad after a report of medical emergency.
+CS000202,S002761,2025-02-04,Founders Hall,Physical Altercation,High,Closed,A physical altercation was observed and documented at Founders Hall.
+CS000203,S007571,2025-02-06,Aspen Court,Theft,Low,Referred to Conduct Board,Student was involved in a theft reported near Aspen Court.
+CS000204,S008769,2025-02-07,Main Quad,Noise Complaint,Low,Open,Student was involved in a noise complaint reported near Main Quad.
+CS000205,S004481,2025-02-08,Stadium,Weapons Policy Violation,Low,Closed,Reporting officer responded to Stadium regarding a weapons policy violation involving the listed student.
+CS000206,S003254,2025-02-08,Engineering Annex,Weapons Policy Violation,Medium,Open,Campus Safety was dispatched to Engineering Annex after a report of weapons policy violation.
+CS000207,S000689,2025-02-08,Bike Path,Trespassing,Low,Closed,Student was involved in a trespassing reported near Bike Path.
+CS000208,S007491,2025-02-09,West Parking Garage,Weapons Policy Violation,Low,Open,Reporting officer responded to West Parking Garage regarding a weapons policy violation involving the listed student.
+CS000209,S002069,2025-02-10,Lakeside Terrace,Noise Complaint,Low,Closed,Student was involved in a noise complaint reported near Lakeside Terrace.
+CS000210,S009105,2025-02-11,Fine Arts Center,Harassment,Low,Under Investigation,Student was involved in a harassment reported near Fine Arts Center.
+CS000211,S006316,2025-02-13,Summit House,Noise Complaint,Low,Open,Campus Safety was dispatched to Summit House after a report of noise complaint.
+CS000212,S006318,2025-02-14,Lakeside Terrace,Trespassing,Medium,Closed,Student was involved in a trespassing reported near Lakeside Terrace.
+CS000213,S002043,2025-02-14,Maple Ridge Hall,Physical Altercation,Low,Closed,Incident occurred at Maple Ridge Hall. Responding staff documented a physical altercation.
+CS000214,S003209,2025-02-15,Science Building,Trespassing,Low,Referred to Conduct Board,Student was involved in a trespassing reported near Science Building.
+CS000215,S001092,2025-02-15,Bike Path,Trespassing,Medium,Closed,Campus Safety was dispatched to Bike Path after a report of trespassing.
+CS000216,S005875,2025-02-16,Student Union,Theft,Low,Open,Campus Safety was dispatched to Student Union after a report of theft.
+CS000217,S002943,2025-02-16,Summit House,Harassment,Low,Closed,A harassment was observed and documented at Summit House.
+CS000218,S007906,2025-02-18,Off-Campus Housing,Noise Complaint,High,Open,Student was involved in a noise complaint reported near Off-Campus Housing.
+CS000219,S009583,2025-02-20,West Parking Garage,Drug Policy Violation,High,Closed,Campus Safety was dispatched to West Parking Garage after a report of drug policy violation.
+CS000220,S005269,2025-02-21,Stadium,Physical Altercation,Low,Closed,Campus Safety was dispatched to Stadium after a report of physical altercation.
+CS000221,S003159,2025-02-22,Science Building,Fire Alarm Activation,Low,Closed,Incident occurred at Science Building. Responding staff documented a fire alarm activation.
+CS000222,S002014,2025-02-23,Summit House,Medical Emergency,Critical,Under Investigation,Campus Safety was dispatched to Summit House after a report of medical emergency.
+CS000223,S005260,2025-02-28,Science Building,Theft,Low,Open,Campus Safety was dispatched to Science Building after a report of theft.
+CS000224,S007028,2025-02-28,Aspen Court,Trespassing,Low,Closed,Reporting officer responded to Aspen Court regarding a trespassing involving the listed student.
+CS000225,S007029,2025-03-02,Aspen Court,Physical Altercation,Medium,Closed,A physical altercation was observed and documented at Aspen Court.
+CS000226,S006093,2025-03-06,Bike Path,Noise Complaint,Low,Open,Student was involved in a noise complaint reported near Bike Path.
+CS000227,S009805,2025-03-07,Science Building,Medical Emergency,High,Referred to Conduct Board,Student was involved in a medical emergency reported near Science Building.
+CS000228,S000458,2025-03-08,Maple Ridge Hall,Noise Complaint,Low,Closed,Student was involved in a noise complaint reported near Maple Ridge Hall.
+CS000229,S006921,2025-03-08,Sunrise Commons,Suspicious Activity,Medium,Closed,Reporting officer responded to Sunrise Commons regarding a suspicious activity involving the listed student.
+CS000230,S006169,2025-03-08,Aspen Court,Fire Alarm Activation,Low,Closed,Student was involved in a fire alarm activation reported near Aspen Court.
+CS000231,S009057,2025-03-09,Fine Arts Center,Alcohol Policy Violation,Medium,Closed,Campus Safety was dispatched to Fine Arts Center after a report of alcohol policy violation.
+CS000232,S006446,2025-03-09,Founders Hall,Alcohol Policy Violation,Low,Closed,Campus Safety was dispatched to Founders Hall after a report of alcohol policy violation.
+CS000233,S007472,2025-03-10,Harborview Hall,Alcohol Policy Violation,Medium,Under Investigation,Campus Safety was dispatched to Harborview Hall after a report of alcohol policy violation.
+CS000234,S000964,2025-03-10,Summit House,Weapons Policy Violation,Low,Closed,Campus Safety was dispatched to Summit House after a report of weapons policy violation.
+CS000235,S005508,2025-03-12,East Lot,Noise Complaint,Low,Closed,Reporting officer responded to East Lot regarding a noise complaint involving the listed student.
+CS000236,S007440,2025-03-15,Recreation Center,Trespassing,Medium,Closed,Incident occurred at Recreation Center. Responding staff documented a trespassing.
+CS000237,S002596,2025-03-15,Student Union,Trespassing,High,Closed,Reporting officer responded to Student Union regarding a trespassing involving the listed student.
+CS000238,S002711,2025-03-17,Science Building,Fire Alarm Activation,Medium,Under Investigation,Reporting officer responded to Science Building regarding a fire alarm activation involving the listed student.
+CS000239,S007125,2025-03-17,Fine Arts Center,Trespassing,Medium,Closed,Reporting officer responded to Fine Arts Center regarding a trespassing involving the listed student.
+CS000240,S009540,2025-03-17,Summit House,Physical Altercation,Critical,Closed,A physical altercation was observed and documented at Summit House.
+CS000241,S008353,2025-03-17,Fine Arts Center,Alcohol Policy Violation,Low,Closed,A alcohol policy violation was observed and documented at Fine Arts Center.
+CS000242,S000641,2025-03-21,Fine Arts Center,Physical Altercation,Medium,Under Investigation,Campus Safety was dispatched to Fine Arts Center after a report of physical altercation.
+CS000243,S004230,2025-03-21,Willow Creek Hall,Vandalism,High,Referred to Conduct Board,A vandalism was observed and documented at Willow Creek Hall.
+CS000244,S000810,2025-03-22,Meadowbrook Hall,Medical Emergency,Low,Referred to Conduct Board,A medical emergency was observed and documented at Meadowbrook Hall.
+CS000245,S001778,2025-03-22,Highland Hall,Physical Altercation,Low,Closed,Campus Safety was dispatched to Highland Hall after a report of physical altercation.
+CS000246,S006813,2025-03-22,Stadium,Suspicious Activity,Low,Closed,Student was involved in a suspicious activity reported near Stadium.
+CS000247,S009681,2025-03-23,Student Union,Theft,Low,Closed,Campus Safety was dispatched to Student Union after a report of theft.
+CS000248,S002291,2025-03-23,Lakeside Terrace,Suspicious Activity,High,Closed,Incident occurred at Lakeside Terrace. Responding staff documented a suspicious activity.
+CS000249,S009471,2025-03-24,Willow Creek Hall,Theft,High,Closed,Campus Safety was dispatched to Willow Creek Hall after a report of theft.
+CS000250,S009805,2025-03-26,Science Building,Trespassing,Low,Under Investigation,Incident occurred at Science Building. Responding staff documented a trespassing.
+CS000251,S002550,2025-03-26,Highland Hall,Fire Alarm Activation,Low,Open,Reporting officer responded to Highland Hall regarding a fire alarm activation involving the listed student.
+CS000252,S009063,2025-03-26,Northgate Hall,Drug Policy Violation,High,Under Investigation,Campus Safety was dispatched to Northgate Hall after a report of drug policy violation.
+CS000253,S001866,2025-03-28,Maple Ridge Hall,Physical Altercation,High,Closed,Student was involved in a physical altercation reported near Maple Ridge Hall.
+CS000254,S009467,2025-03-28,Library,Physical Altercation,Low,Closed,Student was involved in a physical altercation reported near Library.
+CS000255,S004023,2025-03-28,East Lot,Harassment,High,Closed,Incident occurred at East Lot. Responding staff documented a harassment.
+CS000256,S000281,2025-03-29,Harborview Hall,Drug Policy Violation,Low,Referred to Conduct Board,Student was involved in a drug policy violation reported near Harborview Hall.
+CS000257,S008876,2025-03-29,Northgate Hall,Vandalism,High,Open,Incident occurred at Northgate Hall. Responding staff documented a vandalism.
+CS000258,S004165,2025-03-29,Highland Hall,Fire Alarm Activation,Critical,Closed,Student was involved in a fire alarm activation reported near Highland Hall.
+CS000259,S006402,2025-03-31,Riverbend Hall,Noise Complaint,Low,Closed,A noise complaint was observed and documented at Riverbend Hall.
+CS000260,S009426,2025-03-31,Bike Path,Suspicious Activity,Low,Open,Student was involved in a suspicious activity reported near Bike Path.
+CS000261,S004612,2025-04-01,Summit House,Weapons Policy Violation,Low,Closed,A weapons policy violation was observed and documented at Summit House.
+CS000262,S008367,2025-04-02,Riverbend Hall,Drug Policy Violation,Medium,Referred to Conduct Board,Incident occurred at Riverbend Hall. Responding staff documented a drug policy violation.
+CS000263,S003973,2025-04-02,Maple Ridge Hall,Physical Altercation,Critical,Closed,A physical altercation was observed and documented at Maple Ridge Hall.
+CS000264,S007003,2025-04-02,Maple Ridge Hall,Drug Policy Violation,Low,Closed,A drug policy violation was observed and documented at Maple Ridge Hall.
+CS000265,S002561,2025-04-03,Fine Arts Center,Fire Alarm Activation,Medium,Under Investigation,Student was involved in a fire alarm activation reported near Fine Arts Center.
+CS000266,S001197,2025-04-05,Birchwood Hall,Physical Altercation,Critical,Closed,A physical altercation was observed and documented at Birchwood Hall.
+CS000267,S006318,2025-04-05,East Lot,Medical Emergency,High,Open,Campus Safety was dispatched to East Lot after a report of medical emergency.
+CS000268,S001486,2025-04-05,Sunrise Commons,Drug Policy Violation,High,Closed,Reporting officer responded to Sunrise Commons regarding a drug policy violation involving the listed student.
+CS000269,S007520,2025-04-08,Maple Ridge Hall,Weapons Policy Violation,Low,Closed,Incident occurred at Maple Ridge Hall. Responding staff documented a weapons policy violation.
+CS000270,S006228,2025-04-10,Riverbend Hall,Vandalism,Medium,Closed,Campus Safety was dispatched to Riverbend Hall after a report of vandalism.
+CS000271,S003912,2025-04-10,Main Quad,Drug Policy Violation,Low,Referred to Conduct Board,A drug policy violation was observed and documented at Main Quad.
+CS000272,S001421,2025-04-11,Summit House,Fire Alarm Activation,Low,Referred to Conduct Board,Incident occurred at Summit House. Responding staff documented a fire alarm activation.
+CS000273,S001412,2025-04-11,Student Union,Medical Emergency,Medium,Closed,Reporting officer responded to Student Union regarding a medical emergency involving the listed student.
+CS000274,S004395,2025-04-12,Recreation Center,Disorderly Conduct,Low,Closed,Campus Safety was dispatched to Recreation Center after a report of disorderly conduct.
+CS000275,S002119,2025-04-13,Northgate Hall,Disorderly Conduct,Medium,Closed,Reporting officer responded to Northgate Hall regarding a disorderly conduct involving the listed student.
+CS000276,S002904,2025-04-13,Main Quad,Disorderly Conduct,Medium,Closed,Incident occurred at Main Quad. Responding staff documented a disorderly conduct.
+CS000277,S004470,2025-04-15,Meadowbrook Hall,Disorderly Conduct,Low,Open,Student was involved in a disorderly conduct reported near Meadowbrook Hall.
+CS000278,S000034,2025-04-15,Bellview Hall,Drug Policy Violation,Medium,Closed,Student was involved in a drug policy violation reported near Bellview Hall.
+CS000279,S007811,2025-04-17,Riverbend Hall,Trespassing,Low,Under Investigation,Student was involved in a trespassing reported near Riverbend Hall.
+CS000280,S008660,2025-04-18,Highland Hall,Vandalism,Medium,Open,Student was involved in a vandalism reported near Highland Hall.
+CS000281,S009805,2025-04-18,Birchwood Hall,Harassment,High,Closed,Student was involved in a harassment reported near Birchwood Hall.
+CS000282,S005824,2025-04-19,Summit House,Theft,Medium,Closed,A theft was observed and documented at Summit House.
+CS000283,S006197,2025-04-19,Northgate Hall,Medical Emergency,Low,Closed,A medical emergency was observed and documented at Northgate Hall.
+CS000284,S001659,2025-04-23,Birchwood Hall,Physical Altercation,Low,Closed,Incident occurred at Birchwood Hall. Responding staff documented a physical altercation.
+CS000285,S007865,2025-04-23,Stadium,Vandalism,Medium,Closed,A vandalism was observed and documented at Stadium.
+CS000286,S005509,2025-04-24,Bellview Hall,Alcohol Policy Violation,Low,Closed,Student was involved in a alcohol policy violation reported near Bellview Hall.
+CS000287,S003850,2025-04-26,Birchwood Hall,Medical Emergency,High,Closed,Student was involved in a medical emergency reported near Birchwood Hall.
+CS000288,S006503,2025-04-26,Meadowbrook Hall,Medical Emergency,Low,Closed,A medical emergency was observed and documented at Meadowbrook Hall.
+CS000289,S004844,2025-04-27,Summit House,Drug Policy Violation,Low,Closed,Incident occurred at Summit House. Responding staff documented a drug policy violation.
+CS000290,S000584,2025-04-27,Meadowbrook Hall,Harassment,High,Referred to Conduct Board,Incident occurred at Meadowbrook Hall. Responding staff documented a harassment.
+CS000291,S006318,2025-04-28,West Parking Garage,Medical Emergency,Medium,Closed,Reporting officer responded to West Parking Garage regarding a medical emergency involving the listed student.
+CS000292,S000493,2025-04-29,Birchwood Hall,Physical Altercation,Medium,Under Investigation,Incident occurred at Birchwood Hall. Responding staff documented a physical altercation.
+CS000293,S008461,2025-04-30,Library,Trespassing,Low,Referred to Conduct Board,Reporting officer responded to Library regarding a trespassing involving the listed student.
+CS000294,S003530,2025-05-01,Off-Campus Housing,Drug Policy Violation,Low,Closed,Reporting officer responded to Off-Campus Housing regarding a drug policy violation involving the listed student.
+CS000295,S001956,2025-05-02,Off-Campus Housing,Vandalism,Low,Referred to Conduct Board,Student was involved in a vandalism reported near Off-Campus Housing.
+CS000296,S004479,2025-05-02,Bike Path,Noise Complaint,Medium,Under Investigation,Campus Safety was dispatched to Bike Path after a report of noise complaint.
+CS000297,S002660,2025-05-03,Off-Campus Housing,Theft,Critical,Closed,Student was involved in a theft reported near Off-Campus Housing.
+CS000298,S004951,2025-05-04,Northgate Hall,Drug Policy Violation,Low,Closed,A drug policy violation was observed and documented at Northgate Hall.
+CS000299,S000888,2025-05-04,Library,Disorderly Conduct,Medium,Closed,A disorderly conduct was observed and documented at Library.
+CS000300,S008973,2025-05-04,Meadowbrook Hall,Theft,Medium,Under Investigation,A theft was observed and documented at Meadowbrook Hall.
+CS000301,S008782,2025-05-05,Founders Hall,Noise Complaint,Critical,Closed,Incident occurred at Founders Hall. Responding staff documented a noise complaint.
+CS000302,S000758,2025-05-05,Summit House,Weapons Policy Violation,Medium,Closed,Student was involved in a weapons policy violation reported near Summit House.
+CS000303,S001723,2025-05-06,Maple Ridge Hall,Harassment,Low,Closed,Student was involved in a harassment reported near Maple Ridge Hall.
+CS000304,S000788,2025-05-06,Recreation Center,Physical Altercation,Medium,Closed,Student was involved in a physical altercation reported near Recreation Center.
+CS000305,S004006,2025-05-06,Library,Alcohol Policy Violation,Medium,Under Investigation,A alcohol policy violation was observed and documented at Library.
+CS000306,S006337,2025-05-07,Birchwood Hall,Medical Emergency,Low,Closed,Incident occurred at Birchwood Hall. Responding staff documented a medical emergency.
+CS000307,S000371,2025-05-07,Northgate Hall,Disorderly Conduct,Medium,Closed,A disorderly conduct was observed and documented at Northgate Hall.
+CS000308,S009706,2025-05-08,Bellview Hall,Harassment,Low,Open,Incident occurred at Bellview Hall. Responding staff documented a harassment.
+CS000309,S005824,2025-05-09,Student Union,Harassment,Low,Closed,Student was involved in a harassment reported near Student Union.
+CS000310,S005495,2025-05-09,Science Building,Physical Altercation,Medium,Closed,Campus Safety was dispatched to Science Building after a report of physical altercation.
+CS000311,S008483,2025-05-12,Founders Hall,Alcohol Policy Violation,High,Referred to Conduct Board,Reporting officer responded to Founders Hall regarding a alcohol policy violation involving the listed student.
+CS000312,S005105,2025-05-13,Riverbend Hall,Harassment,Low,Under Investigation,Student was involved in a harassment reported near Riverbend Hall.
+CS000313,S002417,2025-05-15,Harborview Hall,Disorderly Conduct,Low,Closed,Reporting officer responded to Harborview Hall regarding a disorderly conduct involving the listed student.
+CS000314,S005638,2025-05-15,Engineering Annex,Medical Emergency,Low,Closed,Reporting officer responded to Engineering Annex regarding a medical emergency involving the listed student.
+CS000315,S004686,2025-05-16,Riverbend Hall,Trespassing,Low,Closed,Student was involved in a trespassing reported near Riverbend Hall.
+CS000316,S007211,2025-05-17,Harborview Hall,Fire Alarm Activation,Low,Referred to Conduct Board,A fire alarm activation was observed and documented at Harborview Hall.
+CS000317,S005548,2025-05-17,Student Union,Disorderly Conduct,Low,Referred to Conduct Board,A disorderly conduct was observed and documented at Student Union.
+CS000318,S004714,2025-05-18,Lakeside Terrace,Weapons Policy Violation,Low,Closed,A weapons policy violation was observed and documented at Lakeside Terrace.
+CS000319,S002363,2025-05-19,Summit House,Disorderly Conduct,High,Closed,Reporting officer responded to Summit House regarding a disorderly conduct involving the listed student.
+CS000320,S005700,2025-05-20,Maple Ridge Hall,Drug Policy Violation,Low,Closed,Student was involved in a drug policy violation reported near Maple Ridge Hall.
+CS000321,S005591,2025-05-20,Fine Arts Center,Theft,High,Closed,Student was involved in a theft reported near Fine Arts Center.
+CS000322,S008812,2025-05-21,Student Union,Noise Complaint,Medium,Closed,Incident occurred at Student Union. Responding staff documented a noise complaint.
+CS000323,S005392,2025-05-21,Birchwood Hall,Alcohol Policy Violation,Low,Open,Reporting officer responded to Birchwood Hall regarding a alcohol policy violation involving the listed student.
+CS000324,S004903,2025-05-22,Northgate Hall,Physical Altercation,Medium,Closed,Incident occurred at Northgate Hall. Responding staff documented a physical altercation.
+CS000325,S006284,2025-05-22,Summit House,Theft,Low,Under Investigation,A theft was observed and documented at Summit House.
+CS000326,S003981,2025-05-25,Sunrise Commons,Noise Complaint,Low,Closed,Campus Safety was dispatched to Sunrise Commons after a report of noise complaint.
+CS000327,S008780,2025-05-27,East Lot,Suspicious Activity,Low,Closed,Incident occurred at East Lot. Responding staff documented a suspicious activity.
+CS000328,S001815,2025-05-29,Highland Hall,Suspicious Activity,Critical,Closed,Campus Safety was dispatched to Highland Hall after a report of suspicious activity.
+CS000329,S007860,2025-05-30,Main Quad,Alcohol Policy Violation,Medium,Closed,A alcohol policy violation was observed and documented at Main Quad.
+CS000330,S003828,2025-05-31,Aspen Court,Noise Complaint,Medium,Referred to Conduct Board,Student was involved in a noise complaint reported near Aspen Court.
+CS000331,S006599,2025-06-02,West Parking Garage,Drug Policy Violation,Medium,Under Investigation,Reporting officer responded to West Parking Garage regarding a drug policy violation involving the listed student.
+CS000332,S005596,2025-06-02,Science Building,Trespassing,Low,Referred to Conduct Board,Reporting officer responded to Science Building regarding a trespassing involving the listed student.
+CS000333,S006364,2025-06-03,Science Building,Vandalism,Low,Open,Incident occurred at Science Building. Responding staff documented a vandalism.
+CS000334,S005266,2025-06-03,Founders Hall,Disorderly Conduct,Medium,Closed,Reporting officer responded to Founders Hall regarding a disorderly conduct involving the listed student.
+CS000335,S001980,2025-06-03,Cedar Crest Hall,Medical Emergency,Low,Open,Reporting officer responded to Cedar Crest Hall regarding a medical emergency involving the listed student.
+CS000336,S002093,2025-06-03,Fine Arts Center,Theft,Medium,Referred to Conduct Board,Incident occurred at Fine Arts Center. Responding staff documented a theft.
+CS000337,S007271,2025-06-03,Northgate Hall,Alcohol Policy Violation,Low,Open,Student was involved in a alcohol policy violation reported near Northgate Hall.
+CS000338,S007673,2025-06-05,Recreation Center,Harassment,Medium,Closed,Campus Safety was dispatched to Recreation Center after a report of harassment.
+CS000339,S007403,2025-06-07,Engineering Annex,Fire Alarm Activation,Medium,Under Investigation,Incident occurred at Engineering Annex. Responding staff documented a fire alarm activation.
+CS000340,S001714,2025-06-08,Founders Hall,Alcohol Policy Violation,Low,Open,Campus Safety was dispatched to Founders Hall after a report of alcohol policy violation.
+CS000341,S004894,2025-06-10,Bike Path,Harassment,High,Closed,Student was involved in a harassment reported near Bike Path.
+CS000342,S000207,2025-06-10,Meadowbrook Hall,Alcohol Policy Violation,Low,Under Investigation,Incident occurred at Meadowbrook Hall. Responding staff documented a alcohol policy violation.
+CS000343,S002749,2025-06-10,Bellview Hall,Weapons Policy Violation,Medium,Open,Campus Safety was dispatched to Bellview Hall after a report of weapons policy violation.
+CS000344,S005995,2025-06-11,Bike Path,Suspicious Activity,Medium,Under Investigation,Student was involved in a suspicious activity reported near Bike Path.
+CS000345,S004966,2025-06-11,Fine Arts Center,Theft,Critical,Closed,A theft was observed and documented at Fine Arts Center.
+CS000346,S005753,2025-06-12,Fine Arts Center,Vandalism,Low,Closed,Incident occurred at Fine Arts Center. Responding staff documented a vandalism.
+CS000347,S005087,2025-06-14,Northgate Hall,Theft,Low,Closed,Reporting officer responded to Northgate Hall regarding a theft involving the listed student.
+CS000348,S004572,2025-06-16,Harborview Hall,Harassment,Low,Under Investigation,Student was involved in a harassment reported near Harborview Hall.
+CS000349,S003352,2025-06-16,Meadowbrook Hall,Theft,Medium,Closed,A theft was observed and documented at Meadowbrook Hall.
+CS000350,S003688,2025-06-16,Recreation Center,Disorderly Conduct,Medium,Under Investigation,Campus Safety was dispatched to Recreation Center after a report of disorderly conduct.
+CS000351,S000715,2025-06-17,Library,Fire Alarm Activation,Medium,Under Investigation,Reporting officer responded to Library regarding a fire alarm activation involving the listed student.
+CS000352,S008561,2025-06-18,Meadowbrook Hall,Theft,High,Closed,Reporting officer responded to Meadowbrook Hall regarding a theft involving the listed student.
+CS000353,S002595,2025-06-18,Riverbend Hall,Trespassing,Medium,Closed,Reporting officer responded to Riverbend Hall regarding a trespassing involving the listed student.
+CS000354,S001889,2025-06-21,Highland Hall,Vandalism,Low,Closed,A vandalism was observed and documented at Highland Hall.
+CS000355,S004849,2025-06-21,Cedar Crest Hall,Weapons Policy Violation,Low,Closed,A weapons policy violation was observed and documented at Cedar Crest Hall.
+CS000356,S004860,2025-06-21,West Parking Garage,Physical Altercation,High,Under Investigation,Incident occurred at West Parking Garage. Responding staff documented a physical altercation.
+CS000357,S003467,2025-06-22,Cedar Crest Hall,Alcohol Policy Violation,Medium,Open,Reporting officer responded to Cedar Crest Hall regarding a alcohol policy violation involving the listed student.
+CS000358,S006506,2025-06-24,Fine Arts Center,Alcohol Policy Violation,Medium,Closed,Reporting officer responded to Fine Arts Center regarding a alcohol policy violation involving the listed student.
+CS000359,S007825,2025-06-26,Recreation Center,Medical Emergency,Low,Open,A medical emergency was observed and documented at Recreation Center.
+CS000360,S004407,2025-06-28,Willow Creek Hall,Alcohol Policy Violation,Low,Closed,Reporting officer responded to Willow Creek Hall regarding a alcohol policy violation involving the listed student.
+CS000361,S006114,2025-06-30,Stadium,Disorderly Conduct,High,Closed,Incident occurred at Stadium. Responding staff documented a disorderly conduct.
+CS000362,S000317,2025-06-30,Highland Hall,Noise Complaint,Medium,Closed,Student was involved in a noise complaint reported near Highland Hall.
+CS000363,S006629,2025-07-03,Birchwood Hall,Physical Altercation,High,Closed,A physical altercation was observed and documented at Birchwood Hall.
+CS000364,S006625,2025-07-03,Science Building,Trespassing,Critical,Referred to Conduct Board,Student was involved in a trespassing reported near Science Building.
+CS000365,S006157,2025-07-06,Northgate Hall,Physical Altercation,High,Closed,Student was involved in a physical altercation reported near Northgate Hall.
+CS000366,S003495,2025-07-07,Harborview Hall,Theft,Low,Closed,Student was involved in a theft reported near Harborview Hall.
+CS000367,S001658,2025-07-08,Summit House,Suspicious Activity,Low,Closed,Incident occurred at Summit House. Responding staff documented a suspicious activity.
+CS000368,S005638,2025-07-10,East Lot,Harassment,Medium,Referred to Conduct Board,A harassment was observed and documented at East Lot.
+CS000369,S006931,2025-07-11,Fine Arts Center,Physical Altercation,Medium,Under Investigation,Campus Safety was dispatched to Fine Arts Center after a report of physical altercation.
+CS000370,S005557,2025-07-12,Birchwood Hall,Alcohol Policy Violation,Low,Referred to Conduct Board,Reporting officer responded to Birchwood Hall regarding a alcohol policy violation involving the listed student.
+CS000371,S003335,2025-07-13,Harborview Hall,Alcohol Policy Violation,Medium,Closed,Campus Safety was dispatched to Harborview Hall after a report of alcohol policy violation.
+CS000372,S008513,2025-07-13,Science Building,Fire Alarm Activation,Medium,Closed,Student was involved in a fire alarm activation reported near Science Building.
+CS000373,S006459,2025-07-15,Northgate Hall,Disorderly Conduct,Medium,Open,Campus Safety was dispatched to Northgate Hall after a report of disorderly conduct.
+CS000374,S004199,2025-07-16,Science Building,Disorderly Conduct,Low,Closed,A disorderly conduct was observed and documented at Science Building.
+CS000375,S006007,2025-07-18,Fine Arts Center,Medical Emergency,Low,Open,Reporting officer responded to Fine Arts Center regarding a medical emergency involving the listed student.
+CS000376,S009871,2025-07-19,Northgate Hall,Physical Altercation,Medium,Closed,Student was involved in a physical altercation reported near Northgate Hall.
+CS000377,S008025,2025-07-20,Recreation Center,Medical Emergency,Low,Closed,Reporting officer responded to Recreation Center regarding a medical emergency involving the listed student.
+CS000378,S001943,2025-07-21,Maple Ridge Hall,Alcohol Policy Violation,Medium,Closed,Student was involved in a alcohol policy violation reported near Maple Ridge Hall.
+CS000379,S009958,2025-07-21,Aspen Court,Alcohol Policy Violation,Critical,Under Investigation,Student was involved in a alcohol policy violation reported near Aspen Court.
+CS000380,S000992,2025-07-21,West Parking Garage,Physical Altercation,Low,Closed,Incident occurred at West Parking Garage. Responding staff documented a physical altercation.
+CS000381,S009040,2025-07-23,Lakeside Terrace,Alcohol Policy Violation,High,Closed,Campus Safety was dispatched to Lakeside Terrace after a report of alcohol policy violation.
+CS000382,S007596,2025-07-23,Riverbend Hall,Theft,Low,Closed,Reporting officer responded to Riverbend Hall regarding a theft involving the listed student.
+CS000383,S009543,2025-07-24,West Parking Garage,Alcohol Policy Violation,Low,Closed,Incident occurred at West Parking Garage. Responding staff documented a alcohol policy violation.
+CS000384,S001343,2025-07-24,Sunrise Commons,Harassment,Medium,Open,Incident occurred at Sunrise Commons. Responding staff documented a harassment.
+CS000385,S005514,2025-07-27,Highland Hall,Harassment,High,Closed,Reporting officer responded to Highland Hall regarding a harassment involving the listed student.
+CS000386,S002848,2025-07-28,Cedar Crest Hall,Medical Emergency,Low,Closed,Reporting officer responded to Cedar Crest Hall regarding a medical emergency involving the listed student.
+CS000387,S002051,2025-07-28,Fine Arts Center,Harassment,Medium,Closed,Student was involved in a harassment reported near Fine Arts Center.
+CS000388,S002150,2025-07-29,Cedar Crest Hall,Theft,Low,Closed,Incident occurred at Cedar Crest Hall. Responding staff documented a theft.
+CS000389,S003045,2025-07-30,Cedar Crest Hall,Theft,Medium,Closed,Incident occurred at Cedar Crest Hall. Responding staff documented a theft.
+CS000390,S006694,2025-07-31,Engineering Annex,Harassment,High,Closed,A harassment was observed and documented at Engineering Annex.
+CS000391,S003670,2025-08-01,Northgate Hall,Noise Complaint,Medium,Closed,Reporting officer responded to Northgate Hall regarding a noise complaint involving the listed student.
+CS000392,S005677,2025-08-02,Sunrise Commons,Trespassing,Low,Closed,Incident occurred at Sunrise Commons. Responding staff documented a trespassing.
+CS000393,S009000,2025-08-02,Student Union,Fire Alarm Activation,High,Under Investigation,Reporting officer responded to Student Union regarding a fire alarm activation involving the listed student.
+CS000394,S004479,2025-08-02,Stadium,Drug Policy Violation,Medium,Closed,A drug policy violation was observed and documented at Stadium.
+CS000395,S009153,2025-08-02,Stadium,Fire Alarm Activation,Medium,Closed,Reporting officer responded to Stadium regarding a fire alarm activation involving the listed student.
+CS000396,S007880,2025-08-05,Off-Campus Housing,Suspicious Activity,Medium,Closed,Incident occurred at Off-Campus Housing. Responding staff documented a suspicious activity.
+CS000397,S005964,2025-08-11,Sunrise Commons,Fire Alarm Activation,Low,Closed,Student was involved in a fire alarm activation reported near Sunrise Commons.
+CS000398,S004625,2025-08-11,Aspen Court,Vandalism,Medium,Under Investigation,Incident occurred at Aspen Court. Responding staff documented a vandalism.
+CS000399,S007440,2025-08-11,Cedar Crest Hall,Trespassing,Low,Under Investigation,A trespassing was observed and documented at Cedar Crest Hall.
+CS000400,S007902,2025-08-11,Student Union,Vandalism,Medium,Referred to Conduct Board,A vandalism was observed and documented at Student Union.
+CS000401,S009522,2025-08-11,Willow Creek Hall,Fire Alarm Activation,Medium,Closed,Incident occurred at Willow Creek Hall. Responding staff documented a fire alarm activation.
+CS000402,S002388,2025-08-14,Science Building,Noise Complaint,Medium,Closed,Reporting officer responded to Science Building regarding a noise complaint involving the listed student.
+CS000403,S000981,2025-08-15,Sunrise Commons,Drug Policy Violation,Low,Closed,Student was involved in a drug policy violation reported near Sunrise Commons.
+CS000404,S008513,2025-08-15,Birchwood Hall,Vandalism,Critical,Referred to Conduct Board,Incident occurred at Birchwood Hall. Responding staff documented a vandalism.
+CS000405,S003022,2025-08-15,Engineering Annex,Weapons Policy Violation,Low,Closed,Incident occurred at Engineering Annex. Responding staff documented a weapons policy violation.
+CS000406,S007200,2025-08-16,Harborview Hall,Noise Complaint,Low,Under Investigation,Student was involved in a noise complaint reported near Harborview Hall.
+CS000407,S008614,2025-08-16,Maple Ridge Hall,Harassment,Low,Closed,Reporting officer responded to Maple Ridge Hall regarding a harassment involving the listed student.
+CS000408,S003697,2025-08-17,Bike Path,Drug Policy Violation,Low,Closed,A drug policy violation was observed and documented at Bike Path.
+CS000409,S005215,2025-08-17,East Lot,Theft,Medium,Closed,Incident occurred at East Lot. Responding staff documented a theft.
+CS000410,S002307,2025-08-18,Northgate Hall,Theft,Low,Closed,A theft was observed and documented at Northgate Hall.
+CS000411,S002970,2025-08-18,Bike Path,Trespassing,Medium,Closed,Student was involved in a trespassing reported near Bike Path.
+CS000412,S005544,2025-08-19,Science Building,Harassment,Medium,Closed,Campus Safety was dispatched to Science Building after a report of harassment.
+CS000413,S001380,2025-08-20,Engineering Annex,Drug Policy Violation,Low,Closed,Student was involved in a drug policy violation reported near Engineering Annex.
+CS000414,S009255,2025-08-21,Main Quad,Alcohol Policy Violation,Medium,Closed,Student was involved in a alcohol policy violation reported near Main Quad.
+CS000415,S004844,2025-08-21,Fine Arts Center,Physical Altercation,High,Open,Reporting officer responded to Fine Arts Center regarding a physical altercation involving the listed student.
+CS000416,S009287,2025-08-22,Main Quad,Vandalism,Low,Closed,A vandalism was observed and documented at Main Quad.
+CS000417,S002624,2025-08-22,Birchwood Hall,Physical Altercation,Medium,Open,Campus Safety was dispatched to Birchwood Hall after a report of physical altercation.
+CS000418,S008609,2025-08-22,Off-Campus Housing,Fire Alarm Activation,Low,Closed,Student was involved in a fire alarm activation reported near Off-Campus Housing.
+CS000419,S003518,2025-08-22,Recreation Center,Suspicious Activity,Low,Referred to Conduct Board,Reporting officer responded to Recreation Center regarding a suspicious activity involving the listed student.
+CS000420,S003070,2025-08-23,Riverbend Hall,Trespassing,Low,Closed,A trespassing was observed and documented at Riverbend Hall.
+CS000421,S008199,2025-08-24,Aspen Court,Alcohol Policy Violation,Low,Referred to Conduct Board,Incident occurred at Aspen Court. Responding staff documented a alcohol policy violation.
+CS000422,S008812,2025-08-25,Sunrise Commons,Suspicious Activity,Low,Closed,Reporting officer responded to Sunrise Commons regarding a suspicious activity involving the listed student.
+CS000423,S004495,2025-08-28,Engineering Annex,Alcohol Policy Violation,High,Closed,Student was involved in a alcohol policy violation reported near Engineering Annex.
+CS000424,S002898,2025-08-28,Library,Weapons Policy Violation,Low,Under Investigation,Student was involved in a weapons policy violation reported near Library.
+CS000425,S004730,2025-08-28,Fine Arts Center,Physical Altercation,Medium,Closed,Campus Safety was dispatched to Fine Arts Center after a report of physical altercation.
+CS000426,S007845,2025-08-30,Science Building,Weapons Policy Violation,Low,Under Investigation,Incident occurred at Science Building. Responding staff documented a weapons policy violation.
+CS000427,S009732,2025-08-31,Northgate Hall,Weapons Policy Violation,Medium,Closed,Incident occurred at Northgate Hall. Responding staff documented a weapons policy violation.
+CS000428,S005392,2025-08-31,Recreation Center,Harassment,Critical,Open,Incident occurred at Recreation Center. Responding staff documented a harassment.
+CS000429,S002583,2025-09-02,Summit House,Physical Altercation,High,Closed,Student was involved in a physical altercation reported near Summit House.
+CS000430,S009054,2025-09-03,Sunrise Commons,Vandalism,High,Closed,Incident occurred at Sunrise Commons. Responding staff documented a vandalism.
+CS000431,S007197,2025-09-05,Recreation Center,Drug Policy Violation,High,Closed,Incident occurred at Recreation Center. Responding staff documented a drug policy violation.
+CS000432,S001096,2025-09-06,Science Building,Weapons Policy Violation,High,Open,Campus Safety was dispatched to Science Building after a report of weapons policy violation.
+CS000433,S000922,2025-09-06,East Lot,Harassment,High,Closed,A harassment was observed and documented at East Lot.
+CS000434,S003850,2025-09-07,Northgate Hall,Suspicious Activity,Medium,Closed,A suspicious activity was observed and documented at Northgate Hall.
+CS000435,S002950,2025-09-08,Willow Creek Hall,Harassment,Low,Closed,Campus Safety was dispatched to Willow Creek Hall after a report of harassment.
+CS000436,S001556,2025-09-08,East Lot,Medical Emergency,High,Referred to Conduct Board,Student was involved in a medical emergency reported near East Lot.
+CS000437,S002204,2025-09-08,Aspen Court,Physical Altercation,Low,Under Investigation,Incident occurred at Aspen Court. Responding staff documented a physical altercation.
+CS000438,S006304,2025-09-08,East Lot,Disorderly Conduct,Critical,Closed,Incident occurred at East Lot. Responding staff documented a disorderly conduct.
+CS000439,S008597,2025-09-09,Willow Creek Hall,Vandalism,Low,Closed,A vandalism was observed and documented at Willow Creek Hall.
+CS000440,S005627,2025-09-09,Stadium,Physical Altercation,Low,Closed,Incident occurred at Stadium. Responding staff documented a physical altercation.
+CS000441,S007440,2025-09-09,Cedar Crest Hall,Physical Altercation,Medium,Under Investigation,Reporting officer responded to Cedar Crest Hall regarding a physical altercation involving the listed student.
+CS000442,S005687,2025-09-10,Engineering Annex,Harassment,Low,Closed,Student was involved in a harassment reported near Engineering Annex.
+CS000443,S007977,2025-09-11,Bellview Hall,Disorderly Conduct,Low,Closed,Student was involved in a disorderly conduct reported near Bellview Hall.
+CS000444,S009419,2025-09-12,Bellview Hall,Fire Alarm Activation,Medium,Closed,A fire alarm activation was observed and documented at Bellview Hall.
+CS000445,S007898,2025-09-12,Maple Ridge Hall,Disorderly Conduct,Medium,Closed,Incident occurred at Maple Ridge Hall. Responding staff documented a disorderly conduct.
+CS000446,S004472,2025-09-12,Willow Creek Hall,Medical Emergency,Low,Closed,Incident occurred at Willow Creek Hall. Responding staff documented a medical emergency.
+CS000447,S003199,2025-09-13,Birchwood Hall,Alcohol Policy Violation,Low,Closed,Incident occurred at Birchwood Hall. Responding staff documented a alcohol policy violation.
+CS000448,S004194,2025-09-14,Riverbend Hall,Trespassing,Medium,Referred to Conduct Board,A trespassing was observed and documented at Riverbend Hall.
+CS000449,S000586,2025-09-14,Meadowbrook Hall,Trespassing,Low,Under Investigation,Campus Safety was dispatched to Meadowbrook Hall after a report of trespassing.
+CS000450,S006361,2025-09-14,Harborview Hall,Medical Emergency,Medium,Closed,Incident occurred at Harborview Hall. Responding staff documented a medical emergency.
+CS000451,S009312,2025-09-15,Highland Hall,Noise Complaint,High,Closed,Incident occurred at Highland Hall. Responding staff documented a noise complaint.
+CS000452,S002765,2025-09-16,Fine Arts Center,Noise Complaint,Low,Closed,Student was involved in a noise complaint reported near Fine Arts Center.
+CS000453,S001701,2025-09-17,East Lot,Disorderly Conduct,Medium,Open,Reporting officer responded to East Lot regarding a disorderly conduct involving the listed student.
+CS000454,S007440,2025-09-17,Lakeside Terrace,Harassment,Low,Closed,Incident occurred at Lakeside Terrace. Responding staff documented a harassment.
+CS000455,S007274,2025-09-17,Harborview Hall,Noise Complaint,Low,Referred to Conduct Board,Incident occurred at Harborview Hall. Responding staff documented a noise complaint.
+CS000456,S000877,2025-09-18,Off-Campus Housing,Harassment,High,Closed,Reporting officer responded to Off-Campus Housing regarding a harassment involving the listed student.
+CS000457,S008988,2025-09-18,Student Union,Alcohol Policy Violation,Low,Under Investigation,Campus Safety was dispatched to Student Union after a report of alcohol policy violation.
+CS000458,S009813,2025-09-19,Meadowbrook Hall,Alcohol Policy Violation,Medium,Closed,Campus Safety was dispatched to Meadowbrook Hall after a report of alcohol policy violation.
+CS000459,S007267,2025-09-19,Willow Creek Hall,Physical Altercation,Medium,Closed,Reporting officer responded to Willow Creek Hall regarding a physical altercation involving the listed student.
+CS000460,S005755,2025-09-19,Bike Path,Medical Emergency,Medium,Closed,Incident occurred at Bike Path. Responding staff documented a medical emergency.
+CS000461,S004373,2025-09-20,Maple Ridge Hall,Drug Policy Violation,Low,Closed,Student was involved in a drug policy violation reported near Maple Ridge Hall.
+CS000462,S002776,2025-09-20,Fine Arts Center,Suspicious Activity,High,Closed,A suspicious activity was observed and documented at Fine Arts Center.
+CS000463,S005068,2025-09-21,Engineering Annex,Physical Altercation,Low,Open,Incident occurred at Engineering Annex. Responding staff documented a physical altercation.
+CS000464,S008163,2025-09-23,Riverbend Hall,Harassment,Low,Closed,Incident occurred at Riverbend Hall. Responding staff documented a harassment.
+CS000465,S007125,2025-09-24,Recreation Center,Alcohol Policy Violation,Low,Closed,Incident occurred at Recreation Center. Responding staff documented a alcohol policy violation.
+CS000466,S001238,2025-09-24,Recreation Center,Noise Complaint,High,Closed,A noise complaint was observed and documented at Recreation Center.
+CS000467,S007192,2025-09-24,Bike Path,Alcohol Policy Violation,Medium,Under Investigation,Campus Safety was dispatched to Bike Path after a report of alcohol policy violation.
+CS000468,S004708,2025-09-24,Summit House,Medical Emergency,Medium,Closed,Campus Safety was dispatched to Summit House after a report of medical emergency.
+CS000469,S008804,2025-09-25,Meadowbrook Hall,Theft,Low,Closed,Student was involved in a theft reported near Meadowbrook Hall.
+CS000470,S001989,2025-09-27,Off-Campus Housing,Theft,High,Referred to Conduct Board,A theft was observed and documented at Off-Campus Housing.
+CS000471,S009459,2025-09-27,Student Union,Alcohol Policy Violation,Medium,Closed,Reporting officer responded to Student Union regarding a alcohol policy violation involving the listed student.
+CS000472,S000034,2025-09-27,Willow Creek Hall,Disorderly Conduct,Medium,Closed,Incident occurred at Willow Creek Hall. Responding staff documented a disorderly conduct.
+CS000473,S005087,2025-09-28,Aspen Court,Physical Altercation,Low,Referred to Conduct Board,A physical altercation was observed and documented at Aspen Court.
+CS000474,S009533,2025-09-28,Fine Arts Center,Noise Complaint,High,Closed,Student was involved in a noise complaint reported near Fine Arts Center.
+CS000475,S002481,2025-09-29,Riverbend Hall,Harassment,Medium,Closed,Campus Safety was dispatched to Riverbend Hall after a report of harassment.
+CS000476,S005392,2025-09-29,Northgate Hall,Suspicious Activity,Low,Closed,Reporting officer responded to Northgate Hall regarding a suspicious activity involving the listed student.
+CS000477,S006700,2025-09-29,Stadium,Fire Alarm Activation,Low,Closed,Reporting officer responded to Stadium regarding a fire alarm activation involving the listed student.
+CS000478,S009250,2025-09-30,Bike Path,Physical Altercation,Medium,Referred to Conduct Board,Student was involved in a physical altercation reported near Bike Path.
+CS000479,S005190,2025-09-30,Fine Arts Center,Physical Altercation,Medium,Under Investigation,Incident occurred at Fine Arts Center. Responding staff documented a physical altercation.
+CS000480,S002077,2025-09-30,Fine Arts Center,Suspicious Activity,High,Closed,Reporting officer responded to Fine Arts Center regarding a suspicious activity involving the listed student.
+CS000481,S008512,2025-09-30,Stadium,Disorderly Conduct,High,Under Investigation,Reporting officer responded to Stadium regarding a disorderly conduct involving the listed student.
+CS000482,S003665,2025-10-02,Maple Ridge Hall,Drug Policy Violation,Medium,Closed,Incident occurred at Maple Ridge Hall. Responding staff documented a drug policy violation.
+CS000483,S000865,2025-10-02,Library,Harassment,High,Open,Campus Safety was dispatched to Library after a report of harassment.
+CS000484,S007180,2025-10-03,Fine Arts Center,Disorderly Conduct,Low,Under Investigation,Student was involved in a disorderly conduct reported near Fine Arts Center.
+CS000485,S005596,2025-10-04,Lakeside Terrace,Noise Complaint,Medium,Under Investigation,Student was involved in a noise complaint reported near Lakeside Terrace.
+CS000486,S004543,2025-10-05,Aspen Court,Alcohol Policy Violation,High,Under Investigation,Reporting officer responded to Aspen Court regarding a alcohol policy violation involving the listed student.
+CS000487,S005706,2025-10-08,East Lot,Noise Complaint,High,Under Investigation,Campus Safety was dispatched to East Lot after a report of noise complaint.
+CS000488,S008161,2025-10-09,Library,Medical Emergency,Medium,Closed,Student was involved in a medical emergency reported near Library.
+CS000489,S007670,2025-10-10,Willow Creek Hall,Alcohol Policy Violation,Low,Under Investigation,Campus Safety was dispatched to Willow Creek Hall after a report of alcohol policy violation.
+CS000490,S004023,2025-10-11,Aspen Court,Weapons Policy Violation,Medium,Open,Campus Safety was dispatched to Aspen Court after a report of weapons policy violation.
+CS000491,S000839,2025-10-11,Library,Theft,Low,Closed,Incident occurred at Library. Responding staff documented a theft.
+CS000492,S007761,2025-10-14,Meadowbrook Hall,Suspicious Activity,Low,Referred to Conduct Board,A suspicious activity was observed and documented at Meadowbrook Hall.
+CS000493,S000969,2025-10-14,Willow Creek Hall,Physical Altercation,Medium,Under Investigation,Campus Safety was dispatched to Willow Creek Hall after a report of physical altercation.
+CS000494,S005266,2025-10-18,Birchwood Hall,Harassment,Low,Open,Student was involved in a harassment reported near Birchwood Hall.
+CS000495,S003083,2025-10-19,Main Quad,Fire Alarm Activation,Medium,Closed,A fire alarm activation was observed and documented at Main Quad.
+CS000496,S006014,2025-10-21,East Lot,Physical Altercation,Medium,Closed,Reporting officer responded to East Lot regarding a physical altercation involving the listed student.
+CS000497,S006192,2025-10-25,Bike Path,Noise Complaint,High,Closed,Reporting officer responded to Bike Path regarding a noise complaint involving the listed student.
+CS000498,S003135,2025-10-25,Lakeside Terrace,Vandalism,Medium,Open,Incident occurred at Lakeside Terrace. Responding staff documented a vandalism.
+CS000499,S000779,2025-10-27,Willow Creek Hall,Medical Emergency,Low,Closed,Campus Safety was dispatched to Willow Creek Hall after a report of medical emergency.
+CS000500,S005059,2025-10-29,Lakeside Terrace,Medical Emergency,Low,Under Investigation,Campus Safety was dispatched to Lakeside Terrace after a report of medical emergency.
+CS000501,S003867,2025-10-29,Off-Campus Housing,Theft,Low,Closed,Incident occurred at Off-Campus Housing. Responding staff documented a theft.
+CS000502,S006009,2025-10-31,Recreation Center,Noise Complaint,Low,Closed,Campus Safety was dispatched to Recreation Center after a report of noise complaint.
+CS000503,S002523,2025-10-31,West Parking Garage,Physical Altercation,Low,Open,Reporting officer responded to West Parking Garage regarding a physical altercation involving the listed student.
+CS000504,S001822,2025-11-03,Main Quad,Theft,Low,Closed,Campus Safety was dispatched to Main Quad after a report of theft.
+CS000505,S008634,2025-11-04,Off-Campus Housing,Drug Policy Violation,Low,Closed,Student was involved in a drug policy violation reported near Off-Campus Housing.
+CS000506,S008276,2025-11-04,Bike Path,Physical Altercation,Low,Under Investigation,Campus Safety was dispatched to Bike Path after a report of physical altercation.
+CS000507,S008540,2025-11-04,Student Union,Medical Emergency,Critical,Closed,Campus Safety was dispatched to Student Union after a report of medical emergency.
+CS000508,S002904,2025-11-05,Sunrise Commons,Physical Altercation,Low,Open,Student was involved in a physical altercation reported near Sunrise Commons.
+CS000509,S004472,2025-11-05,Aspen Court,Weapons Policy Violation,High,Closed,A weapons policy violation was observed and documented at Aspen Court.
+CS000510,S002304,2025-11-05,West Parking Garage,Fire Alarm Activation,Low,Open,Student was involved in a fire alarm activation reported near West Parking Garage.
+CS000511,S009213,2025-11-05,Engineering Annex,Trespassing,High,Under Investigation,Campus Safety was dispatched to Engineering Annex after a report of trespassing.
+CS000512,S001307,2025-11-06,Harborview Hall,Suspicious Activity,Low,Closed,Incident occurred at Harborview Hall. Responding staff documented a suspicious activity.
+CS000513,S006122,2025-11-08,Maple Ridge Hall,Weapons Policy Violation,Medium,Closed,A weapons policy violation was observed and documented at Maple Ridge Hall.
+CS000514,S007766,2025-11-11,Bellview Hall,Fire Alarm Activation,Low,Closed,Incident occurred at Bellview Hall. Responding staff documented a fire alarm activation.
+CS000515,S000882,2025-11-12,Founders Hall,Alcohol Policy Violation,Low,Closed,A alcohol policy violation was observed and documented at Founders Hall.
+CS000516,S007071,2025-11-14,West Parking Garage,Noise Complaint,Low,Closed,A noise complaint was observed and documented at West Parking Garage.
+CS000517,S002979,2025-11-14,Birchwood Hall,Trespassing,High,Open,A trespassing was observed and documented at Birchwood Hall.
+CS000518,S002951,2025-11-15,Maple Ridge Hall,Drug Policy Violation,Low,Closed,A drug policy violation was observed and documented at Maple Ridge Hall.
+CS000519,S001808,2025-11-16,Bike Path,Disorderly Conduct,Medium,Closed,A disorderly conduct was observed and documented at Bike Path.
+CS000520,S005796,2025-11-16,Founders Hall,Vandalism,Medium,Closed,A vandalism was observed and documented at Founders Hall.
+CS000521,S008976,2025-11-18,Highland Hall,Harassment,Low,Under Investigation,Incident occurred at Highland Hall. Responding staff documented a harassment.
+CS000522,S007196,2025-11-18,Bike Path,Physical Altercation,Low,Closed,Incident occurred at Bike Path. Responding staff documented a physical altercation.
+CS000523,S004826,2025-11-18,Fine Arts Center,Physical Altercation,Low,Under Investigation,Campus Safety was dispatched to Fine Arts Center after a report of physical altercation.
+CS000524,S007239,2025-11-20,Engineering Annex,Vandalism,Critical,Closed,A vandalism was observed and documented at Engineering Annex.
+CS000525,S009537,2025-11-20,Maple Ridge Hall,Noise Complaint,Low,Referred to Conduct Board,Student was involved in a noise complaint reported near Maple Ridge Hall.
+CS000526,S006387,2025-11-21,Sunrise Commons,Alcohol Policy Violation,Low,Closed,A alcohol policy violation was observed and documented at Sunrise Commons.
+CS000527,S006421,2025-11-22,Northgate Hall,Vandalism,Medium,Closed,Student was involved in a vandalism reported near Northgate Hall.
+CS000528,S000805,2025-11-22,Cedar Crest Hall,Suspicious Activity,Low,Referred to Conduct Board,Student was involved in a suspicious activity reported near Cedar Crest Hall.
+CS000529,S001531,2025-11-25,Recreation Center,Drug Policy Violation,High,Closed,Campus Safety was dispatched to Recreation Center after a report of drug policy violation.
+CS000530,S000608,2025-11-25,Science Building,Disorderly Conduct,Medium,Closed,Student was involved in a disorderly conduct reported near Science Building.
+CS000531,S006209,2025-11-25,Highland Hall,Drug Policy Violation,Low,Closed,Student was involved in a drug policy violation reported near Highland Hall.
+CS000532,S008034,2025-11-26,Harborview Hall,Disorderly Conduct,Low,Closed,A disorderly conduct was observed and documented at Harborview Hall.
+CS000533,S005087,2025-11-26,Summit House,Fire Alarm Activation,High,Referred to Conduct Board,A fire alarm activation was observed and documented at Summit House.
+CS000534,S005819,2025-11-27,Summit House,Theft,Low,Closed,Campus Safety was dispatched to Summit House after a report of theft.
+CS000535,S004991,2025-12-01,Engineering Annex,Medical Emergency,Low,Open,Campus Safety was dispatched to Engineering Annex after a report of medical emergency.
+CS000536,S003766,2025-12-04,Recreation Center,Noise Complaint,Low,Closed,Reporting officer responded to Recreation Center regarding a noise complaint involving the listed student.
+CS000537,S004994,2025-12-06,Birchwood Hall,Noise Complaint,Low,Closed,Student was involved in a noise complaint reported near Birchwood Hall.
+CS000538,S001118,2025-12-07,Northgate Hall,Disorderly Conduct,Low,Closed,Campus Safety was dispatched to Northgate Hall after a report of disorderly conduct.
+CS000539,S002324,2025-12-08,Summit House,Disorderly Conduct,Medium,Closed,Incident occurred at Summit House. Responding staff documented a disorderly conduct.
+CS000540,S003135,2025-12-09,Student Union,Harassment,High,Open,Student was involved in a harassment reported near Student Union.
+CS000541,S007736,2025-12-12,Bike Path,Vandalism,Low,Closed,Incident occurred at Bike Path. Responding staff documented a vandalism.
+CS000542,S008660,2025-12-12,Fine Arts Center,Theft,Low,Closed,Campus Safety was dispatched to Fine Arts Center after a report of theft.
+CS000543,S009040,2025-12-14,Bellview Hall,Suspicious Activity,Low,Referred to Conduct Board,Reporting officer responded to Bellview Hall regarding a suspicious activity involving the listed student.
+CS000544,S005443,2025-12-15,West Parking Garage,Noise Complaint,Medium,Under Investigation,Reporting officer responded to West Parking Garage regarding a noise complaint involving the listed student.
+CS000545,S003180,2025-12-15,Bike Path,Physical Altercation,Low,Closed,Reporting officer responded to Bike Path regarding a physical altercation involving the listed student.
+CS000546,S005075,2025-12-17,Meadowbrook Hall,Medical Emergency,High,Under Investigation,Student was involved in a medical emergency reported near Meadowbrook Hall.
+CS000547,S008948,2025-12-18,Aspen Court,Alcohol Policy Violation,Medium,Closed,Student was involved in a alcohol policy violation reported near Aspen Court.
+CS000548,S002583,2025-12-20,Bellview Hall,Drug Policy Violation,Medium,Closed,Campus Safety was dispatched to Bellview Hall after a report of drug policy violation.
+CS000549,S003101,2025-12-22,Off-Campus Housing,Disorderly Conduct,Medium,Closed,Incident occurred at Off-Campus Housing. Responding staff documented a disorderly conduct.
+CS000550,S001343,2025-12-25,Lakeside Terrace,Alcohol Policy Violation,Low,Closed,Reporting officer responded to Lakeside Terrace regarding a alcohol policy violation involving the listed student.
+CS000551,S002583,2025-12-26,Willow Creek Hall,Disorderly Conduct,Medium,Closed,Campus Safety was dispatched to Willow Creek Hall after a report of disorderly conduct.
+CS000552,S002125,2025-12-26,Student Union,Trespassing,Low,Closed,Student was involved in a trespassing reported near Student Union.
+CS000553,S004717,2025-12-27,Bellview Hall,Noise Complaint,Low,Referred to Conduct Board,Student was involved in a noise complaint reported near Bellview Hall.
+CS000554,S002924,2025-12-29,Sunrise Commons,Alcohol Policy Violation,Medium,Referred to Conduct Board,Student was involved in a alcohol policy violation reported near Sunrise Commons.
+CS000555,S005371,2025-12-29,West Parking Garage,Drug Policy Violation,Medium,Under Investigation,Reporting officer responded to West Parking Garage regarding a drug policy violation involving the listed student.
+CS000556,S005506,2025-12-30,West Parking Garage,Harassment,Low,Closed,A harassment was observed and documented at West Parking Garage.
+CS000557,S007251,2025-12-31,Bike Path,Physical Altercation,Low,Under Investigation,Campus Safety was dispatched to Bike Path after a report of physical altercation.
+CS000558,S005506,2025-12-31,Off-Campus Housing,Drug Policy Violation,High,Closed,Incident occurred at Off-Campus Housing. Responding staff documented a drug policy violation.
+CS000559,S008491,2025-12-31,Lakeside Terrace,Harassment,High,Referred to Conduct Board,Reporting officer responded to Lakeside Terrace regarding a harassment involving the listed student.
+CS000560,S008271,2026-01-02,Off-Campus Housing,Vandalism,High,Under Investigation,Incident occurred at Off-Campus Housing. Responding staff documented a vandalism.
+CS000561,S004478,2026-01-02,Cedar Crest Hall,Harassment,Low,Closed,Reporting officer responded to Cedar Crest Hall regarding a harassment involving the listed student.
+CS000562,S008614,2026-01-03,Library,Noise Complaint,Low,Closed,Student was involved in a noise complaint reported near Library.
+CS000563,S006352,2026-01-04,Aspen Court,Theft,High,Closed,Reporting officer responded to Aspen Court regarding a theft involving the listed student.
+CS000564,S004085,2026-01-04,East Lot,Disorderly Conduct,High,Closed,Campus Safety was dispatched to East Lot after a report of disorderly conduct.
+CS000565,S003159,2026-01-06,Bellview Hall,Alcohol Policy Violation,Low,Open,A alcohol policy violation was observed and documented at Bellview Hall.
+CS000566,S008563,2026-01-07,Bike Path,Harassment,Medium,Open,Student was involved in a harassment reported near Bike Path.
+CS000567,S007815,2026-01-07,Maple Ridge Hall,Harassment,Medium,Under Investigation,A harassment was observed and documented at Maple Ridge Hall.
+CS000568,S005473,2026-01-07,Birchwood Hall,Trespassing,Medium,Closed,Reporting officer responded to Birchwood Hall regarding a trespassing involving the listed student.
+CS000569,S000033,2026-01-09,Engineering Annex,Noise Complaint,High,Closed,Student was involved in a noise complaint reported near Engineering Annex.
+CS000570,S003006,2026-01-09,Library,Vandalism,Low,Closed,A vandalism was observed and documented at Library.
+CS000571,S009288,2026-01-10,Meadowbrook Hall,Suspicious Activity,Low,Closed,Student was involved in a suspicious activity reported near Meadowbrook Hall.
+CS000572,S004033,2026-01-10,Birchwood Hall,Theft,Medium,Closed,Reporting officer responded to Birchwood Hall regarding a theft involving the listed student.
+CS000573,S007131,2026-01-10,Maple Ridge Hall,Noise Complaint,Medium,Open,Student was involved in a noise complaint reported near Maple Ridge Hall.
+CS000574,S005514,2026-01-10,Riverbend Hall,Harassment,Medium,Closed,A harassment was observed and documented at Riverbend Hall.
+CS000575,S007225,2026-01-10,Off-Campus Housing,Noise Complaint,Medium,Under Investigation,Incident occurred at Off-Campus Housing. Responding staff documented a noise complaint.
+CS000576,S008428,2026-01-13,West Parking Garage,Weapons Policy Violation,Low,Closed,A weapons policy violation was observed and documented at West Parking Garage.
+CS000577,S003012,2026-01-13,Cedar Crest Hall,Trespassing,Medium,Closed,Reporting officer responded to Cedar Crest Hall regarding a trespassing involving the listed student.
+CS000578,S005819,2026-01-14,Northgate Hall,Alcohol Policy Violation,Medium,Closed,A alcohol policy violation was observed and documented at Northgate Hall.
+CS000579,S000147,2026-01-15,Birchwood Hall,Noise Complaint,High,Closed,Student was involved in a noise complaint reported near Birchwood Hall.
+CS000580,S004625,2026-01-15,Lakeside Terrace,Disorderly Conduct,Low,Closed,Campus Safety was dispatched to Lakeside Terrace after a report of disorderly conduct.
+CS000581,S005618,2026-01-16,Fine Arts Center,Noise Complaint,Medium,Under Investigation,Campus Safety was dispatched to Fine Arts Center after a report of noise complaint.
+CS000582,S004039,2026-01-18,Maple Ridge Hall,Suspicious Activity,Medium,Closed,Incident occurred at Maple Ridge Hall. Responding staff documented a suspicious activity.
+CS000583,S007248,2026-01-20,Science Building,Medical Emergency,Low,Under Investigation,Student was involved in a medical emergency reported near Science Building.
+CS000584,S000647,2026-01-20,Harborview Hall,Alcohol Policy Violation,Low,Under Investigation,Campus Safety was dispatched to Harborview Hall after a report of alcohol policy violation.
+CS000585,S005995,2026-01-21,Founders Hall,Fire Alarm Activation,High,Closed,A fire alarm activation was observed and documented at Founders Hall.
+CS000586,S008825,2026-01-21,West Parking Garage,Medical Emergency,Critical,Closed,Campus Safety was dispatched to West Parking Garage after a report of medical emergency.
+CS000587,S002513,2026-01-22,Off-Campus Housing,Theft,Medium,Closed,Reporting officer responded to Off-Campus Housing regarding a theft involving the listed student.
+CS000588,S008999,2026-01-23,Main Quad,Vandalism,Low,Closed,Student was involved in a vandalism reported near Main Quad.
+CS000589,S001412,2026-01-24,Engineering Annex,Disorderly Conduct,Low,Under Investigation,Reporting officer responded to Engineering Annex regarding a disorderly conduct involving the listed student.
+CS000590,S009935,2026-01-26,Bike Path,Physical Altercation,Critical,Closed,Reporting officer responded to Bike Path regarding a physical altercation involving the listed student.
+CS000591,S008802,2026-01-26,Off-Campus Housing,Disorderly Conduct,Medium,Closed,Incident occurred at Off-Campus Housing. Responding staff documented a disorderly conduct.
+CS000592,S003147,2026-01-28,Northgate Hall,Suspicious Activity,Medium,Closed,Student was involved in a suspicious activity reported near Northgate Hall.
+CS000593,S005514,2026-01-28,Cedar Crest Hall,Alcohol Policy Violation,Low,Closed,A alcohol policy violation was observed and documented at Cedar Crest Hall.
+CS000594,S006955,2026-01-28,West Parking Garage,Vandalism,Medium,Closed,A vandalism was observed and documented at West Parking Garage.
+CS000595,S004543,2026-01-28,Engineering Annex,Theft,Low,Closed,Reporting officer responded to Engineering Annex regarding a theft involving the listed student.
+CS000596,S006761,2026-01-28,Library,Weapons Policy Violation,Medium,Closed,A weapons policy violation was observed and documented at Library.
+CS000597,S006770,2026-01-29,Founders Hall,Medical Emergency,Medium,Under Investigation,Reporting officer responded to Founders Hall regarding a medical emergency involving the listed student.
+CS000598,S000821,2026-01-29,East Lot,Alcohol Policy Violation,Low,Open,Campus Safety was dispatched to East Lot after a report of alcohol policy violation.
+CS000599,S001995,2026-01-29,Harborview Hall,Vandalism,Low,Closed,Campus Safety was dispatched to Harborview Hall after a report of vandalism.
+CS000600,S005725,2026-02-01,Stadium,Weapons Policy Violation,Low,Closed,Incident occurred at Stadium. Responding staff documented a weapons policy violation.
+CS000601,S007596,2026-02-02,Founders Hall,Trespassing,Medium,Closed,A trespassing was observed and documented at Founders Hall.
+CS000602,S007431,2026-02-04,Meadowbrook Hall,Drug Policy Violation,Medium,Closed,Reporting officer responded to Meadowbrook Hall regarding a drug policy violation involving the listed student.
+CS000603,S007329,2026-02-04,Library,Fire Alarm Activation,Medium,Closed,Campus Safety was dispatched to Library after a report of fire alarm activation.
+CS000604,S005473,2026-02-05,Summit House,Weapons Policy Violation,Low,Closed,Reporting officer responded to Summit House regarding a weapons policy violation involving the listed student.
+CS000605,S007139,2026-02-06,Harborview Hall,Theft,Medium,Referred to Conduct Board,Student was involved in a theft reported near Harborview Hall.
+CS000606,S005736,2026-02-06,Cedar Crest Hall,Fire Alarm Activation,Low,Closed,Incident occurred at Cedar Crest Hall. Responding staff documented a fire alarm activation.
+CS000607,S008580,2026-02-06,Bellview Hall,Vandalism,High,Closed,A vandalism was observed and documented at Bellview Hall.
+CS000608,S001919,2026-02-06,Aspen Court,Disorderly Conduct,Critical,Closed,Reporting officer responded to Aspen Court regarding a disorderly conduct involving the listed student.
+CS000609,S005565,2026-02-07,Lakeside Terrace,Noise Complaint,Low,Referred to Conduct Board,A noise complaint was observed and documented at Lakeside Terrace.
+CS000610,S005798,2026-02-09,Cedar Crest Hall,Trespassing,Low,Closed,Campus Safety was dispatched to Cedar Crest Hall after a report of trespassing.
+CS000611,S001901,2026-02-09,Recreation Center,Fire Alarm Activation,High,Referred to Conduct Board,Campus Safety was dispatched to Recreation Center after a report of fire alarm activation.
+CS000612,S002939,2026-02-10,West Parking Garage,Physical Altercation,Low,Closed,Reporting officer responded to West Parking Garage regarding a physical altercation involving the listed student.
+CS000613,S008162,2026-02-11,Fine Arts Center,Alcohol Policy Violation,Medium,Closed,Reporting officer responded to Fine Arts Center regarding a alcohol policy violation involving the listed student.
+CS000614,S000095,2026-02-12,Birchwood Hall,Fire Alarm Activation,High,Referred to Conduct Board,Student was involved in a fire alarm activation reported near Birchwood Hall.
+CS000615,S007079,2026-02-14,Willow Creek Hall,Medical Emergency,Medium,Closed,Student was involved in a medical emergency reported near Willow Creek Hall.
+CS000616,S000861,2026-02-15,Meadowbrook Hall,Suspicious Activity,Low,Under Investigation,A suspicious activity was observed and documented at Meadowbrook Hall.
+CS000617,S008920,2026-02-15,Meadowbrook Hall,Suspicious Activity,Medium,Closed,Incident occurred at Meadowbrook Hall. Responding staff documented a suspicious activity.
+CS000618,S007765,2026-02-18,Fine Arts Center,Physical Altercation,Low,Closed,Campus Safety was dispatched to Fine Arts Center after a report of physical altercation.
+CS000619,S000404,2026-02-19,Stadium,Alcohol Policy Violation,Medium,Open,Campus Safety was dispatched to Stadium after a report of alcohol policy violation.
+CS000620,S004463,2026-02-19,Stadium,Drug Policy Violation,Low,Referred to Conduct Board,Campus Safety was dispatched to Stadium after a report of drug policy violation.
+CS000621,S009189,2026-02-20,Highland Hall,Disorderly Conduct,High,Closed,Campus Safety was dispatched to Highland Hall after a report of disorderly conduct.
+CS000622,S003509,2026-02-21,Summit House,Theft,Critical,Closed,Incident occurred at Summit House. Responding staff documented a theft.
+CS000623,S009826,2026-02-22,Fine Arts Center,Fire Alarm Activation,Medium,Referred to Conduct Board,A fire alarm activation was observed and documented at Fine Arts Center.
+CS000624,S000023,2026-02-22,Harborview Hall,Physical Altercation,Low,Closed,Campus Safety was dispatched to Harborview Hall after a report of physical altercation.
+CS000625,S006785,2026-02-23,Engineering Annex,Drug Policy Violation,Critical,Closed,Incident occurred at Engineering Annex. Responding staff documented a drug policy violation.
+CS000626,S000779,2026-02-24,Meadowbrook Hall,Drug Policy Violation,Low,Closed,Reporting officer responded to Meadowbrook Hall regarding a drug policy violation involving the listed student.
+CS000627,S007596,2026-02-24,Main Quad,Vandalism,Low,Closed,A vandalism was observed and documented at Main Quad.
+CS000628,S002548,2026-02-25,Summit House,Alcohol Policy Violation,Medium,Closed,Reporting officer responded to Summit House regarding a alcohol policy violation involving the listed student.
+CS000629,S005443,2026-02-25,Summit House,Drug Policy Violation,High,Closed,Incident occurred at Summit House. Responding staff documented a drug policy violation.
+CS000630,S001372,2026-02-26,Student Union,Harassment,Low,Open,Incident occurred at Student Union. Responding staff documented a harassment.
+CS000631,S005819,2026-02-28,Northgate Hall,Disorderly Conduct,Low,Closed,Campus Safety was dispatched to Northgate Hall after a report of disorderly conduct.
+CS000632,S003912,2026-03-01,Aspen Court,Theft,High,Under Investigation,A theft was observed and documented at Aspen Court.
+CS000633,S002583,2026-03-02,Student Union,Medical Emergency,High,Closed,A medical emergency was observed and documented at Student Union.
+CS000634,S004307,2026-03-04,Highland Hall,Weapons Policy Violation,Medium,Closed,Incident occurred at Highland Hall. Responding staff documented a weapons policy violation.
+CS000635,S002069,2026-03-05,Meadowbrook Hall,Weapons Policy Violation,Low,Closed,Campus Safety was dispatched to Meadowbrook Hall after a report of weapons policy violation.
+CS000636,S009000,2026-03-06,Meadowbrook Hall,Trespassing,High,Closed,Campus Safety was dispatched to Meadowbrook Hall after a report of trespassing.
+CS000637,S004923,2026-03-08,Highland Hall,Theft,Medium,Closed,Student was involved in a theft reported near Highland Hall.
+CS000638,S005064,2026-03-08,Cedar Crest Hall,Disorderly Conduct,Low,Referred to Conduct Board,Student was involved in a disorderly conduct reported near Cedar Crest Hall.
+CS000639,S005266,2026-03-09,Science Building,Physical Altercation,Low,Closed,Student was involved in a physical altercation reported near Science Building.
+CS000640,S000114,2026-03-09,Bellview Hall,Suspicious Activity,Low,Closed,A suspicious activity was observed and documented at Bellview Hall.
+CS000641,S005075,2026-03-10,Willow Creek Hall,Theft,High,Closed,Incident occurred at Willow Creek Hall. Responding staff documented a theft.
+CS000642,S007330,2026-03-10,Summit House,Suspicious Activity,Medium,Closed,Student was involved in a suspicious activity reported near Summit House.
+CS000643,S002904,2026-03-10,Maple Ridge Hall,Harassment,Medium,Closed,Reporting officer responded to Maple Ridge Hall regarding a harassment involving the listed student.
+CS000644,S003995,2026-03-11,West Parking Garage,Trespassing,Medium,Closed,Student was involved in a trespassing reported near West Parking Garage.
+CS000645,S004988,2026-03-13,Willow Creek Hall,Trespassing,Low,Closed,Student was involved in a trespassing reported near Willow Creek Hall.
+CS000646,S002603,2026-03-16,Birchwood Hall,Trespassing,Low,Under Investigation,A trespassing was observed and documented at Birchwood Hall.
+CS000647,S007163,2026-03-16,Student Union,Noise Complaint,Low,Closed,A noise complaint was observed and documented at Student Union.
+CS000648,S004597,2026-03-18,Stadium,Suspicious Activity,Medium,Closed,Campus Safety was dispatched to Stadium after a report of suspicious activity.
+CS000649,S004547,2026-03-19,Lakeside Terrace,Fire Alarm Activation,Low,Open,Reporting officer responded to Lakeside Terrace regarding a fire alarm activation involving the listed student.
+CS000650,S009000,2026-03-19,Founders Hall,Trespassing,Low,Closed,Student was involved in a trespassing reported near Founders Hall.
+CS000651,S007720,2026-03-19,Sunrise Commons,Alcohol Policy Violation,Low,Open,Incident occurred at Sunrise Commons. Responding staff documented a alcohol policy violation.
+CS000652,S007492,2026-03-20,Summit House,Drug Policy Violation,Low,Closed,Reporting officer responded to Summit House regarding a drug policy violation involving the listed student.
+CS000653,S000332,2026-03-21,Highland Hall,Alcohol Policy Violation,Medium,Open,A alcohol policy violation was observed and documented at Highland Hall.
+CS000654,S003927,2026-03-23,Student Union,Theft,Medium,Closed,A theft was observed and documented at Student Union.
+CS000655,S008540,2026-03-23,Highland Hall,Medical Emergency,Low,Closed,Reporting officer responded to Highland Hall regarding a medical emergency involving the listed student.
+CS000656,S005852,2026-03-23,Cedar Crest Hall,Alcohol Policy Violation,High,Closed,Reporting officer responded to Cedar Crest Hall regarding a alcohol policy violation involving the listed student.
+CS000657,S003167,2026-03-23,Science Building,Medical Emergency,Low,Closed,Incident occurred at Science Building. Responding staff documented a medical emergency.
+CS000658,S000903,2026-03-24,Birchwood Hall,Trespassing,High,Referred to Conduct Board,A trespassing was observed and documented at Birchwood Hall.
+CS000659,S009540,2026-03-25,Birchwood Hall,Noise Complaint,Medium,Referred to Conduct Board,Campus Safety was dispatched to Birchwood Hall after a report of noise complaint.
+CS000660,S005875,2026-03-27,Willow Creek Hall,Weapons Policy Violation,Medium,Closed,Campus Safety was dispatched to Willow Creek Hall after a report of weapons policy violation.
+CS000661,S009815,2026-03-28,West Parking Garage,Physical Altercation,High,Closed,Student was involved in a physical altercation reported near West Parking Garage.
+CS000662,S000710,2026-03-30,Willow Creek Hall,Noise Complaint,Medium,Closed,Student was involved in a noise complaint reported near Willow Creek Hall.
+CS000663,S005665,2026-03-31,Northgate Hall,Trespassing,High,Under Investigation,Incident occurred at Northgate Hall. Responding staff documented a trespassing.
+CS000664,S004086,2026-03-31,Harborview Hall,Suspicious Activity,Low,Under Investigation,A suspicious activity was observed and documented at Harborview Hall.
+CS000665,S001936,2026-03-31,Recreation Center,Noise Complaint,Medium,Closed,A noise complaint was observed and documented at Recreation Center.
+CS000666,S000583,2026-03-31,Riverbend Hall,Weapons Policy Violation,Low,Under Investigation,Student was involved in a weapons policy violation reported near Riverbend Hall.
+CS000667,S007918,2026-04-02,Engineering Annex,Vandalism,High,Under Investigation,Incident occurred at Engineering Annex. Responding staff documented a vandalism.
+CS000668,S006114,2026-04-04,Student Union,Harassment,High,Closed,Reporting officer responded to Student Union regarding a harassment involving the listed student.
+CS000669,S000839,2026-04-04,Library,Theft,Critical,Referred to Conduct Board,Student was involved in a theft reported near Library.
+CS000670,S000764,2026-04-05,Northgate Hall,Vandalism,Medium,Open,Reporting officer responded to Northgate Hall regarding a vandalism involving the listed student.
+CS000671,S004523,2026-04-05,Bike Path,Disorderly Conduct,Medium,Closed,Reporting officer responded to Bike Path regarding a disorderly conduct involving the listed student.
+CS000672,S000668,2026-04-06,Willow Creek Hall,Fire Alarm Activation,Low,Closed,Reporting officer responded to Willow Creek Hall regarding a fire alarm activation involving the listed student.
+CS000673,S000382,2026-04-06,Off-Campus Housing,Trespassing,Low,Referred to Conduct Board,Student was involved in a trespassing reported near Off-Campus Housing.
+CS000674,S005407,2026-04-07,Highland Hall,Weapons Policy Violation,Low,Under Investigation,Incident occurred at Highland Hall. Responding staff documented a weapons policy violation.
+CS000675,S002701,2026-04-08,Engineering Annex,Theft,Medium,Closed,A theft was observed and documented at Engineering Annex.
+CS000676,S002826,2026-04-09,Engineering Annex,Physical Altercation,Low,Under Investigation,Incident occurred at Engineering Annex. Responding staff documented a physical altercation.
+CS000677,S006728,2026-04-09,Birchwood Hall,Theft,Low,Under Investigation,Campus Safety was dispatched to Birchwood Hall after a report of theft.
+CS000678,S001380,2026-04-09,Science Building,Fire Alarm Activation,Medium,Closed,Campus Safety was dispatched to Science Building after a report of fire alarm activation.
+CS000679,S000235,2026-04-09,Main Quad,Harassment,Low,Closed,Campus Safety was dispatched to Main Quad after a report of harassment.
+CS000680,S001626,2026-04-12,Fine Arts Center,Alcohol Policy Violation,Medium,Open,Reporting officer responded to Fine Arts Center regarding a alcohol policy violation involving the listed student.
+CS000681,S009230,2026-04-13,Harborview Hall,Drug Policy Violation,Low,Closed,Campus Safety was dispatched to Harborview Hall after a report of drug policy violation.
+CS000682,S004806,2026-04-13,Bike Path,Trespassing,High,Closed,A trespassing was observed and documented at Bike Path.
+CS000683,S007909,2026-04-14,Meadowbrook Hall,Vandalism,Medium,Closed,Student was involved in a vandalism reported near Meadowbrook Hall.
+CS000684,S003781,2026-04-15,Engineering Annex,Disorderly Conduct,Medium,Closed,A disorderly conduct was observed and documented at Engineering Annex.
+CS000685,S001677,2026-04-16,Recreation Center,Vandalism,Low,Referred to Conduct Board,Campus Safety was dispatched to Recreation Center after a report of vandalism.
+CS000686,S002053,2026-04-16,Highland Hall,Alcohol Policy Violation,Low,Closed,Campus Safety was dispatched to Highland Hall after a report of alcohol policy violation.
+CS000687,S005439,2026-04-19,Recreation Center,Drug Policy Violation,Medium,Closed,A drug policy violation was observed and documented at Recreation Center.
+CS000688,S009494,2026-04-20,West Parking Garage,Trespassing,Low,Referred to Conduct Board,Reporting officer responded to West Parking Garage regarding a trespassing involving the listed student.
+CS000689,S007188,2026-04-21,Engineering Annex,Trespassing,Medium,Open,Incident occurred at Engineering Annex. Responding staff documented a trespassing.
+CS000690,S000042,2026-04-21,Off-Campus Housing,Trespassing,Low,Under Investigation,A trespassing was observed and documented at Off-Campus Housing.
+CS000691,S007985,2026-04-22,Summit House,Suspicious Activity,Critical,Closed,Reporting officer responded to Summit House regarding a suspicious activity involving the listed student.
+CS000692,S000513,2026-04-23,Cedar Crest Hall,Disorderly Conduct,Medium,Referred to Conduct Board,Campus Safety was dispatched to Cedar Crest Hall after a report of disorderly conduct.
+CS000693,S006009,2026-04-25,Recreation Center,Disorderly Conduct,Low,Closed,Reporting officer responded to Recreation Center regarding a disorderly conduct involving the listed student.
+CS000694,S005792,2026-04-26,West Parking Garage,Drug Policy Violation,High,Closed,Campus Safety was dispatched to West Parking Garage after a report of drug policy violation.
+CS000695,S004841,2026-04-26,Science Building,Fire Alarm Activation,Low,Under Investigation,Student was involved in a fire alarm activation reported near Science Building.
+CS000696,S008823,2026-04-29,Northgate Hall,Weapons Policy Violation,Low,Closed,Campus Safety was dispatched to Northgate Hall after a report of weapons policy violation.
+CS000697,S004299,2026-04-30,Summit House,Trespassing,High,Under Investigation,Student was involved in a trespassing reported near Summit House.
+CS000698,S007100,2026-04-30,Founders Hall,Suspicious Activity,Medium,Closed,Reporting officer responded to Founders Hall regarding a suspicious activity involving the listed student.
+CS000699,S007763,2026-04-30,Lakeside Terrace,Disorderly Conduct,Medium,Under Investigation,Campus Safety was dispatched to Lakeside Terrace after a report of disorderly conduct.
+CS000700,S008490,2026-05-01,Library,Suspicious Activity,Low,Referred to Conduct Board,Reporting officer responded to Library regarding a suspicious activity involving the listed student.
+CS000701,S007238,2026-05-01,Sunrise Commons,Drug Policy Violation,Low,Under Investigation,Student was involved in a drug policy violation reported near Sunrise Commons.
+CS000702,S002014,2026-05-02,Lakeside Terrace,Trespassing,High,Closed,Campus Safety was dispatched to Lakeside Terrace after a report of trespassing.
+CS000703,S005215,2026-05-02,Cedar Crest Hall,Trespassing,High,Closed,Student was involved in a trespassing reported near Cedar Crest Hall.
+CS000704,S006166,2026-05-03,Bike Path,Weapons Policy Violation,Low,Closed,Student was involved in a weapons policy violation reported near Bike Path.
+CS000705,S001780,2026-05-03,Engineering Annex,Trespassing,Low,Closed,A trespassing was observed and documented at Engineering Annex.
+CS000706,S002814,2026-05-04,Summit House,Theft,High,Under Investigation,Incident occurred at Summit House. Responding staff documented a theft.
+CS000707,S008339,2026-05-04,Harborview Hall,Disorderly Conduct,Low,Open,Student was involved in a disorderly conduct reported near Harborview Hall.
+CS000708,S007059,2026-05-06,West Parking Garage,Suspicious Activity,Medium,Closed,Campus Safety was dispatched to West Parking Garage after a report of suspicious activity.
+CS000709,S001679,2026-05-06,Founders Hall,Alcohol Policy Violation,Low,Closed,Campus Safety was dispatched to Founders Hall after a report of alcohol policy violation.
+CS000710,S000847,2026-05-06,Lakeside Terrace,Theft,Low,Closed,Incident occurred at Lakeside Terrace. Responding staff documented a theft.
+CS000711,S005260,2026-05-07,Engineering Annex,Suspicious Activity,Low,Closed,Reporting officer responded to Engineering Annex regarding a suspicious activity involving the listed student.
+CS000712,S008812,2026-05-09,Bellview Hall,Noise Complaint,Medium,Open,Campus Safety was dispatched to Bellview Hall after a report of noise complaint.
+CS000713,S007431,2026-05-09,Founders Hall,Fire Alarm Activation,Low,Closed,A fire alarm activation was observed and documented at Founders Hall.
+CS000714,S008580,2026-05-09,Northgate Hall,Harassment,Low,Closed,Incident occurred at Northgate Hall. Responding staff documented a harassment.
+CS000715,S000602,2026-05-10,Library,Vandalism,Low,Closed,Campus Safety was dispatched to Library after a report of vandalism.
+CS000716,S006108,2026-05-10,Fine Arts Center,Disorderly Conduct,Critical,Closed,Reporting officer responded to Fine Arts Center regarding a disorderly conduct involving the listed student.
+CS000717,S007373,2026-05-12,Harborview Hall,Harassment,Low,Closed,Student was involved in a harassment reported near Harborview Hall.
+CS000718,S000901,2026-05-13,Willow Creek Hall,Trespassing,Medium,Closed,Incident occurred at Willow Creek Hall. Responding staff documented a trespassing.
+CS000719,S007274,2026-05-13,Student Union,Harassment,Medium,Closed,Incident occurred at Student Union. Responding staff documented a harassment.
+CS000720,S003954,2026-05-14,Recreation Center,Trespassing,Low,Closed,A trespassing was observed and documented at Recreation Center.
+CS000721,S009862,2026-05-15,Student Union,Vandalism,Medium,Referred to Conduct Board,A vandalism was observed and documented at Student Union.
+CS000722,S001587,2026-05-15,West Parking Garage,Alcohol Policy Violation,Low,Closed,Reporting officer responded to West Parking Garage regarding a alcohol policy violation involving the listed student.
+CS000723,S003929,2026-05-16,Northgate Hall,Trespassing,Medium,Closed,A trespassing was observed and documented at Northgate Hall.
+CS000724,S003912,2026-05-18,Meadowbrook Hall,Theft,Medium,Closed,A theft was observed and documented at Meadowbrook Hall.
+CS000725,S002943,2026-05-20,Fine Arts Center,Fire Alarm Activation,Low,Closed,Student was involved in a fire alarm activation reported near Fine Arts Center.
+CS000726,S006318,2026-05-20,Engineering Annex,Theft,Medium,Open,Student was involved in a theft reported near Engineering Annex.
+CS000727,S008103,2026-05-21,Science Building,Drug Policy Violation,Medium,Closed,Incident occurred at Science Building. Responding staff documented a drug policy violation.
+CS000728,S000502,2026-05-22,West Parking Garage,Noise Complaint,Medium,Closed,A noise complaint was observed and documented at West Parking Garage.
+CS000729,S005756,2026-05-22,Bike Path,Physical Altercation,Low,Open,Student was involved in a physical altercation reported near Bike Path.
+CS000730,S007511,2026-05-23,Library,Fire Alarm Activation,Medium,Closed,Incident occurred at Library. Responding staff documented a fire alarm activation.
+CS000731,S009054,2026-05-23,Sunrise Commons,Disorderly Conduct,High,Closed,Campus Safety was dispatched to Sunrise Commons after a report of disorderly conduct.
+CS000732,S008546,2026-05-24,Birchwood Hall,Vandalism,Low,Closed,Campus Safety was dispatched to Birchwood Hall after a report of vandalism.
+CS000733,S008418,2026-05-25,Recreation Center,Physical Altercation,Medium,Under Investigation,A physical altercation was observed and documented at Recreation Center.
+CS000734,S008221,2026-05-25,Bellview Hall,Vandalism,Medium,Under Investigation,Incident occurred at Bellview Hall. Responding staff documented a vandalism.
+CS000735,S006148,2026-05-26,Bellview Hall,Trespassing,Low,Under Investigation,Student was involved in a trespassing reported near Bellview Hall.
+CS000736,S002687,2026-05-26,Bellview Hall,Suspicious Activity,Medium,Closed,A suspicious activity was observed and documented at Bellview Hall.
+CS000737,S002939,2026-05-30,Sunrise Commons,Weapons Policy Violation,High,Open,Reporting officer responded to Sunrise Commons regarding a weapons policy violation involving the listed student.
+CS000738,S000017,2026-05-31,Science Building,Noise Complaint,Low,Closed,A noise complaint was observed and documented at Science Building.
+CS000739,S000235,2026-06-01,East Lot,Weapons Policy Violation,Low,Under Investigation,Incident occurred at East Lot. Responding staff documented a weapons policy violation.
+CS000740,S000731,2026-06-01,Engineering Annex,Harassment,Low,Closed,Reporting officer responded to Engineering Annex regarding a harassment involving the listed student.
+CS000741,S004124,2026-06-01,Birchwood Hall,Medical Emergency,Low,Closed,Reporting officer responded to Birchwood Hall regarding a medical emergency involving the listed student.
+CS000742,S005819,2026-06-01,Birchwood Hall,Harassment,Medium,Under Investigation,Reporting officer responded to Birchwood Hall regarding a harassment involving the listed student.
+CS000743,S004806,2026-06-02,Willow Creek Hall,Alcohol Policy Violation,Low,Closed,A alcohol policy violation was observed and documented at Willow Creek Hall.
+CS000744,S002620,2026-06-02,Science Building,Theft,Medium,Open,Reporting officer responded to Science Building regarding a theft involving the listed student.
+CS000745,S008093,2026-06-02,Cedar Crest Hall,Drug Policy Violation,High,Closed,Reporting officer responded to Cedar Crest Hall regarding a drug policy violation involving the listed student.
+CS000746,S005407,2026-06-02,West Parking Garage,Noise Complaint,Low,Closed,Reporting officer responded to West Parking Garage regarding a noise complaint involving the listed student.
+CS000747,S004059,2026-06-03,Main Quad,Medical Emergency,Low,Closed,Reporting officer responded to Main Quad regarding a medical emergency involving the listed student.
+CS000748,S004844,2026-06-06,Science Building,Vandalism,Low,Under Investigation,A vandalism was observed and documented at Science Building.
+CS000749,S008418,2026-06-09,Founders Hall,Vandalism,Low,Closed,Campus Safety was dispatched to Founders Hall after a report of vandalism.
+CS000750,S005098,2026-06-10,Cedar Crest Hall,Disorderly Conduct,Low,Closed,Reporting officer responded to Cedar Crest Hall regarding a disorderly conduct involving the listed student.
+CS000751,S004918,2026-06-12,Riverbend Hall,Medical Emergency,Critical,Open,A medical emergency was observed and documented at Riverbend Hall.
+CS000752,S007479,2026-06-14,Engineering Annex,Drug Policy Violation,Low,Closed,Campus Safety was dispatched to Engineering Annex after a report of drug policy violation.
+CS000753,S000868,2026-06-15,Engineering Annex,Theft,Low,Closed,Student was involved in a theft reported near Engineering Annex.
+CS000754,S002876,2026-06-15,Highland Hall,Medical Emergency,Low,Closed,Student was involved in a medical emergency reported near Highland Hall.
+CS000755,S008336,2026-06-17,Riverbend Hall,Suspicious Activity,Medium,Under Investigation,Campus Safety was dispatched to Riverbend Hall after a report of suspicious activity.
+CS000756,S006401,2026-06-17,Summit House,Drug Policy Violation,Low,Closed,A drug policy violation was observed and documented at Summit House.
+CS000757,S003459,2026-06-17,Summit House,Trespassing,High,Closed,Student was involved in a trespassing reported near Summit House.
+CS000758,S003159,2026-06-18,Cedar Crest Hall,Physical Altercation,Critical,Closed,Reporting officer responded to Cedar Crest Hall regarding a physical altercation involving the listed student.
+CS000759,S004894,2026-06-18,West Parking Garage,Trespassing,High,Under Investigation,Incident occurred at West Parking Garage. Responding staff documented a trespassing.
+CS000760,S007192,2026-06-19,Northgate Hall,Weapons Policy Violation,Low,Open,Campus Safety was dispatched to Northgate Hall after a report of weapons policy violation.
+CS000761,S004446,2026-06-20,Main Quad,Disorderly Conduct,Medium,Closed,Incident occurred at Main Quad. Responding staff documented a disorderly conduct.
+CS000762,S007922,2026-06-22,Maple Ridge Hall,Fire Alarm Activation,Low,Referred to Conduct Board,A fire alarm activation was observed and documented at Maple Ridge Hall.
+CS000763,S005373,2026-06-23,Student Union,Drug Policy Violation,High,Closed,Student was involved in a drug policy violation reported near Student Union.
+CS000764,S001701,2026-06-23,Lakeside Terrace,Weapons Policy Violation,Critical,Closed,Reporting officer responded to Lakeside Terrace regarding a weapons policy violation involving the listed student.
+CS000765,S002265,2026-06-26,Lakeside Terrace,Medical Emergency,Medium,Closed,Campus Safety was dispatched to Lakeside Terrace after a report of medical emergency.
+CS000766,S003441,2026-06-27,Summit House,Fire Alarm Activation,High,Under Investigation,Incident occurred at Summit House. Responding staff documented a fire alarm activation.
+CS000767,S000877,2026-06-28,Cedar Crest Hall,Fire Alarm Activation,Medium,Closed,Student was involved in a fire alarm activation reported near Cedar Crest Hall.
+CS000768,S004948,2026-06-28,Fine Arts Center,Physical Altercation,Critical,Open,A physical altercation was observed and documented at Fine Arts Center.
+CS000769,S008892,2026-06-29,Bike Path,Suspicious Activity,Low,Closed,A suspicious activity was observed and documented at Bike Path.
+CS000770,S001092,2026-06-30,Cedar Crest Hall,Trespassing,Medium,Under Investigation,Reporting officer responded to Cedar Crest Hall regarding a trespassing involving the listed student.
+CS000771,S008789,2026-07-02,Fine Arts Center,Drug Policy Violation,High,Closed,Incident occurred at Fine Arts Center. Responding staff documented a drug policy violation.
+CS000772,S004578,2026-07-02,Meadowbrook Hall,Fire Alarm Activation,Low,Closed,Incident occurred at Meadowbrook Hall. Responding staff documented a fire alarm activation.
+CS000773,S001957,2026-07-02,Stadium,Drug Policy Violation,Medium,Closed,Incident occurred at Stadium. Responding staff documented a drug policy violation.
+CS000774,S005596,2026-07-02,Maple Ridge Hall,Weapons Policy Violation,Low,Closed,Reporting officer responded to Maple Ridge Hall regarding a weapons policy violation involving the listed student.
+CS000775,S003268,2026-07-03,Lakeside Terrace,Suspicious Activity,Low,Closed,Reporting officer responded to Lakeside Terrace regarding a suspicious activity involving the listed student.
+CS000776,S007196,2026-07-03,Highland Hall,Suspicious Activity,Low,Under Investigation,Reporting officer responded to Highland Hall regarding a suspicious activity involving the listed student.
+CS000777,S006695,2026-07-04,Birchwood Hall,Drug Policy Violation,High,Closed,Reporting officer responded to Birchwood Hall regarding a drug policy violation involving the listed student.
+CS000778,S006197,2026-07-04,Maple Ridge Hall,Medical Emergency,Critical,Under Investigation,Incident occurred at Maple Ridge Hall. Responding staff documented a medical emergency.
+CS000779,S008470,2026-07-05,Sunrise Commons,Suspicious Activity,Low,Closed,Incident occurred at Sunrise Commons. Responding staff documented a suspicious activity.
+CS000780,S006271,2026-07-06,Lakeside Terrace,Drug Policy Violation,Medium,Closed,A drug policy violation was observed and documented at Lakeside Terrace.
+CS000781,S000006,2026-07-08,Stadium,Vandalism,High,Closed,Student was involved in a vandalism reported near Stadium.
+CS000782,S003530,2026-07-08,East Lot,Disorderly Conduct,Critical,Under Investigation,Incident occurred at East Lot. Responding staff documented a disorderly conduct.
+CS000783,S001227,2026-07-09,Birchwood Hall,Theft,Medium,Closed,Campus Safety was dispatched to Birchwood Hall after a report of theft.
+CS000784,S008731,2026-07-10,Lakeside Terrace,Weapons Policy Violation,Medium,Closed,Student was involved in a weapons policy violation reported near Lakeside Terrace.
+CS000785,S003678,2026-07-11,East Lot,Fire Alarm Activation,High,Closed,Campus Safety was dispatched to East Lot after a report of fire alarm activation.
+CS000786,S009653,2026-07-13,Founders Hall,Weapons Policy Violation,Medium,Closed,Student was involved in a weapons policy violation reported near Founders Hall.
+CS000787,S001380,2026-07-14,Off-Campus Housing,Alcohol Policy Violation,Low,Referred to Conduct Board,Student was involved in a alcohol policy violation reported near Off-Campus Housing.
+CS000788,S000907,2026-07-15,Bike Path,Drug Policy Violation,High,Closed,Campus Safety was dispatched to Bike Path after a report of drug policy violation.
+CS000789,S006996,2026-07-16,Library,Medical Emergency,Medium,Closed,Campus Safety was dispatched to Library after a report of medical emergency.
+CS000790,S004543,2026-07-17,Science Building,Drug Policy Violation,Low,Under Investigation,Reporting officer responded to Science Building regarding a drug policy violation involving the listed student.
+CS000791,S003711,2026-07-18,Science Building,Noise Complaint,Medium,Closed,Reporting officer responded to Science Building regarding a noise complaint involving the listed student.
+CS000792,S000641,2026-07-21,Birchwood Hall,Alcohol Policy Violation,Low,Under Investigation,Incident occurred at Birchwood Hall. Responding staff documented a alcohol policy violation.
+CS000793,S001768,2026-07-22,Harborview Hall,Harassment,Low,Closed,Student was involved in a harassment reported near Harborview Hall.
+CS000794,S001626,2026-07-23,Stadium,Theft,Medium,Closed,Incident occurred at Stadium. Responding staff documented a theft.
+CS000795,S009604,2026-07-23,Sunrise Commons,Noise Complaint,High,Closed,Campus Safety was dispatched to Sunrise Commons after a report of noise complaint.
+CS000796,S005334,2026-07-24,Off-Campus Housing,Drug Policy Violation,Low,Closed,A drug policy violation was observed and documented at Off-Campus Housing.
+CS000797,S004533,2026-07-25,Northgate Hall,Alcohol Policy Violation,High,Referred to Conduct Board,Student was involved in a alcohol policy violation reported near Northgate Hall.
+CS000798,S004096,2026-07-26,Maple Ridge Hall,Medical Emergency,Low,Under Investigation,Campus Safety was dispatched to Maple Ridge Hall after a report of medical emergency.
+CS000799,S007444,2026-07-26,Meadowbrook Hall,Fire Alarm Activation,Medium,Closed,Incident occurred at Meadowbrook Hall. Responding staff documented a fire alarm activation.
+CS000800,S001398,2026-07-27,West Parking Garage,Physical Altercation,High,Closed,Incident occurred at West Parking Garage. Responding staff documented a physical altercation.
+CS000801,S006369,2026-07-28,Summit House,Noise Complaint,High,Closed,Reporting officer responded to Summit House regarding a noise complaint involving the listed student.
+CS000802,S006372,2026-07-28,Stadium,Disorderly Conduct,Medium,Closed,Reporting officer responded to Stadium regarding a disorderly conduct involving the listed student.
+CS000803,S002320,2026-07-29,Lakeside Terrace,Fire Alarm Activation,Low,Under Investigation,Reporting officer responded to Lakeside Terrace regarding a fire alarm activation involving the listed student.
+CS000804,S002943,2026-07-31,Cedar Crest Hall,Suspicious Activity,High,Under Investigation,Incident occurred at Cedar Crest Hall. Responding staff documented a suspicious activity.
+CS000805,S002128,2026-08-05,Maple Ridge Hall,Alcohol Policy Violation,Low,Referred to Conduct Board,Incident occurred at Maple Ridge Hall. Responding staff documented a alcohol policy violation.
+CS000806,S006624,2026-08-05,Cedar Crest Hall,Fire Alarm Activation,Medium,Referred to Conduct Board,Incident occurred at Cedar Crest Hall. Responding staff documented a fire alarm activation.
+CS000807,S005456,2026-08-06,Bellview Hall,Trespassing,Low,Closed,Reporting officer responded to Bellview Hall regarding a trespassing involving the listed student.
+CS000808,S007643,2026-08-09,Harborview Hall,Theft,Low,Closed,A theft was observed and documented at Harborview Hall.
+CS000809,S003391,2026-08-09,Harborview Hall,Disorderly Conduct,Medium,Under Investigation,Campus Safety was dispatched to Harborview Hall after a report of disorderly conduct.
+CS000810,S005561,2026-08-11,Sunrise Commons,Medical Emergency,Low,Under Investigation,Student was involved in a medical emergency reported near Sunrise Commons.
+CS000811,S008211,2026-08-11,Northgate Hall,Drug Policy Violation,Medium,Closed,A drug policy violation was observed and documented at Northgate Hall.
+CS000812,S002260,2026-08-12,Northgate Hall,Noise Complaint,Low,Closed,Reporting officer responded to Northgate Hall regarding a noise complaint involving the listed student.
+CS000813,S004479,2026-08-12,West Parking Garage,Trespassing,Low,Referred to Conduct Board,Incident occurred at West Parking Garage. Responding staff documented a trespassing.
+CS000814,S006446,2026-08-12,Bike Path,Harassment,Low,Closed,A harassment was observed and documented at Bike Path.
+CS000815,S003902,2026-08-13,Highland Hall,Weapons Policy Violation,Medium,Closed,Student was involved in a weapons policy violation reported near Highland Hall.
+CS000816,S006402,2026-08-14,Off-Campus Housing,Harassment,Medium,Open,A harassment was observed and documented at Off-Campus Housing.
+CS000817,S000023,2026-08-14,Fine Arts Center,Trespassing,Low,Under Investigation,Student was involved in a trespassing reported near Fine Arts Center.
+CS000818,S000224,2026-08-14,Cedar Crest Hall,Harassment,Low,Referred to Conduct Board,Campus Safety was dispatched to Cedar Crest Hall after a report of harassment.
+CS000819,S000960,2026-08-14,Off-Campus Housing,Medical Emergency,Critical,Closed,Reporting officer responded to Off-Campus Housing regarding a medical emergency involving the listed student.
+CS000820,S005193,2026-08-15,East Lot,Disorderly Conduct,Medium,Closed,Incident occurred at East Lot. Responding staff documented a disorderly conduct.
+CS000821,S007183,2026-08-16,Riverbend Hall,Alcohol Policy Violation,Low,Closed,Student was involved in a alcohol policy violation reported near Riverbend Hall.
+CS000822,S008964,2026-08-16,Highland Hall,Vandalism,Medium,Under Investigation,A vandalism was observed and documented at Highland Hall.
+CS000823,S004805,2026-08-18,Bellview Hall,Drug Policy Violation,Low,Closed,Student was involved in a drug policy violation reported near Bellview Hall.
+CS000824,S005868,2026-08-19,Northgate Hall,Disorderly Conduct,Medium,Closed,Incident occurred at Northgate Hall. Responding staff documented a disorderly conduct.
