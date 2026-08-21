@@ -143,3 +143,80 @@ CREATE TABLE IF NOT EXISTS audit_log (
 CREATE INDEX IF NOT EXISTS idx_audit_created ON audit_log(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_audit_actor ON audit_log(actor_id);
 CREATE INDEX IF NOT EXISTS idx_audit_action ON audit_log(action_type);
+
+-- ---------------------------------------------------------------------------
+-- Student Records — a separate, read-only reference dataset (synthetic demo
+-- data: "Alderbrook University") joined from four source systems: the SIS
+-- roster plus Housing, Campus Safety, and Academic Integrity records, and the
+-- general Web/Anonymous Reporting Portal. Seeded once from the CSVs in
+-- data/student_records/ by db/migrate.js — see that folder's README.md for
+-- full column definitions and provenance. Unrelated to the Wellness case
+-- entries above; this is its own tab in the app.
+-- ---------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS students (
+  student_id TEXT PRIMARY KEY,
+  first_name TEXT,
+  last_name TEXT,
+  email TEXT,
+  dob DATE,
+  major TEXT,
+  academic_year TEXT,
+  enrollment_status TEXT,
+  advisor TEXT,
+  phone TEXT,
+  address TEXT,
+  enrollment_date DATE
+);
+CREATE INDEX IF NOT EXISTS idx_students_last_name ON students(lower(last_name));
+CREATE INDEX IF NOT EXISTS idx_students_first_name ON students(lower(first_name));
+
+CREATE TABLE IF NOT EXISTS housing (
+  housing_id TEXT PRIMARY KEY,
+  student_id TEXT NOT NULL REFERENCES students(student_id),
+  residence_hall TEXT,
+  room_number TEXT,
+  move_in_date DATE,
+  move_out_date DATE,
+  housing_status TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_housing_student ON housing(student_id);
+
+CREATE TABLE IF NOT EXISTS campus_safety (
+  report_id TEXT PRIMARY KEY,
+  student_id TEXT NOT NULL REFERENCES students(student_id),
+  incident_date DATE,
+  location TEXT,
+  incident_type TEXT,
+  severity TEXT,
+  status TEXT,
+  narrative TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_campus_safety_student ON campus_safety(student_id);
+
+CREATE TABLE IF NOT EXISTS academic_integrity (
+  case_id TEXT PRIMARY KEY,
+  student_id TEXT NOT NULL REFERENCES students(student_id),
+  course_code TEXT,
+  course_name TEXT,
+  faculty_name TEXT,
+  incident_date DATE,
+  violation_type TEXT,
+  severity TEXT,
+  status TEXT,
+  description TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_academic_integrity_student ON academic_integrity(student_id);
+
+CREATE TABLE IF NOT EXISTS student_reports (
+  report_id TEXT PRIMARY KEY,
+  reported_student_id TEXT REFERENCES students(student_id),
+  reporter_type TEXT,
+  submitted_date DATE,
+  category TEXT,
+  location TEXT,
+  priority TEXT,
+  description TEXT,
+  anonymous BOOLEAN
+);
+CREATE INDEX IF NOT EXISTS idx_student_reports_student ON student_reports(reported_student_id);

@@ -461,6 +461,81 @@ function listAuditLog(filters, limit) {
   ).then(function (r) { return r.rows.map(auditRow); });
 }
 
+// ---------------- Student Records (read-only reference dataset) ----------------
+// Backs the "Student Records" tab: a synthetic SIS roster joined against
+// Housing, Campus Safety, Academic Integrity, and the Web/Anonymous
+// Reporting Portal. Seeded once by db/migrate.js from data/student_records/.
+// This dataset is intentionally separate from — and unrelated to — the
+// Wellness case entries above.
+
+function studentRecordRow(row) {
+  return {
+    studentId: row.student_id, firstName: row.first_name, lastName: row.last_name, email: row.email,
+    dob: row.dob, major: row.major, academicYear: row.academic_year, enrollmentStatus: row.enrollment_status,
+    advisor: row.advisor, phone: row.phone, address: row.address, enrollmentDate: row.enrollment_date,
+  };
+}
+function housingRecordRow(row) {
+  return {
+    housingId: row.housing_id, studentId: row.student_id, residenceHall: row.residence_hall, roomNumber: row.room_number,
+    moveInDate: row.move_in_date, moveOutDate: row.move_out_date, housingStatus: row.housing_status,
+  };
+}
+function campusSafetyRow(row) {
+  return {
+    reportId: row.report_id, studentId: row.student_id, incidentDate: row.incident_date, location: row.location,
+    incidentType: row.incident_type, severity: row.severity, status: row.status, narrative: row.narrative,
+  };
+}
+function academicIntegrityRow(row) {
+  return {
+    caseId: row.case_id, studentId: row.student_id, courseCode: row.course_code, courseName: row.course_name,
+    facultyName: row.faculty_name, incidentDate: row.incident_date, violationType: row.violation_type,
+    severity: row.severity, status: row.status, description: row.description,
+  };
+}
+function studentReportRow(row) {
+  return {
+    reportId: row.report_id, reportedStudentId: row.reported_student_id, reporterType: row.reporter_type,
+    submittedDate: row.submitted_date, category: row.category, location: row.location, priority: row.priority,
+    description: row.description, anonymous: row.anonymous,
+  };
+}
+
+// Simple substring search over student_id / first / last / "first last" —
+// fine at this table's size (~10k rows); caller enforces a minimum query
+// length so this never runs as an unbounded full-table scan from an empty box.
+function searchStudentRecords(q, limit) {
+  const needle = '%' + String(q || '').trim() + '%';
+  return db.query(
+    'SELECT student_id, first_name, last_name, major, academic_year, enrollment_status FROM students ' +
+    "WHERE student_id ILIKE $1 OR first_name ILIKE $1 OR last_name ILIKE $1 OR (first_name || ' ' || last_name) ILIKE $1 " +
+    'ORDER BY last_name, first_name LIMIT $2',
+    [needle, limit || 50]
+  ).then(function (r) { return r.rows.map(studentRecordRow); });
+}
+
+function getStudentRecordProfile(studentId) {
+  return db.query('SELECT * FROM students WHERE student_id = $1', [studentId]).then(function (r) {
+    if (!r.rows[0]) return null;
+    const student = studentRecordRow(r.rows[0]);
+    return Promise.all([
+      db.query('SELECT * FROM housing WHERE student_id = $1 ORDER BY move_in_date DESC NULLS LAST', [studentId]),
+      db.query('SELECT * FROM campus_safety WHERE student_id = $1 ORDER BY incident_date DESC NULLS LAST', [studentId]),
+      db.query('SELECT * FROM academic_integrity WHERE student_id = $1 ORDER BY incident_date DESC NULLS LAST', [studentId]),
+      db.query('SELECT * FROM student_reports WHERE reported_student_id = $1 ORDER BY submitted_date DESC NULLS LAST', [studentId]),
+    ]).then(function (r2) {
+      return {
+        student: student,
+        housing: r2[0].rows.map(housingRecordRow),
+        campusSafety: r2[1].rows.map(campusSafetyRow),
+        academicIntegrity: r2[2].rows.map(academicIntegrityRow),
+        reports: r2[3].rows.map(studentReportRow),
+      };
+    });
+  });
+}
+
 module.exports = {
   countUsers, createUser, getUserByEmail, getUserById, listUsers, setUserActive, setUserRole, touchLogin, publicUser,
   createSession, getSession, deleteSession, touchSessionActivity,
@@ -471,4 +546,5 @@ module.exports = {
   listTemplates, getTemplate, getDefaultTemplate, createTemplate,
   listTemplateOptions, addTemplateOption, setTemplateOptionActive,
   createAuditLog, listAuditLog,
+  searchStudentRecords, getStudentRecordProfile,
 };

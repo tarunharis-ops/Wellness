@@ -35,6 +35,10 @@
       <span class="brand-mark">W</span>
       <span class="brand-text">Wellness Tracker</span>
     </div>
+    <div class="mode-switch" id="modeSwitch">
+      <button class="mode-tab active" data-mode="wellness">Wellness</button>
+      <button class="mode-tab" data-mode="records">Student Records</button>
+    </div>
     <nav class="nav" id="nav">
       <button class="nav-item" data-view="log">Case Log</button>
       <button class="nav-item" data-view="students">Students</button>
@@ -45,6 +49,9 @@
       <button class="nav-item" data-view="import" id="navImport" style="display:none">Import</button>
       <button class="nav-item" data-view="team" id="navTeam" style="display:none">Team</button>
       <button class="nav-item" data-view="audit" id="navAudit" style="display:none">Audit Log</button>
+    </nav>
+    <nav class="nav" id="navRecords" style="display:none">
+      <button class="nav-item" data-view="recordsSearch">Search &amp; Priors</button>
     </nav>
     <div class="sidebar-footer">
       <div class="user-chip">
@@ -97,5 +104,6 @@
 <script src="/auth.js"></script>
 <script src="/app.js"></script>
 <script src="/import.js"></script>
+<script src="/records.js"></script>
 </body>
 </html>

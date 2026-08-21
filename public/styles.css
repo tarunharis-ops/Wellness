@@ -159,6 +159,17 @@ button { cursor: pointer; }
   text-transform: uppercase;
 }
 
+/* ---------- Mode switch (Wellness / Student Records) ---------- */
+.mode-switch { display: flex; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); margin-bottom: 22px; overflow: hidden; }
+.mode-tab {
+  flex: 1; border: none; background: var(--surface); color: var(--text-muted); padding: 8px 6px;
+  font-size: 10px; font-weight: 650; letter-spacing: 0.06em; text-transform: uppercase; text-align: center;
+  transition: background .12s ease, color .12s ease;
+}
+.mode-tab + .mode-tab { border-left: 1px solid var(--border-strong); }
+.mode-tab:hover { color: var(--text); }
+.mode-tab.active { background: var(--text); color: var(--bg); }
+
 .nav { display: flex; flex-direction: column; gap: 1px; flex: 1; }
 .nav-item {
   display: flex; align-items: center; gap: 10px;
@@ -526,6 +537,30 @@ table.data-table { width: 100%; border-collapse: collapse; min-width: 900px; }
 .audit-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
 .audit-filters select { padding: 7px 10px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--surface); font-size: 12.5px; }
 .audit-meta { font-size: 11.5px; color: var(--text-faint); }
+
+/* ---------- Student Records ---------- */
+.records-search-wrap { margin-bottom: 22px; max-width: 460px; }
+.records-search-wrap input {
+  width: 100%; padding: 11px 14px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm);
+  background: var(--surface); outline: none; font-size: 13.5px; transition: border-color .12s ease;
+}
+.records-search-wrap input:focus { border-color: var(--text); }
+
+.records-header-top { display: flex; align-items: center; gap: 16px; }
+.records-avatar {
+  width: 52px; height: 52px; border-radius: 50%; background: var(--accent-soft); color: var(--accent-soft-text);
+  display: flex; align-items: center; justify-content: center; font-family: var(--font-serif); font-size: 18px; flex-shrink: 0;
+}
+.records-name { font-family: var(--font-serif); font-size: 21px; font-weight: 400; }
+.records-meta { color: var(--text-muted); font-size: 12.5px; margin-top: 5px; }
+
+.kv-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 20px; }
+.kv-label { font-size: 10.5px; color: var(--text-muted); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+.kv-value { font-size: 13.5px; margin-top: 5px; }
+
+.incident-field-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px 20px; margin-top: 12px; }
+.incident-field { font-size: 12.5px; display: flex; flex-direction: column; gap: 3px; }
+.incident-field-label { font-size: 10px; color: var(--text-faint); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
 
 /* ---------- Appearance ---------- */
 .theme-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); max-width: 700px; }

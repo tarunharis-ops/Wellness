@@ -1,0 +1,997 @@
+report_id,reported_student_id,reporter_type,submitted_date,category,location,priority,description,anonymous
+WR000001,S008933,Staff,2024-08-01,Other,East Lot,Low,Reporter describes an incident involving other that occurred at East Lot.,False
+WR000002,S004390,Staff,2024-08-02,Hazing,Engineering Annex,High,Reporter states they witnessed behavior consistent with hazing.,False
+WR000003,,Faculty,2024-08-02,Discrimination,Off-Campus Housing,Low,Concern raised about discrimination; reporter requests follow-up from staff.,False
+WR000004,,Community Member,2024-08-03,Bias Incident,Founders Hall,High,Submission describes an ongoing issue related to bias incident at Founders Hall.,False
+WR000005,S006710,Community Member,2024-08-04,Property Damage,Recreation Center,Medium,Submission describes an ongoing issue related to property damage at Recreation Center.,False
+WR000006,S005488,Staff,2024-08-04,Safety Hazard,Stadium,High,Concern raised about safety hazard; reporter requests follow-up from staff.,False
+WR000007,,Parent,2024-08-04,Academic Dishonesty,Recreation Center,High,A concern was submitted regarding possible academic dishonesty near Recreation Center.,False
+WR000008,S000587,Faculty,2024-08-05,Discrimination,Science Building,Low,A concern was submitted regarding possible discrimination near Science Building.,False
+WR000009,S009067,Student,2024-08-05,Property Damage,Online / Remote,Low,A concern was submitted regarding possible property damage near Online / Remote.,False
+WR000010,S002722,Faculty,2024-08-05,Safety Hazard,Riverbend Hall,Medium,Concern raised about safety hazard; reporter requests follow-up from staff.,False
+WR000011,,Anonymous,2024-08-07,Academic Dishonesty,Founders Hall,High,Concern raised about academic dishonesty; reporter requests follow-up from staff.,True
+WR000012,S007394,Student,2024-08-07,Mental Health Concern,Sunrise Commons,High,Submission describes an ongoing issue related to mental health concern at Sunrise Commons.,False
+WR000013,S000053,Faculty,2024-08-10,Hazing,Bellview Hall,Low,Reporter states they witnessed behavior consistent with hazing.,False
+WR000014,S006872,Anonymous,2024-08-13,Bullying/Harassment,Off-Campus Housing,High,Reporter describes an incident involving bullying/harassment that occurred at Off-Campus Housing.,True
+WR000015,,Student,2024-08-15,Academic Dishonesty,Meadowbrook Hall,Low,Reporter states they witnessed behavior consistent with academic dishonesty.,False
+WR000016,S006260,Community Member,2024-08-15,Academic Dishonesty,Main Quad,Low,Submission describes an ongoing issue related to academic dishonesty at Main Quad.,False
+WR000017,S007025,Community Member,2024-08-16,Alcohol/Drug Concern,Sunrise Commons,Low,Concern raised about alcohol/drug concern; reporter requests follow-up from staff.,False
+WR000018,S009648,Anonymous,2024-08-16,Hazing,Library,Urgent,Concern raised about hazing; reporter requests follow-up from staff.,True
+WR000019,S002921,Anonymous,2024-08-16,Alcohol/Drug Concern,Bellview Hall,Medium,A concern was submitted regarding possible alcohol/drug concern near Bellview Hall.,True
+WR000020,,Staff,2024-08-18,Theft,Off-Campus Housing,Medium,Concern raised about theft; reporter requests follow-up from staff.,False
+WR000021,S004819,Anonymous,2024-08-20,Bullying/Harassment,Recreation Center,Low,A concern was submitted regarding possible bullying/harassment near Recreation Center.,True
+WR000022,S008053,Student,2024-08-20,Theft,Founders Hall,Urgent,Concern raised about theft; reporter requests follow-up from staff.,False
+WR000023,S005187,Anonymous,2024-08-20,Safety Hazard,Lakeside Terrace,Medium,A concern was submitted regarding possible safety hazard near Lakeside Terrace.,True
+WR000024,S001755,Staff,2024-08-21,Bias Incident,Willow Creek Hall,Medium,Concern raised about bias incident; reporter requests follow-up from staff.,False
+WR000025,,Student,2024-08-23,Bullying/Harassment,Bike Path,Medium,A concern was submitted regarding possible bullying/harassment near Bike Path.,False
+WR000026,S009585,Community Member,2024-08-24,Bullying/Harassment,Riverbend Hall,Low,Submission describes an ongoing issue related to bullying/harassment at Riverbend Hall.,False
+WR000027,S001031,Anonymous,2024-08-24,Hazing,East Lot,Low,Reporter states they witnessed behavior consistent with hazing.,True
+WR000028,,Anonymous,2024-08-24,Safety Hazard,Student Union,Medium,Reporter describes an incident involving safety hazard that occurred at Student Union.,True
+WR000029,,Anonymous,2024-08-25,Theft,Engineering Annex,Low,Concern raised about theft; reporter requests follow-up from staff.,True
+WR000030,S007394,Parent,2024-08-25,Safety Hazard,Highland Hall,High,Reporter describes an incident involving safety hazard that occurred at Highland Hall.,False
+WR000031,S000702,Anonymous,2024-08-26,Safety Hazard,Engineering Annex,Medium,Submission describes an ongoing issue related to safety hazard at Engineering Annex.,True
+WR000032,S008365,Student,2024-08-26,Hazing,Bike Path,Medium,Reporter describes an incident involving hazing that occurred at Bike Path.,False
+WR000033,,Faculty,2024-08-26,Property Damage,Off-Campus Housing,Low,Concern raised about property damage; reporter requests follow-up from staff.,False
+WR000034,,Student,2024-08-26,Property Damage,Main Quad,High,Reporter states they witnessed behavior consistent with property damage.,False
+WR000035,,Student,2024-08-27,Bullying/Harassment,Stadium,High,Reporter states they witnessed behavior consistent with bullying/harassment.,False
+WR000036,S001057,Anonymous,2024-08-28,Discrimination,Recreation Center,Medium,Reporter describes an incident involving discrimination that occurred at Recreation Center.,True
+WR000037,S003411,Community Member,2024-08-29,Alcohol/Drug Concern,Stadium,High,Reporter describes an incident involving alcohol/drug concern that occurred at Stadium.,False
+WR000038,S002761,Faculty,2024-08-30,Property Damage,Birchwood Hall,Low,Reporter states they witnessed behavior consistent with property damage.,False
+WR000039,S007441,Staff,2024-08-31,Sexual Misconduct,Stadium,Medium,Concern raised about sexual misconduct; reporter requests follow-up from staff.,False
+WR000040,,Faculty,2024-09-01,Sexual Misconduct,Science Building,Medium,Reporter describes an incident involving sexual misconduct that occurred at Science Building.,False
+WR000041,,Anonymous,2024-09-02,Sexual Misconduct,Fine Arts Center,Urgent,Concern raised about sexual misconduct; reporter requests follow-up from staff.,True
+WR000042,S003827,Staff,2024-09-02,Other,Birchwood Hall,Medium,Submission describes an ongoing issue related to other at Birchwood Hall.,False
+WR000043,S007705,Student,2024-09-03,Discrimination,Birchwood Hall,Low,Submission describes an ongoing issue related to discrimination at Birchwood Hall.,False
+WR000044,S002288,Staff,2024-09-05,Safety Hazard,Sunrise Commons,Medium,Submission describes an ongoing issue related to safety hazard at Sunrise Commons.,False
+WR000045,S000653,Faculty,2024-09-05,Bias Incident,East Lot,Medium,Submission describes an ongoing issue related to bias incident at East Lot.,False
+WR000046,,Student,2024-09-06,Other,Cedar Crest Hall,Medium,Submission describes an ongoing issue related to other at Cedar Crest Hall.,False
+WR000047,,Staff,2024-09-06,Alcohol/Drug Concern,Bellview Hall,Medium,A concern was submitted regarding possible alcohol/drug concern near Bellview Hall.,False
+WR000048,,Student,2024-09-08,Bullying/Harassment,Northgate Hall,High,A concern was submitted regarding possible bullying/harassment near Northgate Hall.,False
+WR000049,S006416,Faculty,2024-09-10,Theft,Library,Urgent,Reporter describes an incident involving theft that occurred at Library.,False
+WR000050,S006725,Faculty,2024-09-10,Mental Health Concern,Summit House,High,Reporter describes an incident involving mental health concern that occurred at Summit House.,False
+WR000051,S006416,Anonymous,2024-09-11,Theft,Off-Campus Housing,Low,Concern raised about theft; reporter requests follow-up from staff.,True
+WR000052,S006996,Student,2024-09-11,Sexual Misconduct,Sunrise Commons,Low,A concern was submitted regarding possible sexual misconduct near Sunrise Commons.,False
+WR000053,S001383,Staff,2024-09-12,Bias Incident,Online / Remote,Low,Reporter states they witnessed behavior consistent with bias incident.,False
+WR000054,S000769,Faculty,2024-09-12,Mental Health Concern,Sunrise Commons,Medium,A concern was submitted regarding possible mental health concern near Sunrise Commons.,False
+WR000055,,Student,2024-09-12,Alcohol/Drug Concern,Off-Campus,High,A concern was submitted regarding possible alcohol/drug concern near Off-Campus.,False
+WR000056,S005187,Community Member,2024-09-13,Other,Off-Campus Housing,High,Submission describes an ongoing issue related to other at Off-Campus Housing.,False
+WR000057,,Community Member,2024-09-13,Sexual Misconduct,Meadowbrook Hall,Low,Concern raised about sexual misconduct; reporter requests follow-up from staff.,False
+WR000058,S006215,Community Member,2024-09-14,Discrimination,Meadowbrook Hall,Urgent,Concern raised about discrimination; reporter requests follow-up from staff.,False
+WR000059,S008546,Student,2024-09-14,Theft,Harborview Hall,Medium,Reporter describes an incident involving theft that occurred at Harborview Hall.,False
+WR000060,S002011,Faculty,2024-09-14,Hazing,Highland Hall,Low,Concern raised about hazing; reporter requests follow-up from staff.,False
+WR000061,S000325,Faculty,2024-09-15,Alcohol/Drug Concern,Recreation Center,Medium,Reporter describes an incident involving alcohol/drug concern that occurred at Recreation Center.,False
+WR000062,S008521,Parent,2024-09-15,Theft,Recreation Center,Medium,A concern was submitted regarding possible theft near Recreation Center.,False
+WR000063,,Staff,2024-09-16,Bullying/Harassment,Maple Ridge Hall,High,A concern was submitted regarding possible bullying/harassment near Maple Ridge Hall.,False
+WR000064,S006085,Anonymous,2024-09-16,Discrimination,Meadowbrook Hall,Low,Reporter describes an incident involving discrimination that occurred at Meadowbrook Hall.,True
+WR000065,,Faculty,2024-09-17,Discrimination,Library,Low,Reporter states they witnessed behavior consistent with discrimination.,False
+WR000066,,Student,2024-09-18,Bullying/Harassment,Willow Creek Hall,High,Reporter states they witnessed behavior consistent with bullying/harassment.,False
+WR000067,,Anonymous,2024-09-18,Property Damage,Engineering Annex,High,Concern raised about property damage; reporter requests follow-up from staff.,True
+WR000068,S002922,Staff,2024-09-19,Theft,Main Quad,Medium,Reporter states they witnessed behavior consistent with theft.,False
+WR000069,S000769,Anonymous,2024-09-21,Property Damage,Main Quad,Medium,Reporter describes an incident involving property damage that occurred at Main Quad.,True
+WR000070,,Student,2024-09-22,Sexual Misconduct,Founders Hall,Medium,Reporter describes an incident involving sexual misconduct that occurred at Founders Hall.,False
+WR000071,S009804,Staff,2024-09-22,Safety Hazard,Off-Campus Housing,Low,A concern was submitted regarding possible safety hazard near Off-Campus Housing.,False
+WR000072,S002154,Parent,2024-09-23,Bias Incident,Science Building,High,Reporter describes an incident involving bias incident that occurred at Science Building.,False
+WR000073,S004541,Student,2024-09-23,Bias Incident,West Parking Garage,Medium,Reporter states they witnessed behavior consistent with bias incident.,False
+WR000074,S006407,Community Member,2024-09-24,Hazing,Maple Ridge Hall,Urgent,Concern raised about hazing; reporter requests follow-up from staff.,False
+WR000075,S008763,Staff,2024-09-25,Property Damage,Fine Arts Center,Medium,Reporter describes an incident involving property damage that occurred at Fine Arts Center.,False
+WR000076,,Anonymous,2024-09-26,Other,Off-Campus Housing,High,Submission describes an ongoing issue related to other at Off-Campus Housing.,True
+WR000077,S001137,Anonymous,2024-09-27,Safety Hazard,Main Quad,Low,A concern was submitted regarding possible safety hazard near Main Quad.,True
+WR000078,,Staff,2024-09-27,Mental Health Concern,Off-Campus Housing,Medium,Reporter describes an incident involving mental health concern that occurred at Off-Campus Housing.,False
+WR000079,S009917,Student,2024-09-27,Mental Health Concern,Library,Low,Concern raised about mental health concern; reporter requests follow-up from staff.,False
+WR000080,S003324,Student,2024-09-28,Safety Hazard,Birchwood Hall,Low,Submission describes an ongoing issue related to safety hazard at Birchwood Hall.,False
+WR000081,S000589,Student,2024-10-03,Bullying/Harassment,Willow Creek Hall,Medium,Concern raised about bullying/harassment; reporter requests follow-up from staff.,False
+WR000082,,Anonymous,2024-10-03,Bullying/Harassment,Off-Campus,Low,Reporter states they witnessed behavior consistent with bullying/harassment.,True
+WR000083,S005967,Staff,2024-10-04,Discrimination,Northgate Hall,Medium,Reporter states they witnessed behavior consistent with discrimination.,False
+WR000084,S001215,Student,2024-10-05,Alcohol/Drug Concern,Main Quad,Medium,Submission describes an ongoing issue related to alcohol/drug concern at Main Quad.,False
+WR000085,S009087,Student,2024-10-07,Discrimination,Birchwood Hall,Low,A concern was submitted regarding possible discrimination near Birchwood Hall.,False
+WR000086,,Community Member,2024-10-09,Property Damage,Engineering Annex,Low,Reporter states they witnessed behavior consistent with property damage.,False
+WR000087,,Staff,2024-10-09,Hazing,Stadium,Low,Reporter states they witnessed behavior consistent with hazing.,False
+WR000088,,Staff,2024-10-09,Mental Health Concern,Online / Remote,Low,Submission describes an ongoing issue related to mental health concern at Online / Remote.,False
+WR000089,S003916,Student,2024-10-10,Property Damage,Student Union,Medium,Concern raised about property damage; reporter requests follow-up from staff.,False
+WR000090,,Student,2024-10-10,Property Damage,Bellview Hall,Medium,A concern was submitted regarding possible property damage near Bellview Hall.,False
+WR000091,,Community Member,2024-10-11,Mental Health Concern,Highland Hall,High,Reporter describes an incident involving mental health concern that occurred at Highland Hall.,False
+WR000092,,Anonymous,2024-10-11,Mental Health Concern,Aspen Court,Low,Reporter states they witnessed behavior consistent with mental health concern.,True
+WR000093,S005522,Anonymous,2024-10-12,Other,Founders Hall,Low,Reporter states they witnessed behavior consistent with other.,True
+WR000094,S002711,Anonymous,2024-10-12,Bullying/Harassment,Highland Hall,Medium,A concern was submitted regarding possible bullying/harassment near Highland Hall.,True
+WR000095,,Student,2024-10-12,Theft,Engineering Annex,Low,Concern raised about theft; reporter requests follow-up from staff.,False
+WR000096,,Anonymous,2024-10-13,Mental Health Concern,Student Union,Medium,Concern raised about mental health concern; reporter requests follow-up from staff.,True
+WR000097,,Student,2024-10-15,Academic Dishonesty,Riverbend Hall,Medium,A concern was submitted regarding possible academic dishonesty near Riverbend Hall.,False
+WR000098,,Staff,2024-10-15,Theft,Fine Arts Center,Medium,A concern was submitted regarding possible theft near Fine Arts Center.,False
+WR000099,,Student,2024-10-16,Property Damage,Cedar Crest Hall,Medium,A concern was submitted regarding possible property damage near Cedar Crest Hall.,False
+WR000100,S000814,Anonymous,2024-10-18,Bias Incident,Birchwood Hall,High,A concern was submitted regarding possible bias incident near Birchwood Hall.,True
+WR000101,,Student,2024-10-18,Mental Health Concern,Main Quad,Medium,Concern raised about mental health concern; reporter requests follow-up from staff.,False
+WR000102,,Community Member,2024-10-19,Bias Incident,Harborview Hall,Medium,Reporter describes an incident involving bias incident that occurred at Harborview Hall.,False
+WR000103,S008402,Anonymous,2024-10-21,Discrimination,Riverbend Hall,Low,Submission describes an ongoing issue related to discrimination at Riverbend Hall.,True
+WR000104,S006287,Student,2024-10-22,Bias Incident,Engineering Annex,High,Reporter states they witnessed behavior consistent with bias incident.,False
+WR000105,,Community Member,2024-10-22,Bias Incident,Stadium,Low,A concern was submitted regarding possible bias incident near Stadium.,False
+WR000106,S008288,Community Member,2024-10-23,Hazing,Summit House,Low,A concern was submitted regarding possible hazing near Summit House.,False
+WR000107,S003898,Anonymous,2024-10-23,Safety Hazard,Library,Medium,Reporter describes an incident involving safety hazard that occurred at Library.,True
+WR000108,S006829,Parent,2024-10-26,Academic Dishonesty,Meadowbrook Hall,Low,Reporter describes an incident involving academic dishonesty that occurred at Meadowbrook Hall.,False
+WR000109,,Student,2024-10-28,Other,Science Building,Medium,Concern raised about other; reporter requests follow-up from staff.,False
+WR000110,,Staff,2024-10-28,Hazing,Sunrise Commons,High,Reporter states they witnessed behavior consistent with hazing.,False
+WR000111,S007719,Student,2024-10-29,Bullying/Harassment,Sunrise Commons,Low,Submission describes an ongoing issue related to bullying/harassment at Sunrise Commons.,False
+WR000112,,Community Member,2024-10-29,Hazing,Riverbend Hall,Low,Concern raised about hazing; reporter requests follow-up from staff.,False
+WR000113,S002959,Student,2024-10-30,Safety Hazard,Science Building,Low,Submission describes an ongoing issue related to safety hazard at Science Building.,False
+WR000114,,Anonymous,2024-11-03,Alcohol/Drug Concern,Bike Path,Medium,Submission describes an ongoing issue related to alcohol/drug concern at Bike Path.,True
+WR000115,,Staff,2024-11-04,Theft,Sunrise Commons,Low,A concern was submitted regarding possible theft near Sunrise Commons.,False
+WR000116,S002922,Anonymous,2024-11-04,Other,Birchwood Hall,Medium,Reporter describes an incident involving other that occurred at Birchwood Hall.,True
+WR000117,,Anonymous,2024-11-04,Hazing,Fine Arts Center,Medium,Reporter describes an incident involving hazing that occurred at Fine Arts Center.,True
+WR000118,S001478,Staff,2024-11-05,Academic Dishonesty,Aspen Court,Medium,Reporter states they witnessed behavior consistent with academic dishonesty.,False
+WR000119,S009505,Anonymous,2024-11-06,Other,Highland Hall,Low,Concern raised about other; reporter requests follow-up from staff.,True
+WR000120,,Faculty,2024-11-06,Safety Hazard,Willow Creek Hall,Medium,Submission describes an ongoing issue related to safety hazard at Willow Creek Hall.,False
+WR000121,S002629,Student,2024-11-06,Other,Highland Hall,High,Reporter states they witnessed behavior consistent with other.,False
+WR000122,,Student,2024-11-07,Property Damage,Stadium,High,A concern was submitted regarding possible property damage near Stadium.,False
+WR000123,,Faculty,2024-11-08,Academic Dishonesty,Highland Hall,Urgent,Submission describes an ongoing issue related to academic dishonesty at Highland Hall.,False
+WR000124,,Anonymous,2024-11-09,Safety Hazard,Founders Hall,Low,Reporter states they witnessed behavior consistent with safety hazard.,True
+WR000125,S006572,Student,2024-11-10,Theft,Northgate Hall,Medium,Reporter states they witnessed behavior consistent with theft.,False
+WR000126,,Staff,2024-11-12,Bias Incident,Birchwood Hall,High,Submission describes an ongoing issue related to bias incident at Birchwood Hall.,False
+WR000127,,Community Member,2024-11-12,Alcohol/Drug Concern,Off-Campus Housing,Medium,Reporter describes an incident involving alcohol/drug concern that occurred at Off-Campus Housing.,False
+WR000128,,Anonymous,2024-11-13,Hazing,East Lot,Medium,Submission describes an ongoing issue related to hazing at East Lot.,True
+WR000129,,Anonymous,2024-11-13,Hazing,Maple Ridge Hall,Medium,Reporter describes an incident involving hazing that occurred at Maple Ridge Hall.,True
+WR000130,,Faculty,2024-11-13,Discrimination,Fine Arts Center,Medium,Submission describes an ongoing issue related to discrimination at Fine Arts Center.,False
+WR000131,S008193,Student,2024-11-13,Property Damage,Harborview Hall,Low,A concern was submitted regarding possible property damage near Harborview Hall.,False
+WR000132,S000053,Community Member,2024-11-13,Hazing,Bellview Hall,Low,Reporter states they witnessed behavior consistent with hazing.,False
+WR000133,S005024,Anonymous,2024-11-14,Discrimination,Willow Creek Hall,Medium,Concern raised about discrimination; reporter requests follow-up from staff.,True
+WR000134,,Parent,2024-11-14,Academic Dishonesty,Cedar Crest Hall,Medium,Reporter states they witnessed behavior consistent with academic dishonesty.,False
+WR000135,S009136,Anonymous,2024-11-14,Alcohol/Drug Concern,Willow Creek Hall,Low,Concern raised about alcohol/drug concern; reporter requests follow-up from staff.,True
+WR000136,,Community Member,2024-11-16,Property Damage,Riverbend Hall,Urgent,Reporter describes an incident involving property damage that occurred at Riverbend Hall.,False
+WR000137,S009297,Anonymous,2024-11-16,Safety Hazard,Aspen Court,Low,Submission describes an ongoing issue related to safety hazard at Aspen Court.,True
+WR000138,,Anonymous,2024-11-17,Mental Health Concern,Online / Remote,High,Submission describes an ongoing issue related to mental health concern at Online / Remote.,True
+WR000139,,Anonymous,2024-11-17,Theft,Meadowbrook Hall,High,Concern raised about theft; reporter requests follow-up from staff.,True
+WR000140,,Community Member,2024-11-17,Hazing,Summit House,High,Submission describes an ongoing issue related to hazing at Summit House.,False
+WR000141,S002287,Student,2024-11-18,Mental Health Concern,Engineering Annex,Medium,Reporter states they witnessed behavior consistent with mental health concern.,False
+WR000142,,Anonymous,2024-11-19,Sexual Misconduct,Highland Hall,Medium,Reporter states they witnessed behavior consistent with sexual misconduct.,True
+WR000143,S000976,Student,2024-11-20,Bullying/Harassment,Maple Ridge Hall,Low,Submission describes an ongoing issue related to bullying/harassment at Maple Ridge Hall.,False
+WR000144,S006188,Student,2024-11-22,Property Damage,Birchwood Hall,Medium,Reporter describes an incident involving property damage that occurred at Birchwood Hall.,False
+WR000145,S003248,Anonymous,2024-11-22,Property Damage,Sunrise Commons,Medium,Submission describes an ongoing issue related to property damage at Sunrise Commons.,True
+WR000146,S008835,Student,2024-11-22,Other,East Lot,Low,Submission describes an ongoing issue related to other at East Lot.,False
+WR000147,S009131,Student,2024-11-23,Mental Health Concern,Science Building,High,Reporter states they witnessed behavior consistent with mental health concern.,False
+WR000148,,Student,2024-11-23,Bullying/Harassment,Off-Campus,Low,Reporter describes an incident involving bullying/harassment that occurred at Off-Campus.,False
+WR000149,,Anonymous,2024-11-24,Bullying/Harassment,Harborview Hall,Medium,A concern was submitted regarding possible bullying/harassment near Harborview Hall.,True
+WR000150,,Community Member,2024-11-25,Mental Health Concern,Lakeside Terrace,Medium,Submission describes an ongoing issue related to mental health concern at Lakeside Terrace.,False
+WR000151,S009984,Anonymous,2024-11-26,Alcohol/Drug Concern,Library,High,A concern was submitted regarding possible alcohol/drug concern near Library.,True
+WR000152,S007957,Student,2024-11-27,Alcohol/Drug Concern,Stadium,Medium,Reporter describes an incident involving alcohol/drug concern that occurred at Stadium.,False
+WR000153,,Anonymous,2024-11-27,Theft,Maple Ridge Hall,Low,A concern was submitted regarding possible theft near Maple Ridge Hall.,True
+WR000154,S007425,Anonymous,2024-11-27,Safety Hazard,Summit House,Medium,Reporter states they witnessed behavior consistent with safety hazard.,True
+WR000155,S006341,Community Member,2024-11-28,Other,Off-Campus,Urgent,Reporter describes an incident involving other that occurred at Off-Campus.,False
+WR000156,S008756,Student,2024-11-28,Safety Hazard,Engineering Annex,Low,Reporter describes an incident involving safety hazard that occurred at Engineering Annex.,False
+WR000157,S009900,Staff,2024-11-30,Other,Birchwood Hall,Medium,A concern was submitted regarding possible other near Birchwood Hall.,False
+WR000158,,Student,2024-11-30,Other,Sunrise Commons,Medium,Reporter describes an incident involving other that occurred at Sunrise Commons.,False
+WR000159,,Faculty,2024-11-30,Safety Hazard,Highland Hall,Medium,A concern was submitted regarding possible safety hazard near Highland Hall.,False
+WR000160,S003330,Student,2024-12-01,Discrimination,Founders Hall,High,Concern raised about discrimination; reporter requests follow-up from staff.,False
+WR000161,,Faculty,2024-12-01,Alcohol/Drug Concern,Recreation Center,Medium,Reporter describes an incident involving alcohol/drug concern that occurred at Recreation Center.,False
+WR000162,S004643,Anonymous,2024-12-01,Theft,Harborview Hall,Medium,Reporter describes an incident involving theft that occurred at Harborview Hall.,True
+WR000163,S000431,Student,2024-12-01,Other,Riverbend Hall,Low,Submission describes an ongoing issue related to other at Riverbend Hall.,False
+WR000164,,Anonymous,2024-12-02,Property Damage,Stadium,Low,A concern was submitted regarding possible property damage near Stadium.,True
+WR000165,,Faculty,2024-12-04,Bias Incident,Summit House,Low,Submission describes an ongoing issue related to bias incident at Summit House.,False
+WR000166,S006317,Anonymous,2024-12-07,Bias Incident,Sunrise Commons,Low,Concern raised about bias incident; reporter requests follow-up from staff.,True
+WR000167,,Student,2024-12-07,Other,Willow Creek Hall,Medium,Reporter describes an incident involving other that occurred at Willow Creek Hall.,False
+WR000168,,Staff,2024-12-07,Hazing,Off-Campus Housing,Medium,Concern raised about hazing; reporter requests follow-up from staff.,False
+WR000169,,Student,2024-12-07,Other,Aspen Court,Urgent,Reporter describes an incident involving other that occurred at Aspen Court.,False
+WR000170,S003540,Community Member,2024-12-07,Other,Fine Arts Center,Low,Submission describes an ongoing issue related to other at Fine Arts Center.,False
+WR000171,,Student,2024-12-08,Other,Cedar Crest Hall,Medium,Concern raised about other; reporter requests follow-up from staff.,False
+WR000172,S004321,Faculty,2024-12-08,Academic Dishonesty,West Parking Garage,Low,Submission describes an ongoing issue related to academic dishonesty at West Parking Garage.,False
+WR000173,,Anonymous,2024-12-09,Alcohol/Drug Concern,Bellview Hall,Medium,Reporter states they witnessed behavior consistent with alcohol/drug concern.,True
+WR000174,,Community Member,2024-12-10,Property Damage,Cedar Crest Hall,Medium,Concern raised about property damage; reporter requests follow-up from staff.,False
+WR000175,S001205,Anonymous,2024-12-10,Discrimination,East Lot,High,Submission describes an ongoing issue related to discrimination at East Lot.,True
+WR000176,S001996,Anonymous,2024-12-11,Alcohol/Drug Concern,Stadium,Low,Reporter states they witnessed behavior consistent with alcohol/drug concern.,True
+WR000177,S001690,Faculty,2024-12-11,Theft,Meadowbrook Hall,High,Reporter states they witnessed behavior consistent with theft.,False
+WR000178,,Anonymous,2024-12-12,Academic Dishonesty,Off-Campus Housing,Low,Submission describes an ongoing issue related to academic dishonesty at Off-Campus Housing.,True
+WR000179,S008637,Anonymous,2024-12-13,Alcohol/Drug Concern,Founders Hall,Low,Concern raised about alcohol/drug concern; reporter requests follow-up from staff.,True
+WR000180,,Faculty,2024-12-13,Mental Health Concern,Sunrise Commons,Medium,Reporter states they witnessed behavior consistent with mental health concern.,False
+WR000181,,Parent,2024-12-14,Property Damage,Fine Arts Center,High,A concern was submitted regarding possible property damage near Fine Arts Center.,False
+WR000182,,Faculty,2024-12-15,Theft,Meadowbrook Hall,Low,Reporter describes an incident involving theft that occurred at Meadowbrook Hall.,False
+WR000183,S005538,Student,2024-12-15,Bullying/Harassment,Aspen Court,High,Reporter describes an incident involving bullying/harassment that occurred at Aspen Court.,False
+WR000184,S009671,Student,2024-12-15,Safety Hazard,East Lot,Medium,Concern raised about safety hazard; reporter requests follow-up from staff.,False
+WR000185,S004401,Student,2024-12-17,Alcohol/Drug Concern,Online / Remote,Low,Submission describes an ongoing issue related to alcohol/drug concern at Online / Remote.,False
+WR000186,S004651,Anonymous,2024-12-18,Sexual Misconduct,Fine Arts Center,Urgent,A concern was submitted regarding possible sexual misconduct near Fine Arts Center.,True
+WR000187,S001600,Student,2024-12-19,Mental Health Concern,Main Quad,High,Reporter states they witnessed behavior consistent with mental health concern.,False
+WR000188,,Parent,2024-12-19,Property Damage,Bike Path,High,A concern was submitted regarding possible property damage near Bike Path.,False
+WR000189,,Anonymous,2024-12-19,Sexual Misconduct,Summit House,Low,Reporter describes an incident involving sexual misconduct that occurred at Summit House.,True
+WR000190,S002549,Student,2024-12-19,Mental Health Concern,Lakeside Terrace,Low,A concern was submitted regarding possible mental health concern near Lakeside Terrace.,False
+WR000191,S000059,Anonymous,2024-12-19,Bias Incident,Engineering Annex,Medium,A concern was submitted regarding possible bias incident near Engineering Annex.,True
+WR000192,S008209,Staff,2024-12-20,Discrimination,West Parking Garage,Urgent,A concern was submitted regarding possible discrimination near West Parking Garage.,False
+WR000193,S001339,Student,2024-12-20,Other,East Lot,Low,Reporter states they witnessed behavior consistent with other.,False
+WR000194,S001598,Community Member,2024-12-21,Other,Northgate Hall,Medium,Reporter states they witnessed behavior consistent with other.,False
+WR000195,S003720,Anonymous,2024-12-21,Academic Dishonesty,Riverbend Hall,Medium,A concern was submitted regarding possible academic dishonesty near Riverbend Hall.,True
+WR000196,,Staff,2024-12-22,Other,Maple Ridge Hall,Medium,Concern raised about other; reporter requests follow-up from staff.,False
+WR000197,S004828,Faculty,2024-12-22,Safety Hazard,Founders Hall,Medium,Submission describes an ongoing issue related to safety hazard at Founders Hall.,False
+WR000198,S007957,Anonymous,2024-12-23,Bias Incident,Summit House,Low,Submission describes an ongoing issue related to bias incident at Summit House.,True
+WR000199,,Anonymous,2024-12-24,Academic Dishonesty,Science Building,Medium,Reporter describes an incident involving academic dishonesty that occurred at Science Building.,True
+WR000200,S001235,Staff,2024-12-25,Alcohol/Drug Concern,Summit House,High,Reporter states they witnessed behavior consistent with alcohol/drug concern.,False
+WR000201,,Faculty,2024-12-26,Property Damage,Founders Hall,Low,Reporter describes an incident involving property damage that occurred at Founders Hall.,False
+WR000202,S006406,Community Member,2024-12-27,Property Damage,Fine Arts Center,Medium,Concern raised about property damage; reporter requests follow-up from staff.,False
+WR000203,S001132,Anonymous,2024-12-27,Other,Harborview Hall,Low,Reporter states they witnessed behavior consistent with other.,True
+WR000204,S000965,Faculty,2024-12-27,Academic Dishonesty,Off-Campus,Low,Reporter describes an incident involving academic dishonesty that occurred at Off-Campus.,False
+WR000205,,Student,2024-12-28,Hazing,Summit House,Medium,Concern raised about hazing; reporter requests follow-up from staff.,False
+WR000206,S003680,Student,2024-12-28,Property Damage,Founders Hall,Medium,A concern was submitted regarding possible property damage near Founders Hall.,False
+WR000207,S009582,Community Member,2024-12-28,Academic Dishonesty,Aspen Court,Low,Concern raised about academic dishonesty; reporter requests follow-up from staff.,False
+WR000208,,Anonymous,2024-12-28,Hazing,Summit House,Low,Reporter describes an incident involving hazing that occurred at Summit House.,True
+WR000209,,Student,2024-12-28,Bullying/Harassment,Library,Low,Submission describes an ongoing issue related to bullying/harassment at Library.,False
+WR000210,S003490,Student,2024-12-29,Alcohol/Drug Concern,Harborview Hall,Low,A concern was submitted regarding possible alcohol/drug concern near Harborview Hall.,False
+WR000211,S007178,Student,2024-12-29,Alcohol/Drug Concern,Fine Arts Center,Medium,A concern was submitted regarding possible alcohol/drug concern near Fine Arts Center.,False
+WR000212,S001995,Anonymous,2024-12-30,Property Damage,Aspen Court,High,Reporter describes an incident involving property damage that occurred at Aspen Court.,True
+WR000213,S004927,Student,2024-12-31,Discrimination,Maple Ridge Hall,Medium,Reporter states they witnessed behavior consistent with discrimination.,False
+WR000214,S001624,Faculty,2025-01-02,Sexual Misconduct,Highland Hall,Medium,Reporter describes an incident involving sexual misconduct that occurred at Highland Hall.,False
+WR000215,S008654,Parent,2025-01-03,Theft,Science Building,High,A concern was submitted regarding possible theft near Science Building.,False
+WR000216,S009950,Student,2025-01-03,Discrimination,Birchwood Hall,Low,Reporter states they witnessed behavior consistent with discrimination.,False
+WR000217,,Community Member,2025-01-04,Property Damage,Cedar Crest Hall,Low,Concern raised about property damage; reporter requests follow-up from staff.,False
+WR000218,,Student,2025-01-04,Sexual Misconduct,Sunrise Commons,Medium,Reporter states they witnessed behavior consistent with sexual misconduct.,False
+WR000219,S004777,Staff,2025-01-08,Other,Riverbend Hall,Medium,Reporter describes an incident involving other that occurred at Riverbend Hall.,False
+WR000220,S000938,Student,2025-01-09,Alcohol/Drug Concern,Lakeside Terrace,High,Submission describes an ongoing issue related to alcohol/drug concern at Lakeside Terrace.,False
+WR000221,S000278,Community Member,2025-01-13,Other,Sunrise Commons,Low,A concern was submitted regarding possible other near Sunrise Commons.,False
+WR000222,S002799,Staff,2025-01-15,Bullying/Harassment,Fine Arts Center,Medium,A concern was submitted regarding possible bullying/harassment near Fine Arts Center.,False
+WR000223,,Student,2025-01-16,Sexual Misconduct,Cedar Crest Hall,High,Reporter states they witnessed behavior consistent with sexual misconduct.,False
+WR000224,S007127,Faculty,2025-01-16,Property Damage,Aspen Court,Low,Reporter states they witnessed behavior consistent with property damage.,False
+WR000225,S001342,Student,2025-01-16,Bullying/Harassment,Maple Ridge Hall,Medium,A concern was submitted regarding possible bullying/harassment near Maple Ridge Hall.,False
+WR000226,S000856,Anonymous,2025-01-18,Academic Dishonesty,Willow Creek Hall,Medium,Reporter states they witnessed behavior consistent with academic dishonesty.,True
+WR000227,S002783,Student,2025-01-18,Discrimination,Bellview Hall,Low,Submission describes an ongoing issue related to discrimination at Bellview Hall.,False
+WR000228,,Student,2025-01-18,Other,Sunrise Commons,High,Submission describes an ongoing issue related to other at Sunrise Commons.,False
+WR000229,S003401,Staff,2025-01-19,Alcohol/Drug Concern,Online / Remote,Low,Submission describes an ongoing issue related to alcohol/drug concern at Online / Remote.,False
+WR000230,S004168,Faculty,2025-01-21,Academic Dishonesty,Cedar Crest Hall,Low,Concern raised about academic dishonesty; reporter requests follow-up from staff.,False
+WR000231,,Anonymous,2025-01-21,Mental Health Concern,Cedar Crest Hall,High,A concern was submitted regarding possible mental health concern near Cedar Crest Hall.,True
+WR000232,S004032,Anonymous,2025-01-21,Theft,Library,Low,Reporter describes an incident involving theft that occurred at Library.,True
+WR000233,,Anonymous,2025-01-21,Academic Dishonesty,Main Quad,High,Concern raised about academic dishonesty; reporter requests follow-up from staff.,True
+WR000234,S009162,Anonymous,2025-01-22,Discrimination,Library,Medium,Concern raised about discrimination; reporter requests follow-up from staff.,True
+WR000235,S006344,Student,2025-01-23,Academic Dishonesty,Willow Creek Hall,Low,Concern raised about academic dishonesty; reporter requests follow-up from staff.,False
+WR000236,,Anonymous,2025-01-26,Hazing,Cedar Crest Hall,Low,Reporter describes an incident involving hazing that occurred at Cedar Crest Hall.,True
+WR000237,,Parent,2025-01-26,Academic Dishonesty,Lakeside Terrace,Low,Reporter describes an incident involving academic dishonesty that occurred at Lakeside Terrace.,False
+WR000238,S003485,Anonymous,2025-01-27,Hazing,Aspen Court,Medium,Concern raised about hazing; reporter requests follow-up from staff.,True
+WR000239,,Faculty,2025-01-27,Mental Health Concern,Off-Campus Housing,Medium,Concern raised about mental health concern; reporter requests follow-up from staff.,False
+WR000240,S009601,Staff,2025-01-27,Bias Incident,Off-Campus Housing,Low,Reporter describes an incident involving bias incident that occurred at Off-Campus Housing.,False
+WR000241,,Staff,2025-01-29,Academic Dishonesty,East Lot,Low,Reporter describes an incident involving academic dishonesty that occurred at East Lot.,False
+WR000242,S008212,Student,2025-01-29,Property Damage,Highland Hall,High,Concern raised about property damage; reporter requests follow-up from staff.,False
+WR000243,,Community Member,2025-01-29,Discrimination,Harborview Hall,High,Reporter states they witnessed behavior consistent with discrimination.,False
+WR000244,,Anonymous,2025-01-30,Safety Hazard,West Parking Garage,Medium,A concern was submitted regarding possible safety hazard near West Parking Garage.,True
+WR000245,,Anonymous,2025-01-31,Property Damage,Northgate Hall,Low,Reporter describes an incident involving property damage that occurred at Northgate Hall.,True
+WR000246,S005376,Student,2025-02-03,Mental Health Concern,Off-Campus Housing,Medium,Concern raised about mental health concern; reporter requests follow-up from staff.,False
+WR000247,,Student,2025-02-04,Other,West Parking Garage,Medium,Reporter describes an incident involving other that occurred at West Parking Garage.,False
+WR000248,,Staff,2025-02-05,Alcohol/Drug Concern,Founders Hall,Medium,A concern was submitted regarding possible alcohol/drug concern near Founders Hall.,False
+WR000249,S006219,Anonymous,2025-02-05,Mental Health Concern,Library,Low,Submission describes an ongoing issue related to mental health concern at Library.,True
+WR000250,S006102,Student,2025-02-06,Property Damage,Maple Ridge Hall,High,Submission describes an ongoing issue related to property damage at Maple Ridge Hall.,False
+WR000251,,Anonymous,2025-02-07,Alcohol/Drug Concern,Sunrise Commons,Medium,Reporter describes an incident involving alcohol/drug concern that occurred at Sunrise Commons.,True
+WR000252,S002264,Faculty,2025-02-07,Sexual Misconduct,Online / Remote,Medium,Submission describes an ongoing issue related to sexual misconduct at Online / Remote.,False
+WR000253,S009384,Faculty,2025-02-08,Property Damage,Bellview Hall,Medium,Reporter describes an incident involving property damage that occurred at Bellview Hall.,False
+WR000254,,Anonymous,2025-02-08,Theft,Off-Campus,Low,Reporter states they witnessed behavior consistent with theft.,True
+WR000255,,Staff,2025-02-10,Theft,Off-Campus Housing,Urgent,Reporter describes an incident involving theft that occurred at Off-Campus Housing.,False
+WR000256,S000643,Staff,2025-02-10,Academic Dishonesty,Sunrise Commons,Low,Reporter states they witnessed behavior consistent with academic dishonesty.,False
+WR000257,S006491,Anonymous,2025-02-10,Mental Health Concern,Fine Arts Center,Medium,Concern raised about mental health concern; reporter requests follow-up from staff.,True
+WR000258,,Anonymous,2025-02-10,Mental Health Concern,Fine Arts Center,Medium,Submission describes an ongoing issue related to mental health concern at Fine Arts Center.,True
+WR000259,,Student,2025-02-11,Bullying/Harassment,Stadium,Medium,Submission describes an ongoing issue related to bullying/harassment at Stadium.,False
+WR000260,,Student,2025-02-12,Hazing,Online / Remote,Low,Submission describes an ongoing issue related to hazing at Online / Remote.,False
+WR000261,S006602,Community Member,2025-02-13,Hazing,Cedar Crest Hall,Medium,Concern raised about hazing; reporter requests follow-up from staff.,False
+WR000262,,Faculty,2025-02-14,Academic Dishonesty,Off-Campus Housing,Low,Submission describes an ongoing issue related to academic dishonesty at Off-Campus Housing.,False
+WR000263,S000506,Community Member,2025-02-14,Bullying/Harassment,Founders Hall,Low,Submission describes an ongoing issue related to bullying/harassment at Founders Hall.,False
+WR000264,,Community Member,2025-02-15,Mental Health Concern,Fine Arts Center,Low,A concern was submitted regarding possible mental health concern near Fine Arts Center.,False
+WR000265,,Staff,2025-02-16,Other,Birchwood Hall,Low,A concern was submitted regarding possible other near Birchwood Hall.,False
+WR000266,,Anonymous,2025-02-18,Safety Hazard,Aspen Court,Urgent,Reporter describes an incident involving safety hazard that occurred at Aspen Court.,True
+WR000267,S000405,Student,2025-02-18,Bias Incident,Sunrise Commons,Medium,Submission describes an ongoing issue related to bias incident at Sunrise Commons.,False
+WR000268,,Anonymous,2025-02-19,Property Damage,Fine Arts Center,Medium,Concern raised about property damage; reporter requests follow-up from staff.,True
+WR000269,,Student,2025-02-19,Alcohol/Drug Concern,Northgate Hall,Low,Reporter states they witnessed behavior consistent with alcohol/drug concern.,False
+WR000270,S007441,Student,2025-02-20,Mental Health Concern,Recreation Center,Medium,Concern raised about mental health concern; reporter requests follow-up from staff.,False
+WR000271,,Faculty,2025-02-20,Bullying/Harassment,East Lot,High,Reporter states they witnessed behavior consistent with bullying/harassment.,False
+WR000272,,Staff,2025-02-20,Property Damage,Stadium,Low,Reporter states they witnessed behavior consistent with property damage.,False
+WR000273,S000903,Anonymous,2025-02-20,Bias Incident,Engineering Annex,Urgent,A concern was submitted regarding possible bias incident near Engineering Annex.,True
+WR000274,S004690,Community Member,2025-02-21,Mental Health Concern,Maple Ridge Hall,Low,Reporter describes an incident involving mental health concern that occurred at Maple Ridge Hall.,False
+WR000275,,Staff,2025-02-22,Safety Hazard,Off-Campus Housing,Medium,Reporter describes an incident involving safety hazard that occurred at Off-Campus Housing.,False
+WR000276,,Anonymous,2025-02-22,Discrimination,Birchwood Hall,Low,A concern was submitted regarding possible discrimination near Birchwood Hall.,True
+WR000277,,Staff,2025-02-23,Other,Online / Remote,Urgent,Reporter states they witnessed behavior consistent with other.,False
+WR000278,S009785,Community Member,2025-02-24,Bias Incident,Stadium,Low,Submission describes an ongoing issue related to bias incident at Stadium.,False
+WR000279,S004309,Anonymous,2025-02-24,Theft,Birchwood Hall,Medium,Reporter states they witnessed behavior consistent with theft.,True
+WR000280,S005566,Staff,2025-02-26,Mental Health Concern,Fine Arts Center,Low,Reporter states they witnessed behavior consistent with mental health concern.,False
+WR000281,S004414,Anonymous,2025-02-27,Other,Summit House,Medium,Concern raised about other; reporter requests follow-up from staff.,True
+WR000282,S007704,Faculty,2025-02-28,Safety Hazard,Recreation Center,High,Reporter describes an incident involving safety hazard that occurred at Recreation Center.,False
+WR000283,,Anonymous,2025-03-02,Safety Hazard,Northgate Hall,High,Reporter states they witnessed behavior consistent with safety hazard.,True
+WR000284,,Community Member,2025-03-04,Bullying/Harassment,Off-Campus,Medium,Reporter describes an incident involving bullying/harassment that occurred at Off-Campus.,False
+WR000285,,Faculty,2025-03-06,Sexual Misconduct,East Lot,Low,Reporter describes an incident involving sexual misconduct that occurred at East Lot.,False
+WR000286,,Staff,2025-03-06,Academic Dishonesty,Science Building,Medium,Submission describes an ongoing issue related to academic dishonesty at Science Building.,False
+WR000287,,Anonymous,2025-03-06,Theft,Library,Low,Reporter states they witnessed behavior consistent with theft.,True
+WR000288,S000571,Student,2025-03-08,Sexual Misconduct,East Lot,Medium,Reporter states they witnessed behavior consistent with sexual misconduct.,False
+WR000289,S002070,Student,2025-03-08,Bias Incident,Maple Ridge Hall,High,Reporter describes an incident involving bias incident that occurred at Maple Ridge Hall.,False
+WR000290,,Anonymous,2025-03-09,Bias Incident,Meadowbrook Hall,Medium,Reporter describes an incident involving bias incident that occurred at Meadowbrook Hall.,True
+WR000291,,Student,2025-03-11,Other,Stadium,Medium,A concern was submitted regarding possible other near Stadium.,False
+WR000292,S000053,Student,2025-03-11,Bias Incident,Sunrise Commons,Medium,Concern raised about bias incident; reporter requests follow-up from staff.,False
+WR000293,S005099,Student,2025-03-11,Bias Incident,Harborview Hall,Medium,Concern raised about bias incident; reporter requests follow-up from staff.,False
+WR000294,,Anonymous,2025-03-12,Other,Main Quad,Low,Reporter describes an incident involving other that occurred at Main Quad.,True
+WR000295,,Staff,2025-03-12,Bias Incident,Founders Hall,Low,A concern was submitted regarding possible bias incident near Founders Hall.,False
+WR000296,S009586,Student,2025-03-12,Bias Incident,Off-Campus,Urgent,Concern raised about bias incident; reporter requests follow-up from staff.,False
+WR000297,,Anonymous,2025-03-12,Hazing,West Parking Garage,Medium,Reporter states they witnessed behavior consistent with hazing.,True
+WR000298,,Parent,2025-03-12,Mental Health Concern,Summit House,Urgent,Submission describes an ongoing issue related to mental health concern at Summit House.,False
+WR000299,,Anonymous,2025-03-14,Other,Cedar Crest Hall,Urgent,A concern was submitted regarding possible other near Cedar Crest Hall.,True
+WR000300,,Anonymous,2025-03-15,Bias Incident,Summit House,Medium,A concern was submitted regarding possible bias incident near Summit House.,True
+WR000301,S005662,Anonymous,2025-03-17,Alcohol/Drug Concern,Harborview Hall,High,Reporter states they witnessed behavior consistent with alcohol/drug concern.,True
+WR000302,S001180,Student,2025-03-19,Safety Hazard,Lakeside Terrace,Urgent,A concern was submitted regarding possible safety hazard near Lakeside Terrace.,False
+WR000303,,Anonymous,2025-03-19,Academic Dishonesty,Student Union,High,Reporter describes an incident involving academic dishonesty that occurred at Student Union.,True
+WR000304,S009821,Faculty,2025-03-19,Academic Dishonesty,East Lot,Low,A concern was submitted regarding possible academic dishonesty near East Lot.,False
+WR000305,S005222,Community Member,2025-03-20,Sexual Misconduct,Online / Remote,Low,Submission describes an ongoing issue related to sexual misconduct at Online / Remote.,False
+WR000306,S001390,Community Member,2025-03-21,Sexual Misconduct,West Parking Garage,High,Reporter describes an incident involving sexual misconduct that occurred at West Parking Garage.,False
+WR000307,S007760,Faculty,2025-03-21,Sexual Misconduct,Harborview Hall,Medium,Submission describes an ongoing issue related to sexual misconduct at Harborview Hall.,False
+WR000308,S006189,Anonymous,2025-03-21,Hazing,Recreation Center,Medium,Concern raised about hazing; reporter requests follow-up from staff.,True
+WR000309,S001022,Anonymous,2025-03-22,Other,Northgate Hall,Medium,Reporter describes an incident involving other that occurred at Northgate Hall.,True
+WR000310,,Community Member,2025-03-24,Bullying/Harassment,Maple Ridge Hall,Low,Reporter states they witnessed behavior consistent with bullying/harassment.,False
+WR000311,,Faculty,2025-03-24,Bias Incident,Riverbend Hall,Medium,Submission describes an ongoing issue related to bias incident at Riverbend Hall.,False
+WR000312,S001783,Student,2025-03-24,Discrimination,Lakeside Terrace,Low,Reporter states they witnessed behavior consistent with discrimination.,False
+WR000313,,Student,2025-03-24,Discrimination,Northgate Hall,Low,Concern raised about discrimination; reporter requests follow-up from staff.,False
+WR000314,,Anonymous,2025-03-24,Safety Hazard,Recreation Center,High,Reporter describes an incident involving safety hazard that occurred at Recreation Center.,True
+WR000315,S006271,Student,2025-03-24,Alcohol/Drug Concern,West Parking Garage,High,A concern was submitted regarding possible alcohol/drug concern near West Parking Garage.,False
+WR000316,,Anonymous,2025-03-27,Theft,Recreation Center,Medium,Reporter describes an incident involving theft that occurred at Recreation Center.,True
+WR000317,,Staff,2025-03-27,Bullying/Harassment,Stadium,Medium,Reporter states they witnessed behavior consistent with bullying/harassment.,False
+WR000318,,Anonymous,2025-03-27,Bullying/Harassment,Summit House,Low,Concern raised about bullying/harassment; reporter requests follow-up from staff.,True
+WR000319,S007514,Anonymous,2025-03-28,Property Damage,Lakeside Terrace,High,A concern was submitted regarding possible property damage near Lakeside Terrace.,True
+WR000320,S001966,Student,2025-03-29,Bullying/Harassment,Recreation Center,High,Reporter describes an incident involving bullying/harassment that occurred at Recreation Center.,False
+WR000321,S006433,Student,2025-03-29,Discrimination,Sunrise Commons,Medium,Submission describes an ongoing issue related to discrimination at Sunrise Commons.,False
+WR000322,S002922,Staff,2025-03-30,Safety Hazard,Birchwood Hall,Medium,Concern raised about safety hazard; reporter requests follow-up from staff.,False
+WR000323,S005143,Anonymous,2025-03-31,Discrimination,Northgate Hall,High,A concern was submitted regarding possible discrimination near Northgate Hall.,True
+WR000324,S001121,Anonymous,2025-03-31,Hazing,Sunrise Commons,Medium,Concern raised about hazing; reporter requests follow-up from staff.,True
+WR000325,S000056,Anonymous,2025-03-31,Sexual Misconduct,Summit House,Urgent,A concern was submitted regarding possible sexual misconduct near Summit House.,True
+WR000326,,Student,2025-04-01,Property Damage,Sunrise Commons,High,Reporter describes an incident involving property damage that occurred at Sunrise Commons.,False
+WR000327,S000604,Anonymous,2025-04-01,Property Damage,Off-Campus,Medium,Reporter describes an incident involving property damage that occurred at Off-Campus.,True
+WR000328,,Parent,2025-04-01,Bullying/Harassment,Founders Hall,High,Concern raised about bullying/harassment; reporter requests follow-up from staff.,False
+WR000329,S007441,Community Member,2025-04-02,Safety Hazard,Northgate Hall,Low,Reporter describes an incident involving safety hazard that occurred at Northgate Hall.,False
+WR000330,S007957,Anonymous,2025-04-02,Sexual Misconduct,Bellview Hall,Urgent,Concern raised about sexual misconduct; reporter requests follow-up from staff.,True
+WR000331,,Community Member,2025-04-02,Property Damage,East Lot,Urgent,A concern was submitted regarding possible property damage near East Lot.,False
+WR000332,,Community Member,2025-04-03,Theft,Science Building,Low,Reporter describes an incident involving theft that occurred at Science Building.,False
+WR000333,S005047,Anonymous,2025-04-04,Bias Incident,Founders Hall,Medium,Concern raised about bias incident; reporter requests follow-up from staff.,True
+WR000334,,Anonymous,2025-04-04,Mental Health Concern,Meadowbrook Hall,High,Reporter describes an incident involving mental health concern that occurred at Meadowbrook Hall.,True
+WR000335,,Parent,2025-04-04,Other,Summit House,Low,Concern raised about other; reporter requests follow-up from staff.,False
+WR000336,S008552,Student,2025-04-05,Bias Incident,Online / Remote,Urgent,Concern raised about bias incident; reporter requests follow-up from staff.,False
+WR000337,S007242,Faculty,2025-04-06,Theft,Off-Campus,Medium,Concern raised about theft; reporter requests follow-up from staff.,False
+WR000338,S006678,Faculty,2025-04-07,Safety Hazard,Aspen Court,Medium,Submission describes an ongoing issue related to safety hazard at Aspen Court.,False
+WR000339,S001009,Community Member,2025-04-08,Other,Main Quad,High,Submission describes an ongoing issue related to other at Main Quad.,False
+WR000340,,Staff,2025-04-09,Mental Health Concern,Maple Ridge Hall,High,Reporter describes an incident involving mental health concern that occurred at Maple Ridge Hall.,False
+WR000341,,Faculty,2025-04-09,Bias Incident,Main Quad,Medium,A concern was submitted regarding possible bias incident near Main Quad.,False
+WR000342,S006057,Student,2025-04-10,Mental Health Concern,Online / Remote,Medium,Concern raised about mental health concern; reporter requests follow-up from staff.,False
+WR000343,S003721,Anonymous,2025-04-10,Property Damage,Recreation Center,Medium,A concern was submitted regarding possible property damage near Recreation Center.,True
+WR000344,S000431,Student,2025-04-11,Hazing,Fine Arts Center,Medium,A concern was submitted regarding possible hazing near Fine Arts Center.,False
+WR000345,S009661,Anonymous,2025-04-11,Safety Hazard,Maple Ridge Hall,High,Submission describes an ongoing issue related to safety hazard at Maple Ridge Hall.,True
+WR000346,,Staff,2025-04-12,Bias Incident,Stadium,High,Reporter states they witnessed behavior consistent with bias incident.,False
+WR000347,,Student,2025-04-12,Bullying/Harassment,West Parking Garage,Medium,Concern raised about bullying/harassment; reporter requests follow-up from staff.,False
+WR000348,,Parent,2025-04-13,Bullying/Harassment,Bellview Hall,High,Reporter describes an incident involving bullying/harassment that occurred at Bellview Hall.,False
+WR000349,S006579,Staff,2025-04-16,Sexual Misconduct,Sunrise Commons,Low,A concern was submitted regarding possible sexual misconduct near Sunrise Commons.,False
+WR000350,,Faculty,2025-04-16,Theft,Bike Path,Low,Reporter states they witnessed behavior consistent with theft.,False
+WR000351,S006151,Anonymous,2025-04-17,Discrimination,Birchwood Hall,Medium,Reporter describes an incident involving discrimination that occurred at Birchwood Hall.,True
+WR000352,S008581,Anonymous,2025-04-17,Bullying/Harassment,Sunrise Commons,Medium,Reporter states they witnessed behavior consistent with bullying/harassment.,True
+WR000353,S006497,Student,2025-04-17,Bias Incident,Meadowbrook Hall,Low,A concern was submitted regarding possible bias incident near Meadowbrook Hall.,False
+WR000354,S001635,Anonymous,2025-04-18,Discrimination,Library,Medium,Submission describes an ongoing issue related to discrimination at Library.,True
+WR000355,,Student,2025-04-20,Property Damage,Highland Hall,Medium,Concern raised about property damage; reporter requests follow-up from staff.,False
+WR000356,S006605,Student,2025-04-20,Other,Birchwood Hall,Medium,A concern was submitted regarding possible other near Birchwood Hall.,False
+WR000357,,Anonymous,2025-04-22,Other,Sunrise Commons,Medium,A concern was submitted regarding possible other near Sunrise Commons.,True
+WR000358,,Student,2025-04-22,Theft,Meadowbrook Hall,Low,A concern was submitted regarding possible theft near Meadowbrook Hall.,False
+WR000359,,Faculty,2025-04-22,Alcohol/Drug Concern,West Parking Garage,High,A concern was submitted regarding possible alcohol/drug concern near West Parking Garage.,False
+WR000360,S003177,Parent,2025-04-22,Bullying/Harassment,Recreation Center,Medium,Concern raised about bullying/harassment; reporter requests follow-up from staff.,False
+WR000361,,Anonymous,2025-04-25,Alcohol/Drug Concern,Aspen Court,Low,Submission describes an ongoing issue related to alcohol/drug concern at Aspen Court.,True
+WR000362,S007852,Community Member,2025-04-25,Discrimination,Stadium,High,Concern raised about discrimination; reporter requests follow-up from staff.,False
+WR000363,S005677,Community Member,2025-04-25,Safety Hazard,Willow Creek Hall,High,Reporter states they witnessed behavior consistent with safety hazard.,False
+WR000364,,Staff,2025-04-25,Hazing,Off-Campus,Medium,A concern was submitted regarding possible hazing near Off-Campus.,False
+WR000365,,Anonymous,2025-04-26,Discrimination,Lakeside Terrace,Medium,Submission describes an ongoing issue related to discrimination at Lakeside Terrace.,True
+WR000366,S000408,Anonymous,2025-04-26,Hazing,Engineering Annex,Low,Reporter states they witnessed behavior consistent with hazing.,True
+WR000367,,Staff,2025-04-28,Mental Health Concern,Riverbend Hall,High,Reporter describes an incident involving mental health concern that occurred at Riverbend Hall.,False
+WR000368,,Student,2025-04-28,Safety Hazard,Lakeside Terrace,High,Reporter describes an incident involving safety hazard that occurred at Lakeside Terrace.,False
+WR000369,,Student,2025-04-28,Property Damage,Founders Hall,Medium,Submission describes an ongoing issue related to property damage at Founders Hall.,False
+WR000370,,Anonymous,2025-04-29,Sexual Misconduct,Meadowbrook Hall,High,A concern was submitted regarding possible sexual misconduct near Meadowbrook Hall.,True
+WR000371,,Student,2025-04-30,Other,Lakeside Terrace,Medium,Reporter states they witnessed behavior consistent with other.,False
+WR000372,,Student,2025-04-30,Sexual Misconduct,Stadium,High,Concern raised about sexual misconduct; reporter requests follow-up from staff.,False
+WR000373,S001031,Student,2025-05-03,Discrimination,Science Building,Medium,Concern raised about discrimination; reporter requests follow-up from staff.,False
+WR000374,S005393,Student,2025-05-03,Bias Incident,Northgate Hall,Medium,Concern raised about bias incident; reporter requests follow-up from staff.,False
+WR000375,,Student,2025-05-04,Discrimination,Off-Campus Housing,Low,A concern was submitted regarding possible discrimination near Off-Campus Housing.,False
+WR000376,,Staff,2025-05-06,Sexual Misconduct,Riverbend Hall,Medium,A concern was submitted regarding possible sexual misconduct near Riverbend Hall.,False
+WR000377,,Community Member,2025-05-06,Sexual Misconduct,Founders Hall,Low,Reporter describes an incident involving sexual misconduct that occurred at Founders Hall.,False
+WR000378,,Community Member,2025-05-07,Sexual Misconduct,Founders Hall,Medium,A concern was submitted regarding possible sexual misconduct near Founders Hall.,False
+WR000379,S003125,Student,2025-05-08,Academic Dishonesty,Lakeside Terrace,Medium,Submission describes an ongoing issue related to academic dishonesty at Lakeside Terrace.,False
+WR000380,S005082,Community Member,2025-05-08,Mental Health Concern,Engineering Annex,Medium,Concern raised about mental health concern; reporter requests follow-up from staff.,False
+WR000381,S001736,Student,2025-05-08,Mental Health Concern,Riverbend Hall,Low,Submission describes an ongoing issue related to mental health concern at Riverbend Hall.,False
+WR000382,,Staff,2025-05-09,Academic Dishonesty,Recreation Center,Low,Reporter describes an incident involving academic dishonesty that occurred at Recreation Center.,False
+WR000383,S006535,Student,2025-05-10,Mental Health Concern,Main Quad,Medium,Reporter states they witnessed behavior consistent with mental health concern.,False
+WR000384,S000080,Student,2025-05-10,Discrimination,Recreation Center,Urgent,Reporter states they witnessed behavior consistent with discrimination.,False
+WR000385,,Community Member,2025-05-12,Alcohol/Drug Concern,Engineering Annex,Medium,A concern was submitted regarding possible alcohol/drug concern near Engineering Annex.,False
+WR000386,,Student,2025-05-13,Sexual Misconduct,Meadowbrook Hall,High,A concern was submitted regarding possible sexual misconduct near Meadowbrook Hall.,False
+WR000387,,Student,2025-05-14,Safety Hazard,Engineering Annex,Medium,Submission describes an ongoing issue related to safety hazard at Engineering Annex.,False
+WR000388,S009727,Student,2025-05-15,Theft,Riverbend Hall,High,Reporter states they witnessed behavior consistent with theft.,False
+WR000389,,Anonymous,2025-05-15,Academic Dishonesty,Harborview Hall,High,Submission describes an ongoing issue related to academic dishonesty at Harborview Hall.,True
+WR000390,S005138,Student,2025-05-16,Alcohol/Drug Concern,Sunrise Commons,Medium,Reporter describes an incident involving alcohol/drug concern that occurred at Sunrise Commons.,False
+WR000391,,Faculty,2025-05-17,Bullying/Harassment,Stadium,Medium,Reporter states they witnessed behavior consistent with bullying/harassment.,False
+WR000392,S007621,Staff,2025-05-18,Academic Dishonesty,East Lot,Urgent,Concern raised about academic dishonesty; reporter requests follow-up from staff.,False
+WR000393,S001433,Anonymous,2025-05-19,Safety Hazard,Student Union,High,Submission describes an ongoing issue related to safety hazard at Student Union.,True
+WR000394,S007740,Staff,2025-05-19,Bias Incident,Lakeside Terrace,Medium,A concern was submitted regarding possible bias incident near Lakeside Terrace.,False
+WR000395,S004421,Anonymous,2025-05-20,Discrimination,Highland Hall,High,Reporter states they witnessed behavior consistent with discrimination.,True
+WR000396,S005133,Student,2025-05-20,Safety Hazard,Meadowbrook Hall,Low,Reporter states they witnessed behavior consistent with safety hazard.,False
+WR000397,,Staff,2025-05-21,Bullying/Harassment,Lakeside Terrace,Medium,A concern was submitted regarding possible bullying/harassment near Lakeside Terrace.,False
+WR000398,S000145,Faculty,2025-05-21,Other,Cedar Crest Hall,Medium,Submission describes an ongoing issue related to other at Cedar Crest Hall.,False
+WR000399,,Student,2025-05-22,Hazing,Birchwood Hall,Medium,Submission describes an ongoing issue related to hazing at Birchwood Hall.,False
+WR000400,,Parent,2025-05-23,Academic Dishonesty,Off-Campus Housing,Medium,Reporter states they witnessed behavior consistent with academic dishonesty.,False
+WR000401,S008178,Community Member,2025-05-23,Bias Incident,Founders Hall,Medium,Reporter describes an incident involving bias incident that occurred at Founders Hall.,False
+WR000402,S004032,Community Member,2025-05-23,Hazing,Maple Ridge Hall,Low,A concern was submitted regarding possible hazing near Maple Ridge Hall.,False
+WR000403,S005342,Staff,2025-05-24,Theft,Lakeside Terrace,Low,Reporter describes an incident involving theft that occurred at Lakeside Terrace.,False
+WR000404,,Student,2025-05-24,Academic Dishonesty,Library,High,A concern was submitted regarding possible academic dishonesty near Library.,False
+WR000405,S005813,Community Member,2025-05-24,Academic Dishonesty,Online / Remote,Low,Submission describes an ongoing issue related to academic dishonesty at Online / Remote.,False
+WR000406,,Anonymous,2025-05-25,Alcohol/Drug Concern,Main Quad,Low,Reporter states they witnessed behavior consistent with alcohol/drug concern.,True
+WR000407,,Faculty,2025-05-25,Academic Dishonesty,Engineering Annex,Low,Reporter describes an incident involving academic dishonesty that occurred at Engineering Annex.,False
+WR000408,,Anonymous,2025-05-27,Property Damage,Student Union,Low,Reporter describes an incident involving property damage that occurred at Student Union.,True
+WR000409,,Student,2025-05-28,Other,Main Quad,High,Reporter describes an incident involving other that occurred at Main Quad.,False
+WR000410,,Parent,2025-05-28,Academic Dishonesty,Off-Campus Housing,Low,Reporter describes an incident involving academic dishonesty that occurred at Off-Campus Housing.,False
+WR000411,,Anonymous,2025-05-31,Other,Stadium,Medium,Reporter states they witnessed behavior consistent with other.,True
+WR000412,S004450,Student,2025-05-31,Other,Founders Hall,Medium,A concern was submitted regarding possible other near Founders Hall.,False
+WR000413,S001758,Anonymous,2025-06-02,Bullying/Harassment,Fine Arts Center,High,Reporter states they witnessed behavior consistent with bullying/harassment.,True
+WR000414,S009767,Student,2025-06-03,Academic Dishonesty,Summit House,Medium,Reporter states they witnessed behavior consistent with academic dishonesty.,False
+WR000415,S001375,Faculty,2025-06-03,Bullying/Harassment,Aspen Court,High,Reporter states they witnessed behavior consistent with bullying/harassment.,False
+WR000416,S006535,Staff,2025-06-05,Academic Dishonesty,Founders Hall,Medium,Reporter describes an incident involving academic dishonesty that occurred at Founders Hall.,False
+WR000417,S007957,Anonymous,2025-06-05,Sexual Misconduct,Bellview Hall,Low,Reporter describes an incident involving sexual misconduct that occurred at Bellview Hall.,True
+WR000418,,Anonymous,2025-06-07,Theft,Recreation Center,High,Reporter states they witnessed behavior consistent with theft.,True
+WR000419,S003119,Anonymous,2025-06-09,Academic Dishonesty,East Lot,Medium,Reporter describes an incident involving academic dishonesty that occurred at East Lot.,True
+WR000420,,Student,2025-06-09,Bias Incident,Maple Ridge Hall,High,A concern was submitted regarding possible bias incident near Maple Ridge Hall.,False
+WR000421,S005942,Staff,2025-06-09,Safety Hazard,Library,Low,Submission describes an ongoing issue related to safety hazard at Library.,False
+WR000422,S001687,Anonymous,2025-06-11,Bias Incident,Northgate Hall,High,Concern raised about bias incident; reporter requests follow-up from staff.,True
+WR000423,S007132,Anonymous,2025-06-11,Sexual Misconduct,Engineering Annex,High,Reporter describes an incident involving sexual misconduct that occurred at Engineering Annex.,True
+WR000424,,Staff,2025-06-12,Mental Health Concern,Off-Campus Housing,Low,Concern raised about mental health concern; reporter requests follow-up from staff.,False
+WR000425,S009663,Staff,2025-06-12,Alcohol/Drug Concern,Stadium,Medium,Submission describes an ongoing issue related to alcohol/drug concern at Stadium.,False
+WR000426,,Parent,2025-06-12,Sexual Misconduct,Science Building,Medium,A concern was submitted regarding possible sexual misconduct near Science Building.,False
+WR000427,S001984,Staff,2025-06-13,Hazing,Highland Hall,Medium,Reporter states they witnessed behavior consistent with hazing.,False
+WR000428,,Student,2025-06-13,Hazing,Birchwood Hall,Medium,Reporter states they witnessed behavior consistent with hazing.,False
+WR000429,,Faculty,2025-06-14,Alcohol/Drug Concern,Bellview Hall,High,A concern was submitted regarding possible alcohol/drug concern near Bellview Hall.,False
+WR000430,,Anonymous,2025-06-14,Safety Hazard,Highland Hall,Urgent,Reporter states they witnessed behavior consistent with safety hazard.,True
+WR000431,S006153,Student,2025-06-15,Mental Health Concern,Highland Hall,Medium,Reporter states they witnessed behavior consistent with mental health concern.,False
+WR000432,S009745,Anonymous,2025-06-16,Academic Dishonesty,Harborview Hall,Medium,Concern raised about academic dishonesty; reporter requests follow-up from staff.,True
+WR000433,,Anonymous,2025-06-16,Bias Incident,West Parking Garage,Low,Submission describes an ongoing issue related to bias incident at West Parking Garage.,True
+WR000434,S004986,Staff,2025-06-17,Property Damage,Riverbend Hall,Low,A concern was submitted regarding possible property damage near Riverbend Hall.,False
+WR000435,S004007,Anonymous,2025-06-17,Property Damage,Summit House,Low,A concern was submitted regarding possible property damage near Summit House.,True
+WR000436,S001792,Faculty,2025-06-17,Theft,Birchwood Hall,Medium,Reporter describes an incident involving theft that occurred at Birchwood Hall.,False
+WR000437,,Student,2025-06-20,Sexual Misconduct,Stadium,Medium,Submission describes an ongoing issue related to sexual misconduct at Stadium.,False
+WR000438,,Faculty,2025-06-21,Alcohol/Drug Concern,Highland Hall,Low,Submission describes an ongoing issue related to alcohol/drug concern at Highland Hall.,False
+WR000439,S005388,Anonymous,2025-06-21,Alcohol/Drug Concern,Library,Low,A concern was submitted regarding possible alcohol/drug concern near Library.,True
+WR000440,,Anonymous,2025-06-22,Safety Hazard,Birchwood Hall,Medium,Reporter describes an incident involving safety hazard that occurred at Birchwood Hall.,True
+WR000441,S002742,Student,2025-06-23,Discrimination,Founders Hall,Medium,Submission describes an ongoing issue related to discrimination at Founders Hall.,False
+WR000442,,Faculty,2025-06-24,Mental Health Concern,Science Building,Medium,Submission describes an ongoing issue related to mental health concern at Science Building.,False
+WR000443,,Anonymous,2025-06-25,Safety Hazard,Science Building,Medium,Reporter states they witnessed behavior consistent with safety hazard.,True
+WR000444,,Anonymous,2025-06-26,Bullying/Harassment,Northgate Hall,Urgent,Submission describes an ongoing issue related to bullying/harassment at Northgate Hall.,True
+WR000445,,Faculty,2025-06-26,Property Damage,Science Building,Low,Reporter states they witnessed behavior consistent with property damage.,False
+WR000446,,Staff,2025-06-27,Discrimination,Lakeside Terrace,Low,Submission describes an ongoing issue related to discrimination at Lakeside Terrace.,False
+WR000447,S001427,Anonymous,2025-06-27,Bias Incident,Recreation Center,Medium,Reporter describes an incident involving bias incident that occurred at Recreation Center.,True
+WR000448,,Student,2025-06-28,Theft,East Lot,Low,Reporter states they witnessed behavior consistent with theft.,False
+WR000449,S005102,Anonymous,2025-06-28,Property Damage,Lakeside Terrace,High,Concern raised about property damage; reporter requests follow-up from staff.,True
+WR000450,S000596,Anonymous,2025-06-29,Bias Incident,West Parking Garage,Medium,A concern was submitted regarding possible bias incident near West Parking Garage.,True
+WR000451,S007426,Student,2025-06-30,Mental Health Concern,Cedar Crest Hall,High,Concern raised about mental health concern; reporter requests follow-up from staff.,False
+WR000452,,Student,2025-06-30,Bias Incident,Willow Creek Hall,High,Reporter describes an incident involving bias incident that occurred at Willow Creek Hall.,False
+WR000453,S000668,Community Member,2025-07-01,Sexual Misconduct,Engineering Annex,High,Reporter describes an incident involving sexual misconduct that occurred at Engineering Annex.,False
+WR000454,,Student,2025-07-01,Academic Dishonesty,Off-Campus,Medium,Submission describes an ongoing issue related to academic dishonesty at Off-Campus.,False
+WR000455,S003125,Community Member,2025-07-01,Discrimination,Main Quad,Medium,Submission describes an ongoing issue related to discrimination at Main Quad.,False
+WR000456,,Student,2025-07-02,Discrimination,Harborview Hall,High,A concern was submitted regarding possible discrimination near Harborview Hall.,False
+WR000457,S001346,Faculty,2025-07-02,Alcohol/Drug Concern,Engineering Annex,Urgent,Reporter describes an incident involving alcohol/drug concern that occurred at Engineering Annex.,False
+WR000458,,Anonymous,2025-07-02,Theft,Founders Hall,Medium,Concern raised about theft; reporter requests follow-up from staff.,True
+WR000459,,Anonymous,2025-07-03,Theft,Founders Hall,High,A concern was submitted regarding possible theft near Founders Hall.,True
+WR000460,S000502,Anonymous,2025-07-03,Alcohol/Drug Concern,Engineering Annex,Medium,Concern raised about alcohol/drug concern; reporter requests follow-up from staff.,True
+WR000461,S003853,Anonymous,2025-07-03,Theft,Meadowbrook Hall,Medium,Submission describes an ongoing issue related to theft at Meadowbrook Hall.,True
+WR000462,,Staff,2025-07-05,Safety Hazard,Library,High,Submission describes an ongoing issue related to safety hazard at Library.,False
+WR000463,S004038,Student,2025-07-06,Mental Health Concern,Online / Remote,Low,Reporter describes an incident involving mental health concern that occurred at Online / Remote.,False
+WR000464,,Anonymous,2025-07-06,Discrimination,Engineering Annex,Medium,A concern was submitted regarding possible discrimination near Engineering Annex.,True
+WR000465,,Student,2025-07-07,Bullying/Harassment,Harborview Hall,Medium,Submission describes an ongoing issue related to bullying/harassment at Harborview Hall.,False
+WR000466,S003330,Anonymous,2025-07-07,Bullying/Harassment,Cedar Crest Hall,Low,Concern raised about bullying/harassment; reporter requests follow-up from staff.,True
+WR000467,S003509,Parent,2025-07-08,Safety Hazard,Stadium,Urgent,Concern raised about safety hazard; reporter requests follow-up from staff.,False
+WR000468,S003916,Anonymous,2025-07-09,Theft,Online / Remote,Medium,Reporter describes an incident involving theft that occurred at Online / Remote.,True
+WR000469,S003365,Student,2025-07-09,Discrimination,Online / Remote,Medium,Reporter states they witnessed behavior consistent with discrimination.,False
+WR000470,S004121,Student,2025-07-09,Theft,Northgate Hall,Medium,Reporter states they witnessed behavior consistent with theft.,False
+WR000471,,Student,2025-07-10,Theft,Fine Arts Center,Low,Concern raised about theft; reporter requests follow-up from staff.,False
+WR000472,S007775,Staff,2025-07-10,Discrimination,Library,Medium,Submission describes an ongoing issue related to discrimination at Library.,False
+WR000473,,Anonymous,2025-07-11,Safety Hazard,Bellview Hall,Medium,Concern raised about safety hazard; reporter requests follow-up from staff.,True
+WR000474,S006263,Anonymous,2025-07-13,Hazing,Bike Path,Low,Concern raised about hazing; reporter requests follow-up from staff.,True
+WR000475,,Anonymous,2025-07-13,Safety Hazard,Meadowbrook Hall,Low,Submission describes an ongoing issue related to safety hazard at Meadowbrook Hall.,True
+WR000476,S002014,Anonymous,2025-07-15,Discrimination,Engineering Annex,Medium,Reporter states they witnessed behavior consistent with discrimination.,True
+WR000477,S006541,Staff,2025-07-15,Academic Dishonesty,Northgate Hall,Medium,Submission describes an ongoing issue related to academic dishonesty at Northgate Hall.,False
+WR000478,,Faculty,2025-07-15,Hazing,Founders Hall,Low,Reporter states they witnessed behavior consistent with hazing.,False
+WR000479,,Anonymous,2025-07-17,Bullying/Harassment,Recreation Center,High,Reporter states they witnessed behavior consistent with bullying/harassment.,True
+WR000480,S009278,Community Member,2025-07-18,Property Damage,Northgate Hall,Low,Concern raised about property damage; reporter requests follow-up from staff.,False
+WR000481,,Anonymous,2025-07-19,Mental Health Concern,Stadium,High,Submission describes an ongoing issue related to mental health concern at Stadium.,True
+WR000482,S006219,Anonymous,2025-07-21,Safety Hazard,Meadowbrook Hall,Urgent,Reporter states they witnessed behavior consistent with safety hazard.,True
+WR000483,S003332,Faculty,2025-07-21,Safety Hazard,Sunrise Commons,Low,Concern raised about safety hazard; reporter requests follow-up from staff.,False
+WR000484,,Anonymous,2025-07-21,Sexual Misconduct,Maple Ridge Hall,Urgent,A concern was submitted regarding possible sexual misconduct near Maple Ridge Hall.,True
+WR000485,S000427,Staff,2025-07-22,Bullying/Harassment,Sunrise Commons,Low,Reporter states they witnessed behavior consistent with bullying/harassment.,False
+WR000486,S003389,Student,2025-07-22,Alcohol/Drug Concern,Cedar Crest Hall,Low,Submission describes an ongoing issue related to alcohol/drug concern at Cedar Crest Hall.,False
+WR000487,,Parent,2025-07-22,Sexual Misconduct,Northgate Hall,Low,Concern raised about sexual misconduct; reporter requests follow-up from staff.,False
+WR000488,,Community Member,2025-07-23,Hazing,Maple Ridge Hall,High,Concern raised about hazing; reporter requests follow-up from staff.,False
+WR000489,,Parent,2025-07-23,Property Damage,Library,High,Submission describes an ongoing issue related to property damage at Library.,False
+WR000490,,Community Member,2025-07-23,Other,Aspen Court,Medium,Concern raised about other; reporter requests follow-up from staff.,False
+WR000491,S005304,Anonymous,2025-07-25,Theft,Harborview Hall,High,Submission describes an ongoing issue related to theft at Harborview Hall.,True
+WR000492,S007653,Community Member,2025-07-25,Property Damage,Main Quad,High,A concern was submitted regarding possible property damage near Main Quad.,False
+WR000493,S004796,Anonymous,2025-07-25,Discrimination,Stadium,Medium,Reporter states they witnessed behavior consistent with discrimination.,True
+WR000494,S006911,Student,2025-07-27,Alcohol/Drug Concern,Stadium,High,Concern raised about alcohol/drug concern; reporter requests follow-up from staff.,False
+WR000495,S008666,Student,2025-07-29,Hazing,West Parking Garage,Medium,Concern raised about hazing; reporter requests follow-up from staff.,False
+WR000496,,Student,2025-07-30,Safety Hazard,Fine Arts Center,Low,Reporter describes an incident involving safety hazard that occurred at Fine Arts Center.,False
+WR000497,S007768,Anonymous,2025-07-31,Bullying/Harassment,Lakeside Terrace,Urgent,A concern was submitted regarding possible bullying/harassment near Lakeside Terrace.,True
+WR000498,S005158,Student,2025-07-31,Safety Hazard,Lakeside Terrace,Medium,A concern was submitted regarding possible safety hazard near Lakeside Terrace.,False
+WR000499,,Faculty,2025-08-01,Discrimination,Lakeside Terrace,Low,Reporter states they witnessed behavior consistent with discrimination.,False
+WR000500,S005099,Student,2025-08-02,Property Damage,Fine Arts Center,Medium,Submission describes an ongoing issue related to property damage at Fine Arts Center.,False
+WR000501,,Faculty,2025-08-03,Theft,Bellview Hall,Low,Submission describes an ongoing issue related to theft at Bellview Hall.,False
+WR000502,,Faculty,2025-08-03,Hazing,Highland Hall,Medium,Concern raised about hazing; reporter requests follow-up from staff.,False
+WR000503,S000325,Staff,2025-08-03,Discrimination,Bike Path,Low,Reporter states they witnessed behavior consistent with discrimination.,False
+WR000504,S001748,Faculty,2025-08-04,Discrimination,Birchwood Hall,Low,Reporter states they witnessed behavior consistent with discrimination.,False
+WR000505,S006268,Anonymous,2025-08-04,Bias Incident,Engineering Annex,High,A concern was submitted regarding possible bias incident near Engineering Annex.,True
+WR000506,,Staff,2025-08-04,Sexual Misconduct,Meadowbrook Hall,Low,Reporter describes an incident involving sexual misconduct that occurred at Meadowbrook Hall.,False
+WR000507,S008756,Parent,2025-08-05,Sexual Misconduct,Bike Path,Medium,Submission describes an ongoing issue related to sexual misconduct at Bike Path.,False
+WR000508,,Anonymous,2025-08-05,Alcohol/Drug Concern,Stadium,Medium,Concern raised about alcohol/drug concern; reporter requests follow-up from staff.,True
+WR000509,S006345,Staff,2025-08-08,Theft,Online / Remote,High,A concern was submitted regarding possible theft near Online / Remote.,False
+WR000510,,Anonymous,2025-08-08,Alcohol/Drug Concern,Off-Campus Housing,Medium,A concern was submitted regarding possible alcohol/drug concern near Off-Campus Housing.,True
+WR000511,S006328,Parent,2025-08-09,Discrimination,Cedar Crest Hall,High,Reporter describes an incident involving discrimination that occurred at Cedar Crest Hall.,False
+WR000512,,Student,2025-08-09,Theft,Sunrise Commons,High,A concern was submitted regarding possible theft near Sunrise Commons.,False
+WR000513,S006058,Anonymous,2025-08-10,Alcohol/Drug Concern,Library,Medium,Submission describes an ongoing issue related to alcohol/drug concern at Library.,True
+WR000514,,Student,2025-08-11,Other,Lakeside Terrace,Medium,Concern raised about other; reporter requests follow-up from staff.,False
+WR000515,,Faculty,2025-08-11,Other,East Lot,Urgent,Reporter states they witnessed behavior consistent with other.,False
+WR000516,,Student,2025-08-11,Discrimination,Student Union,High,Reporter states they witnessed behavior consistent with discrimination.,False
+WR000517,,Student,2025-08-12,Other,Founders Hall,Low,Concern raised about other; reporter requests follow-up from staff.,False
+WR000518,S009210,Anonymous,2025-08-13,Property Damage,Sunrise Commons,Low,Submission describes an ongoing issue related to property damage at Sunrise Commons.,True
+WR000519,S001382,Anonymous,2025-08-14,Property Damage,Stadium,Low,Concern raised about property damage; reporter requests follow-up from staff.,True
+WR000520,S002099,Anonymous,2025-08-14,Discrimination,Library,Low,Reporter states they witnessed behavior consistent with discrimination.,True
+WR000521,S000688,Faculty,2025-08-15,Bias Incident,Harborview Hall,Medium,A concern was submitted regarding possible bias incident near Harborview Hall.,False
+WR000522,,Faculty,2025-08-16,Hazing,Bellview Hall,Low,Reporter states they witnessed behavior consistent with hazing.,False
+WR000523,,Faculty,2025-08-16,Mental Health Concern,Maple Ridge Hall,High,Reporter describes an incident involving mental health concern that occurred at Maple Ridge Hall.,False
+WR000524,S003125,Anonymous,2025-08-16,Property Damage,Fine Arts Center,Medium,Concern raised about property damage; reporter requests follow-up from staff.,True
+WR000525,S004467,Parent,2025-08-17,Other,Bike Path,High,Reporter states they witnessed behavior consistent with other.,False
+WR000526,,Staff,2025-08-19,Discrimination,Aspen Court,Medium,Reporter states they witnessed behavior consistent with discrimination.,False
+WR000527,S009404,Student,2025-08-19,Mental Health Concern,Fine Arts Center,High,Submission describes an ongoing issue related to mental health concern at Fine Arts Center.,False
+WR000528,,Community Member,2025-08-20,Bias Incident,Bike Path,Urgent,Reporter describes an incident involving bias incident that occurred at Bike Path.,False
+WR000529,S001825,Community Member,2025-08-20,Sexual Misconduct,Summit House,Medium,Reporter states they witnessed behavior consistent with sexual misconduct.,False
+WR000530,S002682,Staff,2025-08-21,Mental Health Concern,Science Building,Medium,Reporter states they witnessed behavior consistent with mental health concern.,False
+WR000531,S004235,Faculty,2025-08-23,Alcohol/Drug Concern,Lakeside Terrace,Medium,Submission describes an ongoing issue related to alcohol/drug concern at Lakeside Terrace.,False
+WR000532,S005704,Anonymous,2025-08-23,Discrimination,Northgate Hall,High,A concern was submitted regarding possible discrimination near Northgate Hall.,True
+WR000533,S002922,Faculty,2025-08-25,Alcohol/Drug Concern,Library,Medium,A concern was submitted regarding possible alcohol/drug concern near Library.,False
+WR000534,S005479,Anonymous,2025-08-25,Sexual Misconduct,Student Union,Low,Concern raised about sexual misconduct; reporter requests follow-up from staff.,True
+WR000535,,Student,2025-08-27,Discrimination,Online / Remote,Medium,Reporter describes an incident involving discrimination that occurred at Online / Remote.,False
+WR000536,S003678,Anonymous,2025-08-27,Safety Hazard,Highland Hall,Low,Submission describes an ongoing issue related to safety hazard at Highland Hall.,True
+WR000537,S008451,Anonymous,2025-08-28,Safety Hazard,East Lot,Medium,Submission describes an ongoing issue related to safety hazard at East Lot.,True
+WR000538,S003457,Community Member,2025-08-28,Mental Health Concern,Summit House,Medium,Reporter states they witnessed behavior consistent with mental health concern.,False
+WR000539,S000546,Anonymous,2025-08-29,Property Damage,West Parking Garage,Medium,Concern raised about property damage; reporter requests follow-up from staff.,True
+WR000540,,Staff,2025-08-30,Other,Cedar Crest Hall,Medium,Submission describes an ongoing issue related to other at Cedar Crest Hall.,False
+WR000541,S008326,Student,2025-09-01,Bullying/Harassment,Founders Hall,Medium,Reporter describes an incident involving bullying/harassment that occurred at Founders Hall.,False
+WR000542,,Parent,2025-09-02,Alcohol/Drug Concern,East Lot,Low,Concern raised about alcohol/drug concern; reporter requests follow-up from staff.,False
+WR000543,S007025,Student,2025-09-03,Property Damage,Off-Campus Housing,Low,Reporter describes an incident involving property damage that occurred at Off-Campus Housing.,False
+WR000544,S009531,Anonymous,2025-09-03,Mental Health Concern,Stadium,Medium,Reporter describes an incident involving mental health concern that occurred at Stadium.,True
+WR000545,S006246,Community Member,2025-09-03,Alcohol/Drug Concern,Main Quad,Medium,Reporter describes an incident involving alcohol/drug concern that occurred at Main Quad.,False
+WR000546,S006437,Anonymous,2025-09-04,Other,Student Union,Medium,Reporter states they witnessed behavior consistent with other.,True
+WR000547,S008182,Anonymous,2025-09-06,Other,Bike Path,Medium,Submission describes an ongoing issue related to other at Bike Path.,True
+WR000548,,Community Member,2025-09-06,Theft,Science Building,High,Submission describes an ongoing issue related to theft at Science Building.,False
+WR000549,S001934,Student,2025-09-08,Safety Hazard,Sunrise Commons,Low,Submission describes an ongoing issue related to safety hazard at Sunrise Commons.,False
+WR000550,,Anonymous,2025-09-09,Sexual Misconduct,Student Union,Low,Submission describes an ongoing issue related to sexual misconduct at Student Union.,True
+WR000551,S001783,Anonymous,2025-09-11,Bias Incident,East Lot,Low,Reporter states they witnessed behavior consistent with bias incident.,True
+WR000552,S008756,Anonymous,2025-09-11,Academic Dishonesty,Fine Arts Center,Medium,Reporter describes an incident involving academic dishonesty that occurred at Fine Arts Center.,True
+WR000553,S001747,Anonymous,2025-09-12,Mental Health Concern,West Parking Garage,Medium,Reporter states they witnessed behavior consistent with mental health concern.,True
+WR000554,S004912,Student,2025-09-17,Mental Health Concern,Highland Hall,Medium,Concern raised about mental health concern; reporter requests follow-up from staff.,False
+WR000555,S003566,Parent,2025-09-17,Other,Willow Creek Hall,High,A concern was submitted regarding possible other near Willow Creek Hall.,False
+WR000556,S002494,Student,2025-09-17,Property Damage,Engineering Annex,Medium,Reporter states they witnessed behavior consistent with property damage.,False
+WR000557,S002720,Staff,2025-09-18,Other,Aspen Court,Medium,Concern raised about other; reporter requests follow-up from staff.,False
+WR000558,,Student,2025-09-19,Academic Dishonesty,Engineering Annex,Urgent,Concern raised about academic dishonesty; reporter requests follow-up from staff.,False
+WR000559,,Anonymous,2025-09-21,Discrimination,Summit House,Medium,A concern was submitted regarding possible discrimination near Summit House.,True
+WR000560,,Anonymous,2025-09-21,Other,Birchwood Hall,High,Submission describes an ongoing issue related to other at Birchwood Hall.,True
+WR000561,S009706,Student,2025-09-21,Bias Incident,Maple Ridge Hall,High,Reporter states they witnessed behavior consistent with bias incident.,False
+WR000562,,Student,2025-09-22,Safety Hazard,Science Building,High,Concern raised about safety hazard; reporter requests follow-up from staff.,False
+WR000563,,Faculty,2025-09-23,Discrimination,Lakeside Terrace,Low,Reporter describes an incident involving discrimination that occurred at Lakeside Terrace.,False
+WR000564,S009670,Anonymous,2025-09-23,Discrimination,East Lot,Low,Reporter states they witnessed behavior consistent with discrimination.,True
+WR000565,S008738,Student,2025-09-23,Property Damage,Main Quad,Low,Concern raised about property damage; reporter requests follow-up from staff.,False
+WR000566,S008520,Parent,2025-09-23,Safety Hazard,Northgate Hall,Urgent,A concern was submitted regarding possible safety hazard near Northgate Hall.,False
+WR000567,S003882,Faculty,2025-09-23,Other,Stadium,Medium,Concern raised about other; reporter requests follow-up from staff.,False
+WR000568,S008805,Student,2025-09-23,Bias Incident,Meadowbrook Hall,Medium,A concern was submitted regarding possible bias incident near Meadowbrook Hall.,False
+WR000569,S008828,Staff,2025-09-24,Hazing,Northgate Hall,Low,Submission describes an ongoing issue related to hazing at Northgate Hall.,False
+WR000570,,Community Member,2025-09-26,Hazing,East Lot,Urgent,Concern raised about hazing; reporter requests follow-up from staff.,False
+WR000571,S007524,Student,2025-09-27,Discrimination,Recreation Center,Medium,Concern raised about discrimination; reporter requests follow-up from staff.,False
+WR000572,,Student,2025-09-27,Hazing,Main Quad,Low,A concern was submitted regarding possible hazing near Main Quad.,False
+WR000573,,Student,2025-09-30,Bullying/Harassment,Bellview Hall,Medium,Reporter states they witnessed behavior consistent with bullying/harassment.,False
+WR000574,S002250,Community Member,2025-10-01,Other,Fine Arts Center,Low,Concern raised about other; reporter requests follow-up from staff.,False
+WR000575,S009741,Student,2025-10-02,Hazing,Off-Campus Housing,Medium,A concern was submitted regarding possible hazing near Off-Campus Housing.,False
+WR000576,,Student,2025-10-02,Safety Hazard,Online / Remote,Low,Concern raised about safety hazard; reporter requests follow-up from staff.,False
+WR000577,S006532,Community Member,2025-10-03,Hazing,Northgate Hall,Low,A concern was submitted regarding possible hazing near Northgate Hall.,False
+WR000578,S008428,Anonymous,2025-10-03,Safety Hazard,Main Quad,High,Reporter describes an incident involving safety hazard that occurred at Main Quad.,True
+WR000579,,Parent,2025-10-03,Other,Lakeside Terrace,Medium,Reporter states they witnessed behavior consistent with other.,False
+WR000580,,Anonymous,2025-10-04,Hazing,Fine Arts Center,High,Concern raised about hazing; reporter requests follow-up from staff.,True
+WR000581,,Anonymous,2025-10-05,Sexual Misconduct,Founders Hall,Low,A concern was submitted regarding possible sexual misconduct near Founders Hall.,True
+WR000582,,Anonymous,2025-10-07,Alcohol/Drug Concern,Online / Remote,Urgent,A concern was submitted regarding possible alcohol/drug concern near Online / Remote.,True
+WR000583,S006071,Student,2025-10-08,Academic Dishonesty,Birchwood Hall,Medium,Concern raised about academic dishonesty; reporter requests follow-up from staff.,False
+WR000584,,Student,2025-10-08,Bullying/Harassment,West Parking Garage,Low,Concern raised about bullying/harassment; reporter requests follow-up from staff.,False
+WR000585,S009946,Anonymous,2025-10-09,Hazing,Off-Campus,Medium,Reporter states they witnessed behavior consistent with hazing.,True
+WR000586,S002531,Community Member,2025-10-09,Theft,Recreation Center,High,Concern raised about theft; reporter requests follow-up from staff.,False
+WR000587,S008196,Anonymous,2025-10-09,Academic Dishonesty,Maple Ridge Hall,Medium,Submission describes an ongoing issue related to academic dishonesty at Maple Ridge Hall.,True
+WR000588,,Staff,2025-10-10,Theft,Sunrise Commons,High,Reporter states they witnessed behavior consistent with theft.,False
+WR000589,S005743,Student,2025-10-13,Alcohol/Drug Concern,Off-Campus Housing,Low,Concern raised about alcohol/drug concern; reporter requests follow-up from staff.,False
+WR000590,,Faculty,2025-10-14,Discrimination,Aspen Court,High,Concern raised about discrimination; reporter requests follow-up from staff.,False
+WR000591,,Anonymous,2025-10-14,Discrimination,Fine Arts Center,Urgent,Submission describes an ongoing issue related to discrimination at Fine Arts Center.,True
+WR000592,S005619,Anonymous,2025-10-14,Discrimination,Recreation Center,High,Reporter states they witnessed behavior consistent with discrimination.,True
+WR000593,S003185,Student,2025-10-17,Sexual Misconduct,Aspen Court,High,Reporter describes an incident involving sexual misconduct that occurred at Aspen Court.,False
+WR000594,,Anonymous,2025-10-17,Theft,Engineering Annex,Medium,A concern was submitted regarding possible theft near Engineering Annex.,True
+WR000595,,Student,2025-10-18,Alcohol/Drug Concern,Founders Hall,High,Concern raised about alcohol/drug concern; reporter requests follow-up from staff.,False
+WR000596,,Faculty,2025-10-18,Alcohol/Drug Concern,Meadowbrook Hall,Medium,A concern was submitted regarding possible alcohol/drug concern near Meadowbrook Hall.,False
+WR000597,,Anonymous,2025-10-19,Safety Hazard,Science Building,Medium,Submission describes an ongoing issue related to safety hazard at Science Building.,True
+WR000598,,Community Member,2025-10-20,Discrimination,Highland Hall,Urgent,Reporter states they witnessed behavior consistent with discrimination.,False
+WR000599,,Student,2025-10-25,Bullying/Harassment,Main Quad,High,A concern was submitted regarding possible bullying/harassment near Main Quad.,False
+WR000600,S001027,Parent,2025-10-26,Academic Dishonesty,Highland Hall,Urgent,A concern was submitted regarding possible academic dishonesty near Highland Hall.,False
+WR000601,S003916,Anonymous,2025-10-27,Mental Health Concern,Bellview Hall,Medium,Reporter states they witnessed behavior consistent with mental health concern.,True
+WR000602,,Student,2025-10-27,Hazing,Maple Ridge Hall,High,Reporter describes an incident involving hazing that occurred at Maple Ridge Hall.,False
+WR000603,,Student,2025-10-29,Theft,Willow Creek Hall,High,Submission describes an ongoing issue related to theft at Willow Creek Hall.,False
+WR000604,S004424,Faculty,2025-10-29,Hazing,Northgate Hall,Medium,Reporter describes an incident involving hazing that occurred at Northgate Hall.,False
+WR000605,,Student,2025-10-30,Bullying/Harassment,Northgate Hall,Medium,A concern was submitted regarding possible bullying/harassment near Northgate Hall.,False
+WR000606,,Community Member,2025-11-02,Bullying/Harassment,East Lot,Medium,Submission describes an ongoing issue related to bullying/harassment at East Lot.,False
+WR000607,S000571,Staff,2025-11-02,Hazing,Northgate Hall,High,Reporter describes an incident involving hazing that occurred at Northgate Hall.,False
+WR000608,,Anonymous,2025-11-03,Hazing,Aspen Court,Medium,A concern was submitted regarding possible hazing near Aspen Court.,True
+WR000609,,Student,2025-11-04,Bullying/Harassment,Riverbend Hall,Medium,Reporter describes an incident involving bullying/harassment that occurred at Riverbend Hall.,False
+WR000610,S005333,Faculty,2025-11-04,Safety Hazard,Off-Campus,Low,Concern raised about safety hazard; reporter requests follow-up from staff.,False
+WR000611,S004646,Student,2025-11-07,Property Damage,Recreation Center,High,Reporter describes an incident involving property damage that occurred at Recreation Center.,False
+WR000612,,Anonymous,2025-11-07,Mental Health Concern,Stadium,High,Submission describes an ongoing issue related to mental health concern at Stadium.,True
+WR000613,S005139,Anonymous,2025-11-07,Mental Health Concern,Summit House,Low,Reporter states they witnessed behavior consistent with mental health concern.,True
+WR000614,,Community Member,2025-11-07,Discrimination,Bellview Hall,High,Submission describes an ongoing issue related to discrimination at Bellview Hall.,False
+WR000615,,Student,2025-11-09,Theft,Birchwood Hall,Medium,Reporter describes an incident involving theft that occurred at Birchwood Hall.,False
+WR000616,S003755,Anonymous,2025-11-09,Academic Dishonesty,Stadium,Low,Reporter describes an incident involving academic dishonesty that occurred at Stadium.,True
+WR000617,S003157,Anonymous,2025-11-09,Hazing,Bellview Hall,Medium,A concern was submitted regarding possible hazing near Bellview Hall.,True
+WR000618,,Anonymous,2025-11-10,Bias Incident,Bike Path,High,Reporter describes an incident involving bias incident that occurred at Bike Path.,True
+WR000619,,Community Member,2025-11-11,Safety Hazard,Founders Hall,Low,A concern was submitted regarding possible safety hazard near Founders Hall.,False
+WR000620,,Anonymous,2025-11-11,Sexual Misconduct,Bellview Hall,Medium,Reporter describes an incident involving sexual misconduct that occurred at Bellview Hall.,True
+WR000621,,Anonymous,2025-11-13,Alcohol/Drug Concern,Library,Low,Submission describes an ongoing issue related to alcohol/drug concern at Library.,True
+WR000622,,Anonymous,2025-11-13,Discrimination,Engineering Annex,Medium,A concern was submitted regarding possible discrimination near Engineering Annex.,True
+WR000623,S009032,Anonymous,2025-11-14,Theft,Sunrise Commons,High,A concern was submitted regarding possible theft near Sunrise Commons.,True
+WR000624,S004021,Anonymous,2025-11-14,Academic Dishonesty,Online / Remote,Urgent,A concern was submitted regarding possible academic dishonesty near Online / Remote.,True
+WR000625,,Anonymous,2025-11-14,Sexual Misconduct,Off-Campus Housing,Low,Reporter describes an incident involving sexual misconduct that occurred at Off-Campus Housing.,True
+WR000626,,Anonymous,2025-11-14,Other,Willow Creek Hall,Low,Reporter describes an incident involving other that occurred at Willow Creek Hall.,True
+WR000627,S003295,Anonymous,2025-11-14,Theft,Maple Ridge Hall,Medium,Concern raised about theft; reporter requests follow-up from staff.,True
+WR000628,S007441,Anonymous,2025-11-15,Other,Student Union,Medium,Submission describes an ongoing issue related to other at Student Union.,True
+WR000629,,Student,2025-11-15,Bullying/Harassment,Fine Arts Center,Low,Concern raised about bullying/harassment; reporter requests follow-up from staff.,False
+WR000630,,Anonymous,2025-11-15,Discrimination,Off-Campus Housing,Medium,A concern was submitted regarding possible discrimination near Off-Campus Housing.,True
+WR000631,,Community Member,2025-11-15,Sexual Misconduct,Main Quad,Low,Reporter describes an incident involving sexual misconduct that occurred at Main Quad.,False
+WR000632,,Student,2025-11-18,Property Damage,West Parking Garage,Urgent,Reporter describes an incident involving property damage that occurred at West Parking Garage.,False
+WR000633,,Anonymous,2025-11-18,Sexual Misconduct,Birchwood Hall,Medium,A concern was submitted regarding possible sexual misconduct near Birchwood Hall.,True
+WR000634,,Anonymous,2025-11-18,Discrimination,Bike Path,Medium,A concern was submitted regarding possible discrimination near Bike Path.,True
+WR000635,,Anonymous,2025-11-19,Theft,Student Union,Low,Reporter states they witnessed behavior consistent with theft.,True
+WR000636,,Anonymous,2025-11-20,Academic Dishonesty,Bike Path,Medium,Concern raised about academic dishonesty; reporter requests follow-up from staff.,True
+WR000637,,Student,2025-11-20,Mental Health Concern,Highland Hall,Medium,Reporter states they witnessed behavior consistent with mental health concern.,False
+WR000638,,Student,2025-11-22,Alcohol/Drug Concern,Off-Campus,Medium,Concern raised about alcohol/drug concern; reporter requests follow-up from staff.,False
+WR000639,,Faculty,2025-11-23,Bias Incident,Online / Remote,Medium,Concern raised about bias incident; reporter requests follow-up from staff.,False
+WR000640,,Faculty,2025-11-23,Hazing,Founders Hall,Urgent,Reporter states they witnessed behavior consistent with hazing.,False
+WR000641,,Anonymous,2025-11-23,Bias Incident,Aspen Court,Urgent,A concern was submitted regarding possible bias incident near Aspen Court.,True
+WR000642,S009595,Staff,2025-11-24,Bullying/Harassment,Main Quad,Medium,Reporter describes an incident involving bullying/harassment that occurred at Main Quad.,False
+WR000643,S009785,Anonymous,2025-11-25,Mental Health Concern,Fine Arts Center,Medium,A concern was submitted regarding possible mental health concern near Fine Arts Center.,True
+WR000644,,Community Member,2025-11-27,Safety Hazard,Highland Hall,Low,Reporter describes an incident involving safety hazard that occurred at Highland Hall.,False
+WR000645,,Student,2025-11-27,Property Damage,Birchwood Hall,High,A concern was submitted regarding possible property damage near Birchwood Hall.,False
+WR000646,S006454,Faculty,2025-11-27,Alcohol/Drug Concern,East Lot,Low,Reporter states they witnessed behavior consistent with alcohol/drug concern.,False
+WR000647,S006165,Anonymous,2025-11-27,Alcohol/Drug Concern,Off-Campus,Low,Submission describes an ongoing issue related to alcohol/drug concern at Off-Campus.,True
+WR000648,,Student,2025-11-28,Bias Incident,Sunrise Commons,Medium,Submission describes an ongoing issue related to bias incident at Sunrise Commons.,False
+WR000649,,Student,2025-11-28,Sexual Misconduct,Meadowbrook Hall,Low,Reporter states they witnessed behavior consistent with sexual misconduct.,False
+WR000650,S004418,Faculty,2025-11-28,Bias Incident,Recreation Center,Low,Submission describes an ongoing issue related to bias incident at Recreation Center.,False
+WR000651,S002020,Student,2025-11-30,Sexual Misconduct,Engineering Annex,Low,A concern was submitted regarding possible sexual misconduct near Engineering Annex.,False
+WR000652,S006599,Student,2025-12-02,Discrimination,Bike Path,Medium,Reporter states they witnessed behavior consistent with discrimination.,False
+WR000653,S004517,Community Member,2025-12-03,Alcohol/Drug Concern,Summit House,Low,Concern raised about alcohol/drug concern; reporter requests follow-up from staff.,False
+WR000654,,Student,2025-12-05,Bias Incident,Bike Path,Low,Reporter states they witnessed behavior consistent with bias incident.,False
+WR000655,,Anonymous,2025-12-05,Hazing,Fine Arts Center,Medium,Concern raised about hazing; reporter requests follow-up from staff.,True
+WR000656,S000952,Anonymous,2025-12-06,Discrimination,Founders Hall,Urgent,A concern was submitted regarding possible discrimination near Founders Hall.,True
+WR000657,S005657,Student,2025-12-08,Hazing,Engineering Annex,High,Submission describes an ongoing issue related to hazing at Engineering Annex.,False
+WR000658,S007058,Student,2025-12-08,Sexual Misconduct,Off-Campus Housing,Urgent,Concern raised about sexual misconduct; reporter requests follow-up from staff.,False
+WR000659,,Student,2025-12-08,Safety Hazard,Northgate Hall,Medium,A concern was submitted regarding possible safety hazard near Northgate Hall.,False
+WR000660,,Community Member,2025-12-09,Safety Hazard,Summit House,High,Concern raised about safety hazard; reporter requests follow-up from staff.,False
+WR000661,S009674,Student,2025-12-09,Discrimination,Stadium,Medium,Reporter describes an incident involving discrimination that occurred at Stadium.,False
+WR000662,,Anonymous,2025-12-10,Bias Incident,Student Union,Medium,Reporter describes an incident involving bias incident that occurred at Student Union.,True
+WR000663,,Faculty,2025-12-10,Sexual Misconduct,Sunrise Commons,High,A concern was submitted regarding possible sexual misconduct near Sunrise Commons.,False
+WR000664,S000502,Student,2025-12-11,Safety Hazard,Maple Ridge Hall,Medium,Reporter states they witnessed behavior consistent with safety hazard.,False
+WR000665,,Anonymous,2025-12-12,Discrimination,Recreation Center,Medium,Submission describes an ongoing issue related to discrimination at Recreation Center.,True
+WR000666,,Staff,2025-12-12,Hazing,Engineering Annex,Medium,Submission describes an ongoing issue related to hazing at Engineering Annex.,False
+WR000667,S009586,Community Member,2025-12-12,Hazing,Summit House,Low,Submission describes an ongoing issue related to hazing at Summit House.,False
+WR000668,,Anonymous,2025-12-13,Academic Dishonesty,Off-Campus,Medium,Submission describes an ongoing issue related to academic dishonesty at Off-Campus.,True
+WR000669,,Student,2025-12-17,Bullying/Harassment,Founders Hall,Medium,A concern was submitted regarding possible bullying/harassment near Founders Hall.,False
+WR000670,S005288,Parent,2025-12-17,Safety Hazard,Lakeside Terrace,Low,Concern raised about safety hazard; reporter requests follow-up from staff.,False
+WR000671,S009399,Parent,2025-12-18,Discrimination,Off-Campus Housing,High,Reporter states they witnessed behavior consistent with discrimination.,False
+WR000672,,Student,2025-12-18,Property Damage,Recreation Center,Medium,A concern was submitted regarding possible property damage near Recreation Center.,False
+WR000673,,Parent,2025-12-19,Bias Incident,Aspen Court,High,Concern raised about bias incident; reporter requests follow-up from staff.,False
+WR000674,,Community Member,2025-12-19,Alcohol/Drug Concern,Stadium,Low,A concern was submitted regarding possible alcohol/drug concern near Stadium.,False
+WR000675,,Parent,2025-12-20,Safety Hazard,Sunrise Commons,High,Reporter states they witnessed behavior consistent with safety hazard.,False
+WR000676,S004510,Anonymous,2025-12-20,Sexual Misconduct,Stadium,Medium,A concern was submitted regarding possible sexual misconduct near Stadium.,True
+WR000677,,Anonymous,2025-12-22,Other,Bike Path,Low,Reporter states they witnessed behavior consistent with other.,True
+WR000678,,Anonymous,2025-12-23,Sexual Misconduct,Willow Creek Hall,Medium,Submission describes an ongoing issue related to sexual misconduct at Willow Creek Hall.,True
+WR000679,,Anonymous,2025-12-25,Sexual Misconduct,Student Union,Medium,Submission describes an ongoing issue related to sexual misconduct at Student Union.,True
+WR000680,S003039,Anonymous,2025-12-25,Hazing,Sunrise Commons,Low,Concern raised about hazing; reporter requests follow-up from staff.,True
+WR000681,S007404,Anonymous,2025-12-25,Sexual Misconduct,Birchwood Hall,High,Submission describes an ongoing issue related to sexual misconduct at Birchwood Hall.,True
+WR000682,,Faculty,2025-12-25,Safety Hazard,East Lot,Medium,Submission describes an ongoing issue related to safety hazard at East Lot.,False
+WR000683,S008784,Student,2025-12-25,Theft,Summit House,Low,A concern was submitted regarding possible theft near Summit House.,False
+WR000684,S008401,Community Member,2025-12-25,Mental Health Concern,Library,Medium,Reporter describes an incident involving mental health concern that occurred at Library.,False
+WR000685,S002894,Anonymous,2025-12-25,Academic Dishonesty,Maple Ridge Hall,High,Concern raised about academic dishonesty; reporter requests follow-up from staff.,True
+WR000686,S002210,Student,2025-12-26,Property Damage,Main Quad,Medium,Reporter states they witnessed behavior consistent with property damage.,False
+WR000687,S007127,Anonymous,2025-12-26,Safety Hazard,Fine Arts Center,Urgent,Submission describes an ongoing issue related to safety hazard at Fine Arts Center.,True
+WR000688,,Anonymous,2025-12-27,Bias Incident,Northgate Hall,Medium,Concern raised about bias incident; reporter requests follow-up from staff.,True
+WR000689,S005621,Student,2025-12-27,Mental Health Concern,Harborview Hall,Medium,Reporter states they witnessed behavior consistent with mental health concern.,False
+WR000690,,Student,2025-12-28,Safety Hazard,Founders Hall,Low,Reporter states they witnessed behavior consistent with safety hazard.,False
+WR000691,,Faculty,2025-12-28,Discrimination,Library,High,Reporter describes an incident involving discrimination that occurred at Library.,False
+WR000692,S006075,Anonymous,2025-12-29,Hazing,Recreation Center,High,Reporter states they witnessed behavior consistent with hazing.,True
+WR000693,,Anonymous,2025-12-30,Mental Health Concern,Aspen Court,Low,Reporter states they witnessed behavior consistent with mental health concern.,True
+WR000694,S006894,Community Member,2025-12-30,Hazing,Birchwood Hall,Medium,Submission describes an ongoing issue related to hazing at Birchwood Hall.,False
+WR000695,,Anonymous,2025-12-30,Other,Willow Creek Hall,Medium,Concern raised about other; reporter requests follow-up from staff.,True
+WR000696,,Student,2025-12-31,Property Damage,Willow Creek Hall,High,Submission describes an ongoing issue related to property damage at Willow Creek Hall.,False
+WR000697,S007292,Anonymous,2026-01-01,Mental Health Concern,Main Quad,Low,Concern raised about mental health concern; reporter requests follow-up from staff.,True
+WR000698,,Anonymous,2026-01-02,Other,Library,High,Reporter describes an incident involving other that occurred at Library.,True
+WR000699,S009324,Community Member,2026-01-03,Sexual Misconduct,Founders Hall,Low,Submission describes an ongoing issue related to sexual misconduct at Founders Hall.,False
+WR000700,,Faculty,2026-01-03,Property Damage,Off-Campus Housing,Urgent,Reporter describes an incident involving property damage that occurred at Off-Campus Housing.,False
+WR000701,S004427,Staff,2026-01-04,Discrimination,West Parking Garage,High,Reporter describes an incident involving discrimination that occurred at West Parking Garage.,False
+WR000702,S004510,Anonymous,2026-01-04,Bias Incident,Summit House,Medium,Submission describes an ongoing issue related to bias incident at Summit House.,True
+WR000703,,Community Member,2026-01-05,Academic Dishonesty,Aspen Court,Medium,Submission describes an ongoing issue related to academic dishonesty at Aspen Court.,False
+WR000704,S000899,Student,2026-01-06,Alcohol/Drug Concern,Recreation Center,Medium,Reporter states they witnessed behavior consistent with alcohol/drug concern.,False
+WR000705,S003898,Student,2026-01-07,Alcohol/Drug Concern,Stadium,Medium,Reporter states they witnessed behavior consistent with alcohol/drug concern.,False
+WR000706,,Faculty,2026-01-07,Bias Incident,Engineering Annex,Low,Reporter describes an incident involving bias incident that occurred at Engineering Annex.,False
+WR000707,,Community Member,2026-01-07,Bullying/Harassment,Aspen Court,High,Reporter describes an incident involving bullying/harassment that occurred at Aspen Court.,False
+WR000708,,Student,2026-01-07,Bullying/Harassment,East Lot,Low,Submission describes an ongoing issue related to bullying/harassment at East Lot.,False
+WR000709,,Anonymous,2026-01-08,Other,Off-Campus Housing,Medium,A concern was submitted regarding possible other near Off-Campus Housing.,True
+WR000710,S007441,Community Member,2026-01-08,Safety Hazard,Sunrise Commons,High,Reporter describes an incident involving safety hazard that occurred at Sunrise Commons.,False
+WR000711,,Community Member,2026-01-09,Other,Sunrise Commons,Medium,Reporter states they witnessed behavior consistent with other.,False
+WR000712,,Student,2026-01-10,Safety Hazard,East Lot,Urgent,Reporter describes an incident involving safety hazard that occurred at East Lot.,False
+WR000713,,Anonymous,2026-01-11,Discrimination,Highland Hall,Low,Concern raised about discrimination; reporter requests follow-up from staff.,True
+WR000714,,Student,2026-01-13,Other,Willow Creek Hall,High,A concern was submitted regarding possible other near Willow Creek Hall.,False
+WR000715,,Student,2026-01-13,Academic Dishonesty,Main Quad,High,Submission describes an ongoing issue related to academic dishonesty at Main Quad.,False
+WR000716,,Student,2026-01-13,Safety Hazard,Aspen Court,High,Submission describes an ongoing issue related to safety hazard at Aspen Court.,False
+WR000717,,Parent,2026-01-14,Bullying/Harassment,Online / Remote,Low,A concern was submitted regarding possible bullying/harassment near Online / Remote.,False
+WR000718,S008068,Anonymous,2026-01-14,Hazing,Engineering Annex,High,Reporter describes an incident involving hazing that occurred at Engineering Annex.,True
+WR000719,S001474,Community Member,2026-01-15,Alcohol/Drug Concern,Lakeside Terrace,Low,Submission describes an ongoing issue related to alcohol/drug concern at Lakeside Terrace.,False
+WR000720,,Anonymous,2026-01-16,Academic Dishonesty,Science Building,Medium,Submission describes an ongoing issue related to academic dishonesty at Science Building.,True
+WR000721,S006263,Community Member,2026-01-16,Discrimination,Engineering Annex,Medium,Concern raised about discrimination; reporter requests follow-up from staff.,False
+WR000722,S009464,Anonymous,2026-01-16,Sexual Misconduct,Northgate Hall,Low,Submission describes an ongoing issue related to sexual misconduct at Northgate Hall.,True
+WR000723,,Student,2026-01-16,Property Damage,Aspen Court,Low,Reporter describes an incident involving property damage that occurred at Aspen Court.,False
+WR000724,,Student,2026-01-16,Mental Health Concern,Science Building,High,Submission describes an ongoing issue related to mental health concern at Science Building.,False
+WR000725,,Community Member,2026-01-17,Theft,Fine Arts Center,High,Reporter states they witnessed behavior consistent with theft.,False
+WR000726,,Faculty,2026-01-17,Alcohol/Drug Concern,Bellview Hall,High,Concern raised about alcohol/drug concern; reporter requests follow-up from staff.,False
+WR000727,S002005,Faculty,2026-01-18,Hazing,Aspen Court,Low,Concern raised about hazing; reporter requests follow-up from staff.,False
+WR000728,S007704,Anonymous,2026-01-18,Safety Hazard,Riverbend Hall,High,Reporter states they witnessed behavior consistent with safety hazard.,True
+WR000729,S007554,Anonymous,2026-01-19,Bullying/Harassment,Birchwood Hall,Medium,Concern raised about bullying/harassment; reporter requests follow-up from staff.,True
+WR000730,S003402,Anonymous,2026-01-20,Bias Incident,Sunrise Commons,Medium,Submission describes an ongoing issue related to bias incident at Sunrise Commons.,True
+WR000731,S005512,Community Member,2026-01-20,Bullying/Harassment,Library,Medium,Reporter states they witnessed behavior consistent with bullying/harassment.,False
+WR000732,,Student,2026-01-21,Other,Engineering Annex,Medium,Submission describes an ongoing issue related to other at Engineering Annex.,False
+WR000733,S008545,Student,2026-01-22,Property Damage,Harborview Hall,Low,Reporter describes an incident involving property damage that occurred at Harborview Hall.,False
+WR000734,,Student,2026-01-22,Mental Health Concern,Bellview Hall,Medium,Concern raised about mental health concern; reporter requests follow-up from staff.,False
+WR000735,S008126,Staff,2026-01-22,Sexual Misconduct,Birchwood Hall,Medium,Reporter states they witnessed behavior consistent with sexual misconduct.,False
+WR000736,S002928,Staff,2026-01-24,Theft,Main Quad,Medium,A concern was submitted regarding possible theft near Main Quad.,False
+WR000737,S005037,Staff,2026-01-25,Property Damage,Bike Path,High,Concern raised about property damage; reporter requests follow-up from staff.,False
+WR000738,S008311,Anonymous,2026-01-25,Safety Hazard,Bike Path,Urgent,Reporter states they witnessed behavior consistent with safety hazard.,True
+WR000739,S004090,Staff,2026-01-26,Hazing,Lakeside Terrace,Medium,Reporter describes an incident involving hazing that occurred at Lakeside Terrace.,False
+WR000740,S005409,Staff,2026-01-27,Other,Aspen Court,Low,Concern raised about other; reporter requests follow-up from staff.,False
+WR000741,S005196,Student,2026-01-27,Alcohol/Drug Concern,Founders Hall,Medium,Submission describes an ongoing issue related to alcohol/drug concern at Founders Hall.,False
+WR000742,S005089,Staff,2026-01-27,Bullying/Harassment,Meadowbrook Hall,Medium,Reporter describes an incident involving bullying/harassment that occurred at Meadowbrook Hall.,False
+WR000743,,Community Member,2026-01-28,Safety Hazard,Cedar Crest Hall,Medium,Reporter states they witnessed behavior consistent with safety hazard.,False
+WR000744,,Anonymous,2026-01-29,Safety Hazard,Lakeside Terrace,High,Submission describes an ongoing issue related to safety hazard at Lakeside Terrace.,True
+WR000745,S005257,Anonymous,2026-01-30,Hazing,Sunrise Commons,Medium,Reporter describes an incident involving hazing that occurred at Sunrise Commons.,True
+WR000746,,Anonymous,2026-01-31,Mental Health Concern,Maple Ridge Hall,Urgent,Reporter states they witnessed behavior consistent with mental health concern.,True
+WR000747,S008264,Staff,2026-01-31,Academic Dishonesty,Sunrise Commons,High,Submission describes an ongoing issue related to academic dishonesty at Sunrise Commons.,False
+WR000748,,Student,2026-01-31,Alcohol/Drug Concern,Birchwood Hall,Low,Reporter states they witnessed behavior consistent with alcohol/drug concern.,False
+WR000749,S003723,Student,2026-01-31,Property Damage,Aspen Court,Urgent,A concern was submitted regarding possible property damage near Aspen Court.,False
+WR000750,S008365,Anonymous,2026-02-01,Discrimination,West Parking Garage,High,A concern was submitted regarding possible discrimination near West Parking Garage.,True
+WR000751,S007140,Staff,2026-02-01,Other,West Parking Garage,Low,Reporter describes an incident involving other that occurred at West Parking Garage.,False
+WR000752,,Anonymous,2026-02-02,Sexual Misconduct,Northgate Hall,High,Reporter describes an incident involving sexual misconduct that occurred at Northgate Hall.,True
+WR000753,,Faculty,2026-02-02,Other,Summit House,Medium,Submission describes an ongoing issue related to other at Summit House.,False
+WR000754,,Student,2026-02-02,Sexual Misconduct,Riverbend Hall,High,Submission describes an ongoing issue related to sexual misconduct at Riverbend Hall.,False
+WR000755,S005252,Staff,2026-02-03,Sexual Misconduct,Science Building,Low,Concern raised about sexual misconduct; reporter requests follow-up from staff.,False
+WR000756,,Student,2026-02-03,Property Damage,Engineering Annex,Urgent,Concern raised about property damage; reporter requests follow-up from staff.,False
+WR000757,S002087,Student,2026-02-04,Bias Incident,Birchwood Hall,Medium,A concern was submitted regarding possible bias incident near Birchwood Hall.,False
+WR000758,,Anonymous,2026-02-05,Sexual Misconduct,Willow Creek Hall,Low,A concern was submitted regarding possible sexual misconduct near Willow Creek Hall.,True
+WR000759,S000053,Anonymous,2026-02-06,Sexual Misconduct,Student Union,Medium,Submission describes an ongoing issue related to sexual misconduct at Student Union.,True
+WR000760,S006728,Student,2026-02-06,Bullying/Harassment,Sunrise Commons,Low,A concern was submitted regarding possible bullying/harassment near Sunrise Commons.,False
+WR000761,S002029,Student,2026-02-09,Discrimination,Birchwood Hall,High,Reporter describes an incident involving discrimination that occurred at Birchwood Hall.,False
+WR000762,,Student,2026-02-11,Bias Incident,Highland Hall,Medium,Reporter describes an incident involving bias incident that occurred at Highland Hall.,False
+WR000763,S001245,Anonymous,2026-02-12,Property Damage,Highland Hall,High,Reporter describes an incident involving property damage that occurred at Highland Hall.,True
+WR000764,S000738,Student,2026-02-12,Academic Dishonesty,Fine Arts Center,High,A concern was submitted regarding possible academic dishonesty near Fine Arts Center.,False
+WR000765,,Staff,2026-02-16,Hazing,Founders Hall,Low,A concern was submitted regarding possible hazing near Founders Hall.,False
+WR000766,,Anonymous,2026-02-18,Discrimination,East Lot,Medium,A concern was submitted regarding possible discrimination near East Lot.,True
+WR000767,S008980,Staff,2026-02-19,Academic Dishonesty,Recreation Center,High,Submission describes an ongoing issue related to academic dishonesty at Recreation Center.,False
+WR000768,S004912,Student,2026-02-19,Mental Health Concern,Meadowbrook Hall,Medium,Reporter states they witnessed behavior consistent with mental health concern.,False
+WR000769,S002473,Anonymous,2026-02-19,Academic Dishonesty,Lakeside Terrace,Urgent,Concern raised about academic dishonesty; reporter requests follow-up from staff.,True
+WR000770,,Student,2026-02-19,Mental Health Concern,Meadowbrook Hall,Medium,Submission describes an ongoing issue related to mental health concern at Meadowbrook Hall.,False
+WR000771,,Anonymous,2026-02-22,Other,Cedar Crest Hall,Low,Submission describes an ongoing issue related to other at Cedar Crest Hall.,True
+WR000772,S004472,Faculty,2026-02-27,Bullying/Harassment,Engineering Annex,High,Reporter states they witnessed behavior consistent with bullying/harassment.,False
+WR000773,S000596,Student,2026-02-27,Bias Incident,Bellview Hall,Medium,Submission describes an ongoing issue related to bias incident at Bellview Hall.,False
+WR000774,S004788,Student,2026-02-27,Discrimination,Off-Campus Housing,Low,Submission describes an ongoing issue related to discrimination at Off-Campus Housing.,False
+WR000775,S008196,Student,2026-02-28,Sexual Misconduct,Maple Ridge Hall,High,Concern raised about sexual misconduct; reporter requests follow-up from staff.,False
+WR000776,S003267,Anonymous,2026-02-28,Mental Health Concern,Riverbend Hall,High,Concern raised about mental health concern; reporter requests follow-up from staff.,True
+WR000777,,Staff,2026-03-01,Property Damage,Sunrise Commons,Low,Reporter describes an incident involving property damage that occurred at Sunrise Commons.,False
+WR000778,,Student,2026-03-02,Safety Hazard,Off-Campus Housing,High,A concern was submitted regarding possible safety hazard near Off-Campus Housing.,False
+WR000779,,Student,2026-03-02,Property Damage,Sunrise Commons,Low,Reporter describes an incident involving property damage that occurred at Sunrise Commons.,False
+WR000780,,Student,2026-03-03,Alcohol/Drug Concern,East Lot,High,Concern raised about alcohol/drug concern; reporter requests follow-up from staff.,False
+WR000781,,Anonymous,2026-03-03,Sexual Misconduct,Sunrise Commons,Low,Reporter describes an incident involving sexual misconduct that occurred at Sunrise Commons.,True
+WR000782,,Staff,2026-03-05,Hazing,Off-Campus,Low,Reporter states they witnessed behavior consistent with hazing.,False
+WR000783,S004037,Student,2026-03-07,Other,Riverbend Hall,Medium,Submission describes an ongoing issue related to other at Riverbend Hall.,False
+WR000784,,Anonymous,2026-03-08,Property Damage,Library,Medium,Concern raised about property damage; reporter requests follow-up from staff.,True
+WR000785,S009182,Anonymous,2026-03-08,Bias Incident,Cedar Crest Hall,Medium,Submission describes an ongoing issue related to bias incident at Cedar Crest Hall.,True
+WR000786,,Anonymous,2026-03-10,Sexual Misconduct,East Lot,Medium,Reporter states they witnessed behavior consistent with sexual misconduct.,True
+WR000787,,Parent,2026-03-10,Bullying/Harassment,Science Building,Medium,A concern was submitted regarding possible bullying/harassment near Science Building.,False
+WR000788,,Faculty,2026-03-16,Bias Incident,Off-Campus Housing,Low,Reporter states they witnessed behavior consistent with bias incident.,False
+WR000789,,Anonymous,2026-03-17,Mental Health Concern,Off-Campus Housing,High,Submission describes an ongoing issue related to mental health concern at Off-Campus Housing.,True
+WR000790,S002195,Student,2026-03-18,Property Damage,Recreation Center,Medium,Reporter describes an incident involving property damage that occurred at Recreation Center.,False
+WR000791,S005099,Anonymous,2026-03-20,Bullying/Harassment,Meadowbrook Hall,Low,Submission describes an ongoing issue related to bullying/harassment at Meadowbrook Hall.,True
+WR000792,S003388,Anonymous,2026-03-21,Bias Incident,Harborview Hall,Medium,Concern raised about bias incident; reporter requests follow-up from staff.,True
+WR000793,S008212,Faculty,2026-03-23,Sexual Misconduct,Main Quad,High,Submission describes an ongoing issue related to sexual misconduct at Main Quad.,False
+WR000794,,Student,2026-03-23,Property Damage,Riverbend Hall,Medium,A concern was submitted regarding possible property damage near Riverbend Hall.,False
+WR000795,S006071,Student,2026-03-24,Hazing,East Lot,Medium,Concern raised about hazing; reporter requests follow-up from staff.,False
+WR000796,,Student,2026-03-24,Property Damage,Online / Remote,Medium,Reporter states they witnessed behavior consistent with property damage.,False
+WR000797,,Student,2026-03-25,Bias Incident,Stadium,Low,Concern raised about bias incident; reporter requests follow-up from staff.,False
+WR000798,S007704,Anonymous,2026-03-25,Other,Founders Hall,Low,Reporter states they witnessed behavior consistent with other.,True
+WR000799,S005931,Staff,2026-03-26,Hazing,Student Union,Medium,Reporter states they witnessed behavior consistent with hazing.,False
+WR000800,,Staff,2026-03-27,Discrimination,Riverbend Hall,High,Submission describes an ongoing issue related to discrimination at Riverbend Hall.,False
+WR000801,S001635,Anonymous,2026-03-27,Bias Incident,Willow Creek Hall,High,A concern was submitted regarding possible bias incident near Willow Creek Hall.,True
+WR000802,,Anonymous,2026-03-28,Bias Incident,Student Union,High,Reporter states they witnessed behavior consistent with bias incident.,True
+WR000803,S006151,Student,2026-03-31,Bullying/Harassment,West Parking Garage,Low,Reporter describes an incident involving bullying/harassment that occurred at West Parking Garage.,False
+WR000804,S004799,Anonymous,2026-04-01,Theft,Meadowbrook Hall,Low,Reporter states they witnessed behavior consistent with theft.,True
+WR000805,,Anonymous,2026-04-01,Hazing,Meadowbrook Hall,Medium,Submission describes an ongoing issue related to hazing at Meadowbrook Hall.,True
+WR000806,S000427,Anonymous,2026-04-02,Mental Health Concern,Harborview Hall,Low,Submission describes an ongoing issue related to mental health concern at Harborview Hall.,True
+WR000807,S003933,Community Member,2026-04-03,Hazing,Science Building,Medium,Concern raised about hazing; reporter requests follow-up from staff.,False
+WR000808,S008365,Anonymous,2026-04-03,Property Damage,Engineering Annex,Medium,Reporter states they witnessed behavior consistent with property damage.,True
+WR000809,,Parent,2026-04-06,Other,Lakeside Terrace,High,Concern raised about other; reporter requests follow-up from staff.,False
+WR000810,S007913,Student,2026-04-06,Bullying/Harassment,Willow Creek Hall,Medium,Concern raised about bullying/harassment; reporter requests follow-up from staff.,False
+WR000811,,Student,2026-04-09,Property Damage,Off-Campus,Low,Submission describes an ongoing issue related to property damage at Off-Campus.,False
+WR000812,S001810,Student,2026-04-10,Discrimination,Lakeside Terrace,High,A concern was submitted regarding possible discrimination near Lakeside Terrace.,False
+WR000813,S002164,Anonymous,2026-04-11,Discrimination,Sunrise Commons,Urgent,Reporter states they witnessed behavior consistent with discrimination.,True
+WR000814,S000542,Anonymous,2026-04-11,Theft,Northgate Hall,Low,Reporter describes an incident involving theft that occurred at Northgate Hall.,True
+WR000815,S002273,Faculty,2026-04-11,Property Damage,Student Union,High,Submission describes an ongoing issue related to property damage at Student Union.,False
+WR000816,,Student,2026-04-11,Hazing,Online / Remote,High,Reporter describes an incident involving hazing that occurred at Online / Remote.,False
+WR000817,S007953,Anonymous,2026-04-12,Discrimination,Fine Arts Center,Low,Reporter describes an incident involving discrimination that occurred at Fine Arts Center.,True
+WR000818,S005937,Anonymous,2026-04-12,Mental Health Concern,Main Quad,Urgent,Concern raised about mental health concern; reporter requests follow-up from staff.,True
+WR000819,S008365,Student,2026-04-13,Bullying/Harassment,Aspen Court,Low,Reporter states they witnessed behavior consistent with bullying/harassment.,False
+WR000820,,Staff,2026-04-13,Academic Dishonesty,Stadium,Low,A concern was submitted regarding possible academic dishonesty near Stadium.,False
+WR000821,S007113,Anonymous,2026-04-14,Academic Dishonesty,Science Building,High,Reporter states they witnessed behavior consistent with academic dishonesty.,True
+WR000822,S005153,Student,2026-04-15,Alcohol/Drug Concern,Engineering Annex,Urgent,A concern was submitted regarding possible alcohol/drug concern near Engineering Annex.,False
+WR000823,S009917,Anonymous,2026-04-16,Other,East Lot,Medium,Submission describes an ongoing issue related to other at East Lot.,True
+WR000824,S000063,Community Member,2026-04-16,Sexual Misconduct,East Lot,Low,Submission describes an ongoing issue related to sexual misconduct at East Lot.,False
+WR000825,S006211,Faculty,2026-04-17,Sexual Misconduct,Library,Medium,Submission describes an ongoing issue related to sexual misconduct at Library.,False
+WR000826,,Anonymous,2026-04-18,Academic Dishonesty,Willow Creek Hall,Medium,Submission describes an ongoing issue related to academic dishonesty at Willow Creek Hall.,True
+WR000827,,Faculty,2026-04-18,Mental Health Concern,Online / Remote,Medium,Concern raised about mental health concern; reporter requests follow-up from staff.,False
+WR000828,S007394,Student,2026-04-18,Property Damage,Student Union,Low,Reporter describes an incident involving property damage that occurred at Student Union.,False
+WR000829,,Student,2026-04-20,Bullying/Harassment,Birchwood Hall,Urgent,A concern was submitted regarding possible bullying/harassment near Birchwood Hall.,False
+WR000830,,Student,2026-04-23,Academic Dishonesty,Founders Hall,High,Reporter states they witnessed behavior consistent with academic dishonesty.,False
+WR000831,S004467,Student,2026-04-23,Discrimination,West Parking Garage,Medium,Concern raised about discrimination; reporter requests follow-up from staff.,False
+WR000832,S005657,Anonymous,2026-04-25,Theft,Science Building,Low,Reporter describes an incident involving theft that occurred at Science Building.,True
+WR000833,,Community Member,2026-04-26,Mental Health Concern,Willow Creek Hall,Low,Reporter describes an incident involving mental health concern that occurred at Willow Creek Hall.,False
+WR000834,,Parent,2026-04-28,Alcohol/Drug Concern,Willow Creek Hall,Urgent,Concern raised about alcohol/drug concern; reporter requests follow-up from staff.,False
+WR000835,S000782,Parent,2026-04-29,Bullying/Harassment,Riverbend Hall,Urgent,Submission describes an ongoing issue related to bullying/harassment at Riverbend Hall.,False
+WR000836,,Student,2026-04-30,Hazing,Stadium,High,Reporter states they witnessed behavior consistent with hazing.,False
+WR000837,S007999,Student,2026-04-30,Academic Dishonesty,East Lot,Low,A concern was submitted regarding possible academic dishonesty near East Lot.,False
+WR000838,,Faculty,2026-05-01,Other,Summit House,Medium,Concern raised about other; reporter requests follow-up from staff.,False
+WR000839,,Anonymous,2026-05-01,Mental Health Concern,Bike Path,Low,Reporter describes an incident involving mental health concern that occurred at Bike Path.,True
+WR000840,S005372,Anonymous,2026-05-02,Bullying/Harassment,Fine Arts Center,Medium,Reporter describes an incident involving bullying/harassment that occurred at Fine Arts Center.,True
+WR000841,S006881,Anonymous,2026-05-03,Sexual Misconduct,Maple Ridge Hall,Low,Reporter states they witnessed behavior consistent with sexual misconduct.,True
+WR000842,,Faculty,2026-05-03,Bullying/Harassment,Northgate Hall,Medium,Reporter describes an incident involving bullying/harassment that occurred at Northgate Hall.,False
+WR000843,S007077,Student,2026-05-03,Sexual Misconduct,Willow Creek Hall,Medium,A concern was submitted regarding possible sexual misconduct near Willow Creek Hall.,False
+WR000844,S005978,Staff,2026-05-03,Sexual Misconduct,Northgate Hall,Medium,A concern was submitted regarding possible sexual misconduct near Northgate Hall.,False
+WR000845,S004564,Student,2026-05-04,Sexual Misconduct,Northgate Hall,High,Reporter states they witnessed behavior consistent with sexual misconduct.,False
+WR000846,S009900,Parent,2026-05-04,Theft,Founders Hall,Medium,Reporter states they witnessed behavior consistent with theft.,False
+WR000847,S007756,Anonymous,2026-05-06,Property Damage,Engineering Annex,Medium,Submission describes an ongoing issue related to property damage at Engineering Annex.,True
+WR000848,S008608,Faculty,2026-05-08,Sexual Misconduct,East Lot,Medium,Concern raised about sexual misconduct; reporter requests follow-up from staff.,False
+WR000849,S002515,Staff,2026-05-11,Other,Highland Hall,Medium,A concern was submitted regarding possible other near Highland Hall.,False
+WR000850,,Faculty,2026-05-11,Bias Incident,Summit House,High,Submission describes an ongoing issue related to bias incident at Summit House.,False
+WR000851,S001074,Faculty,2026-05-11,Discrimination,Online / Remote,Medium,Submission describes an ongoing issue related to discrimination at Online / Remote.,False
+WR000852,S009208,Anonymous,2026-05-12,Other,Aspen Court,High,Submission describes an ongoing issue related to other at Aspen Court.,True
+WR000853,,Student,2026-05-13,Bias Incident,Maple Ridge Hall,Low,Reporter describes an incident involving bias incident that occurred at Maple Ridge Hall.,False
+WR000854,S006782,Faculty,2026-05-14,Bias Incident,Harborview Hall,Low,Submission describes an ongoing issue related to bias incident at Harborview Hall.,False
+WR000855,,Staff,2026-05-15,Theft,Bike Path,Medium,Reporter describes an incident involving theft that occurred at Bike Path.,False
+WR000856,,Student,2026-05-18,Mental Health Concern,Bike Path,Medium,Submission describes an ongoing issue related to mental health concern at Bike Path.,False
+WR000857,S006535,Student,2026-05-18,Alcohol/Drug Concern,Maple Ridge Hall,Low,Submission describes an ongoing issue related to alcohol/drug concern at Maple Ridge Hall.,False
+WR000858,,Anonymous,2026-05-19,Mental Health Concern,Bike Path,High,Submission describes an ongoing issue related to mental health concern at Bike Path.,True
+WR000859,,Staff,2026-05-20,Academic Dishonesty,Aspen Court,Medium,Concern raised about academic dishonesty; reporter requests follow-up from staff.,False
+WR000860,S007511,Community Member,2026-05-21,Sexual Misconduct,Riverbend Hall,Medium,A concern was submitted regarding possible sexual misconduct near Riverbend Hall.,False
+WR000861,S006437,Faculty,2026-05-21,Mental Health Concern,Willow Creek Hall,Urgent,Reporter states they witnessed behavior consistent with mental health concern.,False
+WR000862,S005598,Anonymous,2026-05-22,Theft,Bike Path,Medium,Reporter describes an incident involving theft that occurred at Bike Path.,True
+WR000863,S003820,Student,2026-05-22,Property Damage,Northgate Hall,Medium,Reporter describes an incident involving property damage that occurred at Northgate Hall.,False
+WR000864,,Parent,2026-05-23,Property Damage,Online / Remote,Low,Submission describes an ongoing issue related to property damage at Online / Remote.,False
+WR000865,S009136,Parent,2026-05-24,Property Damage,Aspen Court,Low,Submission describes an ongoing issue related to property damage at Aspen Court.,False
+WR000866,S003714,Anonymous,2026-05-24,Theft,Science Building,Urgent,Reporter describes an incident involving theft that occurred at Science Building.,True
+WR000867,,Student,2026-05-28,Property Damage,Student Union,Medium,A concern was submitted regarding possible property damage near Student Union.,False
+WR000868,S006535,Student,2026-05-29,Discrimination,Maple Ridge Hall,Medium,A concern was submitted regarding possible discrimination near Maple Ridge Hall.,False
+WR000869,S006105,Anonymous,2026-05-30,Bullying/Harassment,Bike Path,Low,Reporter states they witnessed behavior consistent with bullying/harassment.,True
+WR000870,,Staff,2026-05-30,Hazing,Science Building,Medium,Reporter states they witnessed behavior consistent with hazing.,False
+WR000871,S006634,Student,2026-05-30,Discrimination,West Parking Garage,Low,Reporter describes an incident involving discrimination that occurred at West Parking Garage.,False
+WR000872,S001939,Anonymous,2026-05-31,Bias Incident,West Parking Garage,Low,Concern raised about bias incident; reporter requests follow-up from staff.,True
+WR000873,,Student,2026-05-31,Mental Health Concern,Cedar Crest Hall,Low,Reporter describes an incident involving mental health concern that occurred at Cedar Crest Hall.,False
+WR000874,,Student,2026-06-01,Other,Summit House,Low,Submission describes an ongoing issue related to other at Summit House.,False
+WR000875,S004037,Staff,2026-06-01,Safety Hazard,West Parking Garage,Medium,Reporter describes an incident involving safety hazard that occurred at West Parking Garage.,False
+WR000876,S000938,Student,2026-06-01,Discrimination,Northgate Hall,Low,A concern was submitted regarding possible discrimination near Northgate Hall.,False
+WR000877,S003656,Anonymous,2026-06-02,Discrimination,Student Union,Medium,Submission describes an ongoing issue related to discrimination at Student Union.,True
+WR000878,,Anonymous,2026-06-03,Sexual Misconduct,East Lot,Medium,Reporter describes an incident involving sexual misconduct that occurred at East Lot.,True
+WR000879,S005269,Staff,2026-06-03,Academic Dishonesty,Harborview Hall,Low,Reporter states they witnessed behavior consistent with academic dishonesty.,False
+WR000880,,Student,2026-06-03,Bias Incident,Maple Ridge Hall,Urgent,Reporter describes an incident involving bias incident that occurred at Maple Ridge Hall.,False
+WR000881,S002190,Anonymous,2026-06-03,Bullying/Harassment,Science Building,Medium,Concern raised about bullying/harassment; reporter requests follow-up from staff.,True
+WR000882,S007434,Student,2026-06-04,Bullying/Harassment,Harborview Hall,Urgent,A concern was submitted regarding possible bullying/harassment near Harborview Hall.,False
+WR000883,S005027,Student,2026-06-04,Academic Dishonesty,Fine Arts Center,Medium,Reporter states they witnessed behavior consistent with academic dishonesty.,False
+WR000884,S008605,Community Member,2026-06-04,Theft,Northgate Hall,Urgent,Reporter states they witnessed behavior consistent with theft.,False
+WR000885,,Student,2026-06-04,Alcohol/Drug Concern,Online / Remote,Low,Reporter describes an incident involving alcohol/drug concern that occurred at Online / Remote.,False
+WR000886,S002805,Student,2026-06-05,Discrimination,Off-Campus,Medium,Reporter states they witnessed behavior consistent with discrimination.,False
+WR000887,S001456,Student,2026-06-05,Academic Dishonesty,Student Union,Low,Reporter states they witnessed behavior consistent with academic dishonesty.,False
+WR000888,S000604,Anonymous,2026-06-07,Safety Hazard,Cedar Crest Hall,Medium,A concern was submitted regarding possible safety hazard near Cedar Crest Hall.,True
+WR000889,S008335,Community Member,2026-06-07,Other,Riverbend Hall,Medium,Reporter states they witnessed behavior consistent with other.,False
+WR000890,S006210,Anonymous,2026-06-08,Bullying/Harassment,Online / Remote,Medium,Concern raised about bullying/harassment; reporter requests follow-up from staff.,True
+WR000891,,Anonymous,2026-06-09,Other,Meadowbrook Hall,High,Submission describes an ongoing issue related to other at Meadowbrook Hall.,True
+WR000892,S002367,Anonymous,2026-06-09,Safety Hazard,Main Quad,Low,A concern was submitted regarding possible safety hazard near Main Quad.,True
+WR000893,,Anonymous,2026-06-11,Alcohol/Drug Concern,West Parking Garage,Medium,A concern was submitted regarding possible alcohol/drug concern near West Parking Garage.,True
+WR000894,,Parent,2026-06-11,Sexual Misconduct,Fine Arts Center,Medium,Submission describes an ongoing issue related to sexual misconduct at Fine Arts Center.,False
+WR000895,,Student,2026-06-12,Bias Incident,Stadium,Low,Concern raised about bias incident; reporter requests follow-up from staff.,False
+WR000896,S001356,Student,2026-06-13,Property Damage,Main Quad,Urgent,Submission describes an ongoing issue related to property damage at Main Quad.,False
+WR000897,,Anonymous,2026-06-13,Bias Incident,Main Quad,Medium,A concern was submitted regarding possible bias incident near Main Quad.,True
+WR000898,S005970,Anonymous,2026-06-14,Discrimination,Meadowbrook Hall,Medium,Reporter states they witnessed behavior consistent with discrimination.,True
+WR000899,S002806,Community Member,2026-06-16,Other,Stadium,Low,Reporter states they witnessed behavior consistent with other.,False
+WR000900,S007127,Anonymous,2026-06-16,Alcohol/Drug Concern,Riverbend Hall,Low,A concern was submitted regarding possible alcohol/drug concern near Riverbend Hall.,True
+WR000901,,Student,2026-06-16,Bullying/Harassment,Engineering Annex,Low,Concern raised about bullying/harassment; reporter requests follow-up from staff.,False
+WR000902,S004807,Anonymous,2026-06-17,Bullying/Harassment,Riverbend Hall,Low,Reporter describes an incident involving bullying/harassment that occurred at Riverbend Hall.,True
+WR000903,,Student,2026-06-18,Sexual Misconduct,West Parking Garage,Urgent,Reporter describes an incident involving sexual misconduct that occurred at West Parking Garage.,False
+WR000904,,Student,2026-06-19,Bias Incident,Off-Campus Housing,Urgent,Reporter describes an incident involving bias incident that occurred at Off-Campus Housing.,False
+WR000905,S000195,Anonymous,2026-06-19,Academic Dishonesty,Sunrise Commons,Urgent,Reporter states they witnessed behavior consistent with academic dishonesty.,True
+WR000906,S007621,Anonymous,2026-06-19,Mental Health Concern,Bike Path,Medium,Reporter states they witnessed behavior consistent with mental health concern.,True
+WR000907,S004709,Faculty,2026-06-20,Theft,Lakeside Terrace,Low,A concern was submitted regarding possible theft near Lakeside Terrace.,False
+WR000908,,Staff,2026-06-20,Academic Dishonesty,Northgate Hall,High,Reporter describes an incident involving academic dishonesty that occurred at Northgate Hall.,False
+WR000909,S006343,Parent,2026-06-20,Theft,Summit House,Medium,Reporter describes an incident involving theft that occurred at Summit House.,False
+WR000910,S002711,Anonymous,2026-06-20,Bullying/Harassment,Student Union,Low,A concern was submitted regarding possible bullying/harassment near Student Union.,True
+WR000911,S005927,Anonymous,2026-06-21,Bias Incident,Sunrise Commons,Low,Concern raised about bias incident; reporter requests follow-up from staff.,True
+WR000912,S003350,Faculty,2026-06-21,Other,Bellview Hall,Medium,Reporter describes an incident involving other that occurred at Bellview Hall.,False
+WR000913,S000166,Community Member,2026-06-22,Mental Health Concern,East Lot,Medium,Concern raised about mental health concern; reporter requests follow-up from staff.,False
+WR000914,S003350,Community Member,2026-06-22,Theft,Summit House,Low,Concern raised about theft; reporter requests follow-up from staff.,False
+WR000915,,Student,2026-06-23,Discrimination,Recreation Center,Medium,A concern was submitted regarding possible discrimination near Recreation Center.,False
+WR000916,S006985,Faculty,2026-06-23,Property Damage,Science Building,Medium,Reporter states they witnessed behavior consistent with property damage.,False
+WR000917,,Anonymous,2026-06-24,Mental Health Concern,East Lot,Medium,A concern was submitted regarding possible mental health concern near East Lot.,True
+WR000918,S009793,Anonymous,2026-06-25,Mental Health Concern,Stadium,Urgent,Submission describes an ongoing issue related to mental health concern at Stadium.,True
+WR000919,S002942,Student,2026-06-26,Mental Health Concern,Bike Path,High,Submission describes an ongoing issue related to mental health concern at Bike Path.,False
+WR000920,,Anonymous,2026-06-27,Alcohol/Drug Concern,Riverbend Hall,High,Concern raised about alcohol/drug concern; reporter requests follow-up from staff.,True
+WR000921,S009334,Faculty,2026-06-27,Academic Dishonesty,Maple Ridge Hall,Medium,Reporter describes an incident involving academic dishonesty that occurred at Maple Ridge Hall.,False
+WR000922,S004046,Student,2026-06-30,Safety Hazard,Bellview Hall,Medium,Reporter states they witnessed behavior consistent with safety hazard.,False
+WR000923,,Parent,2026-07-01,Other,East Lot,Low,Reporter states they witnessed behavior consistent with other.,False
+WR000924,S009253,Student,2026-07-02,Other,Engineering Annex,Low,Reporter describes an incident involving other that occurred at Engineering Annex.,False
+WR000925,,Anonymous,2026-07-02,Other,Main Quad,Urgent,Reporter states they witnessed behavior consistent with other.,True
+WR000926,S008273,Anonymous,2026-07-03,Alcohol/Drug Concern,Recreation Center,Low,A concern was submitted regarding possible alcohol/drug concern near Recreation Center.,True
+WR000927,S005813,Staff,2026-07-04,Property Damage,East Lot,High,Reporter describes an incident involving property damage that occurred at East Lot.,False
+WR000928,S007544,Staff,2026-07-05,Alcohol/Drug Concern,Off-Campus Housing,Medium,A concern was submitted regarding possible alcohol/drug concern near Off-Campus Housing.,False
+WR000929,S001624,Anonymous,2026-07-06,Academic Dishonesty,Lakeside Terrace,High,Concern raised about academic dishonesty; reporter requests follow-up from staff.,True
+WR000930,,Parent,2026-07-07,Bias Incident,Stadium,Medium,Reporter states they witnessed behavior consistent with bias incident.,False
+WR000931,,Faculty,2026-07-07,Academic Dishonesty,Stadium,Low,Submission describes an ongoing issue related to academic dishonesty at Stadium.,False
+WR000932,S002997,Anonymous,2026-07-09,Alcohol/Drug Concern,Founders Hall,High,Concern raised about alcohol/drug concern; reporter requests follow-up from staff.,True
+WR000933,,Faculty,2026-07-09,Theft,Meadowbrook Hall,Medium,Reporter states they witnessed behavior consistent with theft.,False
+WR000934,S003775,Community Member,2026-07-09,Property Damage,Off-Campus,Low,Submission describes an ongoing issue related to property damage at Off-Campus.,False
+WR000935,S006437,Anonymous,2026-07-11,Mental Health Concern,West Parking Garage,Low,Concern raised about mental health concern; reporter requests follow-up from staff.,True
+WR000936,,Staff,2026-07-11,Property Damage,Stadium,Medium,A concern was submitted regarding possible property damage near Stadium.,False
+WR000937,S002476,Student,2026-07-12,Discrimination,Harborview Hall,Medium,Reporter states they witnessed behavior consistent with discrimination.,False
+WR000938,,Faculty,2026-07-12,Theft,Fine Arts Center,Medium,Concern raised about theft; reporter requests follow-up from staff.,False
+WR000939,S001701,Student,2026-07-12,Bias Incident,Birchwood Hall,Low,Reporter describes an incident involving bias incident that occurred at Birchwood Hall.,False
+WR000940,,Anonymous,2026-07-12,Academic Dishonesty,Online / Remote,Low,Reporter describes an incident involving academic dishonesty that occurred at Online / Remote.,True
+WR000941,S006491,Community Member,2026-07-14,Mental Health Concern,Summit House,Medium,Concern raised about mental health concern; reporter requests follow-up from staff.,False
+WR000942,,Anonymous,2026-07-14,Property Damage,Founders Hall,Medium,Concern raised about property damage; reporter requests follow-up from staff.,True
+WR000943,,Student,2026-07-15,Property Damage,Recreation Center,Low,Concern raised about property damage; reporter requests follow-up from staff.,False
+WR000944,S002643,Staff,2026-07-15,Hazing,Lakeside Terrace,High,A concern was submitted regarding possible hazing near Lakeside Terrace.,False
+WR000945,,Student,2026-07-16,Theft,Online / Remote,Medium,Concern raised about theft; reporter requests follow-up from staff.,False
+WR000946,S006089,Community Member,2026-07-16,Theft,Aspen Court,Medium,A concern was submitted regarding possible theft near Aspen Court.,False
+WR000947,S001524,Community Member,2026-07-16,Other,Summit House,Urgent,Submission describes an ongoing issue related to other at Summit House.,False
+WR000948,,Community Member,2026-07-17,Other,Bellview Hall,Medium,A concern was submitted regarding possible other near Bellview Hall.,False
+WR000949,S009451,Staff,2026-07-18,Hazing,East Lot,Medium,Concern raised about hazing; reporter requests follow-up from staff.,False
+WR000950,,Faculty,2026-07-18,Academic Dishonesty,Lakeside Terrace,Medium,Reporter describes an incident involving academic dishonesty that occurred at Lakeside Terrace.,False
+WR000951,,Student,2026-07-20,Alcohol/Drug Concern,Online / Remote,Medium,A concern was submitted regarding possible alcohol/drug concern near Online / Remote.,False
+WR000952,S004498,Anonymous,2026-07-21,Bullying/Harassment,Founders Hall,Medium,Concern raised about bullying/harassment; reporter requests follow-up from staff.,True
+WR000953,,Anonymous,2026-07-22,Bullying/Harassment,Willow Creek Hall,Low,Reporter states they witnessed behavior consistent with bullying/harassment.,True
+WR000954,,Student,2026-07-22,Academic Dishonesty,Engineering Annex,Low,Concern raised about academic dishonesty; reporter requests follow-up from staff.,False
+WR000955,S008880,Anonymous,2026-07-23,Bullying/Harassment,Sunrise Commons,Medium,Reporter describes an incident involving bullying/harassment that occurred at Sunrise Commons.,True
+WR000956,S003358,Student,2026-07-23,Discrimination,Harborview Hall,Low,Reporter states they witnessed behavior consistent with discrimination.,False
+WR000957,,Anonymous,2026-07-23,Academic Dishonesty,Engineering Annex,High,Concern raised about academic dishonesty; reporter requests follow-up from staff.,True
+WR000958,,Anonymous,2026-07-24,Alcohol/Drug Concern,Northgate Hall,Urgent,Concern raised about alcohol/drug concern; reporter requests follow-up from staff.,True
+WR000959,S009214,Student,2026-07-26,Other,Founders Hall,Low,Reporter states they witnessed behavior consistent with other.,False
+WR000960,S000642,Student,2026-07-26,Mental Health Concern,Off-Campus Housing,Medium,Reporter describes an incident involving mental health concern that occurred at Off-Campus Housing.,False
+WR000961,S009900,Anonymous,2026-07-26,Safety Hazard,Online / Remote,Low,Concern raised about safety hazard; reporter requests follow-up from staff.,True
+WR000962,S003758,Anonymous,2026-07-26,Property Damage,Bellview Hall,Low,A concern was submitted regarding possible property damage near Bellview Hall.,True
+WR000963,S003003,Anonymous,2026-07-27,Property Damage,Student Union,Medium,Submission describes an ongoing issue related to property damage at Student Union.,True
+WR000964,S002288,Anonymous,2026-07-28,Bias Incident,Off-Campus,Medium,Reporter describes an incident involving bias incident that occurred at Off-Campus.,True
+WR000965,S009024,Anonymous,2026-07-29,Property Damage,Science Building,Low,Reporter states they witnessed behavior consistent with property damage.,True
+WR000966,,Anonymous,2026-07-29,Property Damage,Online / Remote,High,Reporter describes an incident involving property damage that occurred at Online / Remote.,True
+WR000967,,Anonymous,2026-07-31,Academic Dishonesty,Summit House,Low,Submission describes an ongoing issue related to academic dishonesty at Summit House.,True
+WR000968,S001478,Student,2026-07-31,Bullying/Harassment,Riverbend Hall,Medium,Reporter states they witnessed behavior consistent with bullying/harassment.,False
+WR000969,S004935,Student,2026-07-31,Mental Health Concern,Recreation Center,Medium,Concern raised about mental health concern; reporter requests follow-up from staff.,False
+WR000970,,Anonymous,2026-07-31,Bias Incident,East Lot,Urgent,Concern raised about bias incident; reporter requests follow-up from staff.,True
+WR000971,,Community Member,2026-08-01,Discrimination,Riverbend Hall,Medium,Reporter states they witnessed behavior consistent with discrimination.,False
+WR000972,S008862,Staff,2026-08-02,Bullying/Harassment,Engineering Annex,Low,Reporter describes an incident involving bullying/harassment that occurred at Engineering Annex.,False
+WR000973,,Anonymous,2026-08-05,Hazing,Cedar Crest Hall,Low,Concern raised about hazing; reporter requests follow-up from staff.,True
+WR000974,,Anonymous,2026-08-05,Hazing,Meadowbrook Hall,Medium,A concern was submitted regarding possible hazing near Meadowbrook Hall.,True
+WR000975,S006416,Anonymous,2026-08-07,Discrimination,Stadium,Urgent,Reporter describes an incident involving discrimination that occurred at Stadium.,True
+WR000976,,Community Member,2026-08-08,Discrimination,Cedar Crest Hall,High,Concern raised about discrimination; reporter requests follow-up from staff.,False
+WR000977,,Student,2026-08-08,Alcohol/Drug Concern,Maple Ridge Hall,Low,Reporter states they witnessed behavior consistent with alcohol/drug concern.,False
+WR000978,,Anonymous,2026-08-08,Discrimination,Cedar Crest Hall,Medium,Reporter describes an incident involving discrimination that occurred at Cedar Crest Hall.,True
+WR000979,S009583,Anonymous,2026-08-08,Mental Health Concern,Fine Arts Center,Medium,Concern raised about mental health concern; reporter requests follow-up from staff.,True
+WR000980,S003580,Anonymous,2026-08-08,Sexual Misconduct,East Lot,Low,Reporter describes an incident involving sexual misconduct that occurred at East Lot.,True
+WR000981,S007716,Student,2026-08-09,Sexual Misconduct,East Lot,Medium,Concern raised about sexual misconduct; reporter requests follow-up from staff.,False
+WR000982,,Staff,2026-08-10,Bias Incident,Bellview Hall,Medium,Submission describes an ongoing issue related to bias incident at Bellview Hall.,False
+WR000983,S000824,Community Member,2026-08-10,Property Damage,West Parking Garage,Medium,Submission describes an ongoing issue related to property damage at West Parking Garage.,False
+WR000984,S000394,Faculty,2026-08-11,Safety Hazard,Stadium,Medium,Concern raised about safety hazard; reporter requests follow-up from staff.,False
+WR000985,,Student,2026-08-11,Theft,Stadium,Medium,Reporter describes an incident involving theft that occurred at Stadium.,False
+WR000986,S008738,Parent,2026-08-12,Sexual Misconduct,Stadium,Medium,Reporter describes an incident involving sexual misconduct that occurred at Stadium.,False
+WR000987,S002956,Staff,2026-08-14,Academic Dishonesty,Bellview Hall,Medium,Reporter describes an incident involving academic dishonesty that occurred at Bellview Hall.,False
+WR000988,S008365,Faculty,2026-08-15,Other,Cedar Crest Hall,Low,Concern raised about other; reporter requests follow-up from staff.,False
+WR000989,S008537,Student,2026-08-15,Other,Bellview Hall,Low,Reporter describes an incident involving other that occurred at Bellview Hall.,False
+WR000990,,Student,2026-08-16,Property Damage,Aspen Court,Medium,A concern was submitted regarding possible property damage near Aspen Court.,False
+WR000991,S003898,Anonymous,2026-08-16,Other,Bike Path,Low,A concern was submitted regarding possible other near Bike Path.,True
+WR000992,S006747,Faculty,2026-08-17,Bullying/Harassment,Online / Remote,Low,Reporter describes an incident involving bullying/harassment that occurred at Online / Remote.,False
+WR000993,,Anonymous,2026-08-17,Theft,Birchwood Hall,High,A concern was submitted regarding possible theft near Birchwood Hall.,True
+WR000994,S002070,Student,2026-08-18,Bullying/Harassment,Stadium,High,Concern raised about bullying/harassment; reporter requests follow-up from staff.,False
+WR000995,,Staff,2026-08-18,Safety Hazard,Fine Arts Center,Low,A concern was submitted regarding possible safety hazard near Fine Arts Center.,False
+WR000996,,Community Member,2026-08-20,Bullying/Harassment,Riverbend Hall,Low,A concern was submitted regarding possible bullying/harassment near Riverbend Hall.,False

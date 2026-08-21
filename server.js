@@ -586,6 +586,22 @@ async function handleApi(req, res, pathname, query) {
     return sendJSON(res, 200, { logs: logs });
   }
 
+  // ---- Student Records: read-only synthetic SIS/Housing/Safety/AI/Reports dataset ----
+  if (pathname === '/api/student-records' && req.method === 'GET') {
+    const q = String(query.q || '').trim();
+    if (q.length < 2) return sendJSON(res, 200, { students: [] });
+    const students = await repo.searchStudentRecords(q, 50);
+    return sendJSON(res, 200, { students: students });
+  }
+
+  const studentRecordMatch = pathname.match(/^\/api\/student-records\/([^/]+)$/);
+  if (studentRecordMatch && req.method === 'GET') {
+    const profile = await repo.getStudentRecordProfile(studentRecordMatch[1]);
+    if (!profile) return sendJSON(res, 404, { error: 'Student not found' });
+    logAudit(req, user, 'student_record.view', studentRecordMatch[1]);
+    return sendJSON(res, 200, { profile: profile });
+  }
+
   // ---- Danger Zone: bulk-delete case entries ----
   if (pathname === '/api/admin/purge/preview' && req.method === 'GET') {
     requireAdmin(user);
