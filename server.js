@@ -528,7 +528,7 @@ async function handleApi(req, res, pathname, query) {
     const body = await readBody(req);
     const name = String(body.name || '').trim();
     if (!name) return sendJSON(res, 400, { error: 'Template name is required.' });
-    const template = await repo.createTemplate(name, user.id).catch(function (err) {
+    const template = await repo.createTemplate(name, user.id, { blank: !!body.blank }).catch(function (err) {
       if (/duplicate key|unique/i.test(err.message)) { const e = new Error('A template named "' + name + '" already exists.'); e.status = 400; throw e; }
       throw err;
     });
@@ -719,9 +719,14 @@ async function runImport(body, user) {
     labelToId[label] = semester.id;
   }
 
-  const defaultTemplate = await repo.getDefaultTemplate();
-  const importTemplateId = (defaultTemplate || {}).id || null;
-  const importTemplateFields = importTemplateId ? await repo.listTemplateFields(importTemplateId) : [];
+  // Each row carries its own templateId now — the Import wizard resolves
+  // (or creates) one per detected column schema client-side before calling
+  // this endpoint, since different sheets in one import can be shaped
+  // differently. Field lists are fetched once per distinct template, not
+  // once per row.
+  const templateIds = Array.from(new Set(rows.map(function (r) { return r.templateId; }).filter(Boolean)));
+  const fieldsByTemplate = {};
+  for (const tid of templateIds) { fieldsByTemplate[tid] = await repo.listTemplateFields(tid); }
 
   const users = await repo.listUsers();
   const nameToUserId = {};
@@ -730,18 +735,20 @@ async function runImport(body, user) {
   const valid = [];
   const skipped = [];
   rows.forEach(function (row, idx) {
-    const fields = sanitizeFieldsWithSchema(row.fields || {}, importTemplateFields);
+    const templateId = row.templateId;
+    if (!templateId || !fieldsByTemplate[templateId]) { skipped.push({ row: idx + 1, reason: 'No template resolved for this row.' }); return; }
+    const fields = sanitizeFieldsWithSchema(row.fields || {}, fieldsByTemplate[templateId]);
     const semesterLabel = String(row.semesterLabel || '').trim();
     const semesterId = labelToId[semesterLabel];
     if (!semesterId) { skipped.push({ row: idx + 1, reason: 'Unrecognized semester "' + semesterLabel + '"' }); return; }
-    const errors = validateEntry(fields, semesterId, importTemplateId);
+    const errors = validateEntry(fields, semesterId, templateId);
     if (errors.length) { skipped.push({ row: idx + 1, reason: errors.join(' ') }); return; }
     const counselorName = String(row.counselorName || '').trim();
     const matchedUserId = counselorName ? nameToUserId[counselorName.toLowerCase()] : null;
     valid.push({
       fields: fields,
       semesterId: semesterId,
-      templateId: importTemplateId,
+      templateId: templateId,
       createdBy: matchedUserId || null,
       createdByNameOverride: matchedUserId ? null : (counselorName || null),
     });

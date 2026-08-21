@@ -373,16 +373,21 @@ function getDefaultTemplate() {
   return db.query('SELECT * FROM templates WHERE is_default = true LIMIT 1').then(function (r) { return r.rows[0] ? templateRow(r.rows[0]) : null; });
 }
 
-// Creates a new named template pre-populated with a copy of the Default
-// template's current field schema + active options — the "start from the
-// default, then customize" flow. field_key stays identical across the copy
-// so the cloned options (also copied below) still line up with their field.
-function createTemplate(name, userId) {
+// Creates a new named template. By default it's pre-populated with a copy
+// of the Default template's current field schema + active options — the
+// "start from the default, then customize" flow (field_key stays identical
+// across the copy so the cloned options line up with their field). Pass
+// opts.blank to skip cloning entirely — used by the Import wizard, which
+// builds a template's fields itself from a detected column schema rather
+// than starting from Default's spreadsheet-shaped fields.
+function createTemplate(name, userId, opts) {
+  opts = opts || {};
   const id = uuid();
   return db.query(
     'INSERT INTO templates (id, name, created_by) VALUES ($1,$2,$3) RETURNING *',
     [id, name.trim(), userId]
   ).then(function (r) {
+    if (opts.blank) return r.rows[0];
     return getDefaultTemplate().then(function (def) {
       if (!def) return r.rows[0];
       return cloneTemplateFieldsAndOptions(def.id, id, userId).then(function () { return r.rows[0]; });
