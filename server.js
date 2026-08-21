@@ -473,6 +473,19 @@ async function handleApi(req, res, pathname, query) {
     return sendJSON(res, 201, { semester: semester });
   }
 
+  const semesterDeleteMatch = pathname.match(/^\/api\/semesters\/([^/]+)$/);
+  if (semesterDeleteMatch && req.method === 'DELETE') {
+    requireAdmin(user);
+    const semesterId = semesterDeleteMatch[1];
+    const semester = await repo.getSemester(semesterId);
+    if (!semester) return sendJSON(res, 404, { error: 'Semester not found' });
+    const entryCount = await repo.countEntriesForScope({ type: 'semester', semesterId: semesterId });
+    if (entryCount > 0) return sendJSON(res, 400, { error: 'This semester has ' + entryCount + ' entr' + (entryCount === 1 ? 'y' : 'ies') + ' — delete or reassign them first.' });
+    await repo.deleteSemester(semesterId);
+    logAudit(req, user, 'semester.delete', semesterId, { label: semester.label });
+    return sendJSON(res, 200, { ok: true });
+  }
+
   if (pathname === '/api/students' && req.method === 'GET') {
     const students = agg.groupStudents(filterEntries(await repo.listEntries(), query));
     return sendJSON(res, 200, { students: students });
