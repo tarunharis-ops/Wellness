@@ -6,7 +6,6 @@
 
 const db = require('./pool');
 const { uuid } = require('../lib/id');
-const cfg = require('../lib/config');
 
 function camelToSnake(s) {
   return s.replace(/[A-Z]/g, function (c) { return '_' + c.toLowerCase(); });
@@ -15,13 +14,15 @@ function snakeToCamel(s) {
   return s.replace(/_([a-z])/g, function (_, c) { return c.toUpperCase(); });
 }
 
-const ENTRY_KEYS = cfg.FIELDS.map(function (f) { return f.key; });
-const DATE_KEYS = { referralDate: true, outreachDate: true };
-
+// entries.fields is dynamic (see db/schema.sql) — this flattens it onto the
+// returned object (so e.g. entry.concernPrimary still works for callers that
+// know a specific key) while also exposing the raw object as entry.fields
+// for generic/dynamic rendering that doesn't know field keys ahead of time.
 function rowToEntry(row) {
   if (!row) return null;
   const out = {};
   Object.keys(row).forEach(function (col) {
+    if (col === 'fields') return;
     var key = snakeToCamel(col);
     var val = row[col];
     if (val instanceof Date) {
@@ -29,6 +30,9 @@ function rowToEntry(row) {
     }
     out[key] = val === null ? '' : val;
   });
+  const fields = row.fields || {};
+  out.fields = fields;
+  Object.keys(fields).forEach(function (k) { if (out[k] === undefined) out[k] = fields[k]; });
   return out;
 }
 
@@ -221,43 +225,52 @@ function getEntry(id) {
   return db.query('SELECT * FROM entries WHERE id = $1', [id]).then(function (r) { return r.rows[0] ? rowToEntry(r.rows[0]) : null; });
 }
 
-function buildEntryColumns(fields) {
-  const cols = [], values = [];
-  ENTRY_KEYS.forEach(function (key) {
-    const col = camelToSnake(key);
-    var val = fields[key];
-    if (val === '' && DATE_KEYS[key]) val = null;
-    if (val === '' && key === 'durationMinutes') val = null;
-    cols.push(col);
-    values.push(val === undefined ? null : val);
+// Splits an incoming fields object into the real identity columns
+// (firstName/lastName/studentIdExternal — the only guaranteed fields) and
+// everything else, which is dynamic and stored as-is in the `fields` JSONB
+// column keyed by whatever field_key the entry's template defines. Empty
+// values are dropped rather than stored as null/empty-string noise.
+const IDENTITY_KEYS = ['firstName', 'lastName', 'studentIdExternal'];
+
+function splitEntryFields(fields) {
+  fields = fields || {};
+  const identity = {
+    firstName: fields.firstName || '',
+    lastName: fields.lastName || '',
+    studentIdExternal: fields.studentIdExternal || null,
+  };
+  const dynamic = {};
+  Object.keys(fields).forEach(function (k) {
+    if (IDENTITY_KEYS.indexOf(k) !== -1) return;
+    if (fields[k] === '' || fields[k] === undefined || fields[k] === null) return;
+    dynamic[k] = fields[k];
   });
-  return { cols: cols, values: values };
+  return { identity: identity, dynamic: dynamic };
 }
 
 function createEntry(fields, userId, opts) {
   opts = opts || {};
   const id = uuid();
-  const built = buildEntryColumns(fields);
-  const cols = ['id', 'student_key', 'semester_id', 'template_id', 'created_by_name_override'].concat(built.cols).concat(['created_by', 'updated_by']);
-  const values = [id, studentKeyFor(fields.firstName, fields.lastName), opts.semesterId || null, opts.templateId || null, opts.createdByNameOverride || null]
-    .concat(built.values).concat([userId, userId]);
-  const placeholders = values.map(function (_, i) { return '$' + (i + 1); });
-  const sql = 'INSERT INTO entries (' + cols.join(',') + ') VALUES (' + placeholders.join(',') + ') RETURNING *';
+  const split = splitEntryFields(fields);
+  const sql = 'INSERT INTO entries (id, student_key, student_id_external, semester_id, template_id, first_name, last_name, fields, created_by_name_override, created_by, updated_by) ' +
+    'VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *';
+  const values = [
+    id, studentKeyFor(split.identity.firstName, split.identity.lastName), split.identity.studentIdExternal,
+    opts.semesterId || null, opts.templateId || null, split.identity.firstName, split.identity.lastName,
+    JSON.stringify(split.dynamic), opts.createdByNameOverride || null, userId, userId,
+  ];
   return db.query(sql, values).then(function (r) { return rowToEntry(r.rows[0]); });
 }
 
 function updateEntry(id, fields, userId, opts) {
   opts = opts || {};
-  const built = buildEntryColumns(fields);
-  const setClauses = built.cols.map(function (col, i) { return col + ' = $' + (i + 5); });
-  setClauses.push('student_key = $2');
-  setClauses.push('semester_id = $3');
-  setClauses.push('template_id = $4');
-  setClauses.push('updated_by = $' + (built.cols.length + 5));
-  setClauses.push('updated_at = now()');
-  const values = [id, studentKeyFor(fields.firstName, fields.lastName), opts.semesterId || null, opts.templateId || null]
-    .concat(built.values).concat([userId]);
-  const sql = 'UPDATE entries SET ' + setClauses.join(', ') + ' WHERE id = $1 RETURNING *';
+  const split = splitEntryFields(fields);
+  const sql = 'UPDATE entries SET student_key=$2, student_id_external=$3, semester_id=$4, template_id=$5, first_name=$6, last_name=$7, fields=$8, updated_by=$9, updated_at=now() WHERE id=$1 RETURNING *';
+  const values = [
+    id, studentKeyFor(split.identity.firstName, split.identity.lastName), split.identity.studentIdExternal,
+    opts.semesterId || null, opts.templateId || null, split.identity.firstName, split.identity.lastName,
+    JSON.stringify(split.dynamic), userId,
+  ];
   return db.query(sql, values).then(function (r) { return r.rows[0] ? rowToEntry(r.rows[0]) : null; });
 }
 
@@ -294,15 +307,17 @@ function purgeEntries(scope) {
 // Bulk-inserts pre-parsed import rows inside one transaction, batching many
 // rows per INSERT (imports can be thousands of rows — one round trip per row
 // would be far too slow). Each item:
-// { fields: {...cfg.FIELDS keys}, semesterId, templateId, createdByNameOverride, createdBy }
+// { fields: {firstName, lastName, studentIdExternal, ...dynamic}, semesterId, templateId, createdByNameOverride, createdBy }
 const IMPORT_BATCH_SIZE = 200;
-const FIXED_COLS = ['id', 'student_key', 'semester_id', 'template_id', 'created_by_name_override'];
-const ENTRY_COLS = FIXED_COLS.concat(ENTRY_KEYS.map(camelToSnake)).concat(['created_by', 'updated_by']);
+const ENTRY_COLS = ['id', 'student_key', 'student_id_external', 'semester_id', 'template_id', 'first_name', 'last_name', 'fields', 'created_by_name_override', 'created_by', 'updated_by'];
 
 function entryRowValues(item) {
-  const built = buildEntryColumns(item.fields);
-  return [uuid(), studentKeyFor(item.fields.firstName, item.fields.lastName), item.semesterId || null, item.templateId || null, item.createdByNameOverride || null]
-    .concat(built.values).concat([item.createdBy || null, item.createdBy || null]);
+  const split = splitEntryFields(item.fields);
+  return [
+    uuid(), studentKeyFor(split.identity.firstName, split.identity.lastName), split.identity.studentIdExternal,
+    item.semesterId || null, item.templateId || null, split.identity.firstName, split.identity.lastName,
+    JSON.stringify(split.dynamic), item.createdByNameOverride || null, item.createdBy || null, item.createdBy || null,
+  ];
 }
 
 function insertBatch(client, batch) {
@@ -359,8 +374,9 @@ function getDefaultTemplate() {
 }
 
 // Creates a new named template pre-populated with a copy of the Default
-// template's currently-active options — the "start from the default, then
-// customize" flow.
+// template's current field schema + active options — the "start from the
+// default, then customize" flow. field_key stays identical across the copy
+// so the cloned options (also copied below) still line up with their field.
 function createTemplate(name, userId) {
   const id = uuid();
   return db.query(
@@ -369,32 +385,86 @@ function createTemplate(name, userId) {
   ).then(function (r) {
     return getDefaultTemplate().then(function (def) {
       if (!def) return r.rows[0];
-      return db.query(
-        'INSERT INTO template_options (id, template_id, group_key, value, sort_order, created_by) ' +
-        'SELECT gen_random_uuid()::text, $1, group_key, value, sort_order, $2 FROM template_options ' +
-        'WHERE template_id = $3 AND active = true',
-        [id, userId, def.id]
-      ).catch(function () {
-        // gen_random_uuid() needs pgcrypto; fall back to per-row inserts with our own id generator if it's unavailable.
-        return listTemplateOptions(def.id).then(function (byGroup) {
-          const rowsToInsert = [];
-          Object.keys(byGroup).forEach(function (g) {
-            byGroup[g].forEach(function (o) { if (o.active) rowsToInsert.push({ groupKey: g, value: o.value, sortOrder: o.sortOrder }); });
-          });
-          var chain = Promise.resolve();
-          rowsToInsert.forEach(function (o) {
-            chain = chain.then(function () {
-              return db.query(
-                'INSERT INTO template_options (id, template_id, group_key, value, sort_order, created_by) VALUES ($1,$2,$3,$4,$5,$6)',
-                [uuid(), id, o.groupKey, o.value, o.sortOrder, userId]
-              );
-            });
-          });
-          return chain;
+      return cloneTemplateFieldsAndOptions(def.id, id, userId).then(function () { return r.rows[0]; });
+    });
+  }).then(function (row) { return templateRow(row); });
+}
+
+function cloneTemplateFieldsAndOptions(fromTemplateId, toTemplateId, userId) {
+  return Promise.all([
+    listTemplateFields(fromTemplateId),
+    listTemplateOptions(fromTemplateId),
+  ]).then(function (r) {
+    const fields = r[0].filter(function (f) { return f.active; });
+    const byGroup = r[1];
+    var chain = Promise.resolve();
+    fields.forEach(function (f) {
+      chain = chain.then(function () {
+        return db.query(
+          'INSERT INTO template_fields (id, template_id, field_key, label, field_type, section, sort_order) VALUES ($1,$2,$3,$4,$5,$6,$7)',
+          [uuid(), toTemplateId, f.fieldKey, f.label, f.fieldType, f.section, f.sortOrder]
+        );
+      });
+      const options = (byGroup[f.fieldKey] || []).filter(function (o) { return o.active; });
+      options.forEach(function (o) {
+        chain = chain.then(function () {
+          return db.query(
+            'INSERT INTO template_options (id, template_id, group_key, value, sort_order, created_by) VALUES ($1,$2,$3,$4,$5,$6)',
+            [uuid(), toTemplateId, f.fieldKey, o.value, o.sortOrder, userId]
+          );
         });
       });
-    }).then(function () { return r.rows[0]; });
-  }).then(function (row) { return templateRow(row); });
+    });
+    return chain;
+  });
+}
+
+// ---------------- Template fields (dynamic schema) ----------------
+// One row per field on a template's entry form — see db/schema.sql. Select-
+// type fields' dropdown values live in template_options, keyed by field_key.
+
+function templateFieldRow(row) {
+  return {
+    id: row.id, templateId: row.template_id, fieldKey: row.field_key, label: row.label,
+    fieldType: row.field_type, section: row.section, sortOrder: row.sort_order, active: row.active,
+  };
+}
+
+function listTemplateFields(templateId) {
+  return db.query('SELECT * FROM template_fields WHERE template_id = $1 ORDER BY sort_order, label', [templateId])
+    .then(function (r) { return r.rows.map(templateFieldRow); });
+}
+
+function addTemplateField(templateId, field, userId) {
+  const id = uuid();
+  return db.query('SELECT COALESCE(MAX(sort_order), -1)::int AS max_sort FROM template_fields WHERE template_id = $1', [templateId])
+    .then(function (r) {
+      const sortOrder = field.sortOrder !== undefined ? field.sortOrder : r.rows[0].max_sort + 1;
+      return db.query(
+        'INSERT INTO template_fields (id, template_id, field_key, label, field_type, section, sort_order) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *',
+        [id, templateId, field.fieldKey, field.label, field.fieldType || 'text', field.section || null, sortOrder]
+      );
+    }).then(function (r) { return templateFieldRow(r.rows[0]); });
+}
+
+function updateTemplateField(templateId, fieldId, patch) {
+  const sets = [], values = [];
+  ['label', 'fieldType', 'section', 'sortOrder', 'active'].forEach(function (key) {
+    if (patch[key] === undefined) return;
+    values.push(patch[key]);
+    sets.push(camelToSnake(key) + ' = $' + values.length);
+  });
+  if (!sets.length) return getTemplateField(templateId, fieldId);
+  values.push(templateId, fieldId);
+  return db.query(
+    'UPDATE template_fields SET ' + sets.join(', ') + ' WHERE template_id = $' + (values.length - 1) + ' AND id = $' + values.length + ' RETURNING *',
+    values
+  ).then(function (r) { return r.rows[0] ? templateFieldRow(r.rows[0]) : null; });
+}
+
+function getTemplateField(templateId, fieldId) {
+  return db.query('SELECT * FROM template_fields WHERE template_id = $1 AND id = $2', [templateId, fieldId])
+    .then(function (r) { return r.rows[0] ? templateFieldRow(r.rows[0]) : null; });
 }
 
 // ---------------- Template options ----------------
@@ -688,6 +758,7 @@ module.exports = {
   listEntries, getEntry, createEntry, updateEntry, deleteEntry, bulkCreateEntries, studentKeyFor,
   countEntriesForScope, purgeEntries,
   listTemplates, getTemplate, getDefaultTemplate, createTemplate,
+  listTemplateFields, addTemplateField, updateTemplateField, getTemplateField,
   listTemplateOptions, addTemplateOption, setTemplateOptionActive,
   createAuditLog, listAuditLog,
   searchStudentRecords, getStudentRecordProfile, searchSourceRecords, getStudentRecordFacets,
