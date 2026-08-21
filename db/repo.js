@@ -502,26 +502,49 @@ function studentReportRow(row) {
   };
 }
 
-// Substring search over student_id / first / last / "first last". An empty
-// query is "browse mode" — the caller still gets a bounded, alphabetically
-// sorted page rather than the whole ~10k table, so the list view can render
-// something scrollable immediately without ever shipping an unbounded dump.
-function searchStudentRecords(q, limit) {
-  limit = limit || 200;
-  const trimmed = String(q || '').trim();
-  if (!trimmed) {
-    return db.query(
-      'SELECT student_id, first_name, last_name, major, academic_year, enrollment_status FROM students ORDER BY last_name, first_name LIMIT $1',
-      [limit]
-    ).then(function (r) { return r.rows.map(studentRecordRow); });
+// Search over student_id / name / email / phone, plus optional exact-match
+// filters (academic year, advisor). An empty query is "browse mode" — the
+// caller still gets a bounded, alphabetically sorted page rather than the
+// whole ~10k table, so the list view can render something scrollable
+// immediately without ever shipping an unbounded dump.
+function studentSearchWhere(params, needleCols) {
+  const clauses = [];
+  const values = [];
+  const trimmed = String(params.q || '').trim();
+  if (trimmed) {
+    values.push('%' + trimmed + '%');
+    const i = values.length;
+    clauses.push('(' + needleCols.map(function (c) { return c + ' ILIKE $' + i; }).join(' OR ') + ')');
   }
-  const needle = '%' + trimmed + '%';
+  if (params.academicYear) { values.push(params.academicYear); clauses.push('academic_year = $' + values.length); }
+  if (params.advisor) { values.push(params.advisor); clauses.push('advisor = $' + values.length); }
+  return { where: clauses.length ? 'WHERE ' + clauses.join(' AND ') : '', values: values };
+}
+
+function searchStudentRecords(params) {
+  params = params || {};
+  const limit = params.limit || 200;
+  const built = studentSearchWhere(params, ["student_id", "first_name", "last_name", "(first_name || ' ' || last_name)", "email", "phone"]);
+  const values = built.values.concat([limit]);
   return db.query(
-    'SELECT student_id, first_name, last_name, major, academic_year, enrollment_status FROM students ' +
-    "WHERE student_id ILIKE $1 OR first_name ILIKE $1 OR last_name ILIKE $1 OR (first_name || ' ' || last_name) ILIKE $1 " +
-    'ORDER BY last_name, first_name LIMIT $2',
-    [needle, limit]
+    'SELECT student_id, first_name, last_name, major, academic_year, enrollment_status FROM students ' + built.where +
+    ' ORDER BY last_name, first_name LIMIT $' + values.length,
+    values
   ).then(function (r) { return r.rows.map(studentRecordRow); });
+}
+
+// Distinct academic years / advisors on file, for populating filter controls
+// without the frontend hardcoding an assumed value list.
+function getStudentRecordFacets() {
+  return Promise.all([
+    db.query('SELECT DISTINCT academic_year FROM students WHERE academic_year IS NOT NULL AND academic_year != \'\' ORDER BY academic_year'),
+    db.query('SELECT DISTINCT advisor FROM students WHERE advisor IS NOT NULL AND advisor != \'\' ORDER BY advisor'),
+  ]).then(function (r) {
+    return {
+      academicYears: r[0].rows.map(function (row) { return row.academic_year; }),
+      advisors: r[1].rows.map(function (row) { return row.advisor; }),
+    };
+  });
 }
 
 // ---- Per-source-system browse lists (Housing / Campus Safety / Academic
@@ -611,21 +634,22 @@ function sourceSisRow(row) {
     major: row.major, academicYear: row.academic_year, enrollmentStatus: row.enrollment_status,
   };
 }
-function searchSisRecords(q, limit) {
-  const trimmed = String(q || '').trim();
-  const needle = '%' + trimmed + '%';
-  const where = trimmed ? "WHERE student_id ILIKE $1 OR first_name ILIKE $1 OR last_name ILIKE $1 OR (first_name || ' ' || last_name) ILIKE $1" : '';
-  const params = trimmed ? [needle, limit] : [limit];
+function searchSisRecords(params) {
+  params = params || {};
+  const limit = params.limit || 200;
+  const built = studentSearchWhere(params, ["student_id", "first_name", "last_name", "(first_name || ' ' || last_name)", "email", "phone"]);
+  const values = built.values.concat([limit]);
   return db.query(
-    'SELECT student_id, first_name, last_name, email, major, academic_year, enrollment_status FROM students ' + where +
-    ' ORDER BY last_name, first_name LIMIT $' + (trimmed ? 2 : 1),
-    params
+    'SELECT student_id, first_name, last_name, email, major, academic_year, enrollment_status FROM students ' + built.where +
+    ' ORDER BY last_name, first_name LIMIT $' + values.length,
+    values
   ).then(function (r) { return r.rows.map(sourceSisRow); });
 }
 
-function searchSourceRecords(source, q, limit) {
-  limit = limit || 200;
-  if (source === 'sis') return searchSisRecords(q, limit);
+function searchSourceRecords(source, params) {
+  params = params || {};
+  const q = params.q, limit = params.limit || 200;
+  if (source === 'sis') return searchSisRecords(params);
   if (source === 'housing') return searchHousingRecords(q, limit);
   if (source === 'campusSafety') return searchCampusSafetyRecords(q, limit);
   if (source === 'academicIntegrity') return searchAcademicIntegrityRecords(q, limit);
@@ -666,5 +690,5 @@ module.exports = {
   listTemplates, getTemplate, getDefaultTemplate, createTemplate,
   listTemplateOptions, addTemplateOption, setTemplateOptionActive,
   createAuditLog, listAuditLog,
-  searchStudentRecords, getStudentRecordProfile, searchSourceRecords,
+  searchStudentRecords, getStudentRecordProfile, searchSourceRecords, getStudentRecordFacets,
 };

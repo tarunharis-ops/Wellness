@@ -587,13 +587,18 @@ async function handleApi(req, res, pathname, query) {
   }
 
   // ---- Student Records: read-only synthetic SIS/Housing/Safety/AI/Reports dataset ----
+  if (pathname === '/api/student-records/facets' && req.method === 'GET') {
+    const facets = await repo.getStudentRecordFacets();
+    return sendJSON(res, 200, facets);
+  }
+
   if (pathname === '/api/student-records' && req.method === 'GET') {
-    const students = await repo.searchStudentRecords(query.q, 200);
+    const students = await repo.searchStudentRecords({ q: query.q, academicYear: query.academicYear, advisor: query.advisor, limit: 200 });
     return sendJSON(res, 200, { students: students });
   }
 
   if (pathname === '/api/source-records' && req.method === 'GET') {
-    const records = await repo.searchSourceRecords(String(query.source || ''), query.q, 200);
+    const records = await repo.searchSourceRecords(String(query.source || ''), { q: query.q, academicYear: query.academicYear, advisor: query.advisor, limit: 200 });
     return sendJSON(res, 200, { records: records });
   }
 

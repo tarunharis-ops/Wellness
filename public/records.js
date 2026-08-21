@@ -11,10 +11,48 @@
   function fmtDate(v) { return window.WCT_APP.fmtDate(v); }
   function api(path, opts) { return window.WCT_APP.api(path, opts); }
 
-  var RSTATE = { query: '', results: [], searching: false, profile: null, activeTab: 'demographics', incidentFilter: 'all', returnView: 'recordsSearch', returnLabel: 'Student Records' };
-  var SRSTATE = { source: null, query: '', results: [], loading: false };
+  var RSTATE = { query: '', results: [], searching: false, profile: null, activeTab: 'demographics', incidentFilter: 'all', returnView: 'recordsSearch', returnLabel: 'Student Records', filters: { academicYear: '', advisor: '' } };
+  var SRSTATE = { source: null, query: '', results: [], loading: false, filters: { academicYear: '', advisor: '' } };
 
   function badge(cls, text) { return '<span class="badge ' + cls + '">' + esc(text || '—') + '</span>'; }
+
+  // ---------------- Filters (Academic Year / Advisor) ----------------
+  // Values come from the database (distinct academic_year / advisor on
+  // file), not an assumed hardcoded list, so the controls stay correct if
+  // the underlying data ever changes.
+  var FACETS = null;
+  function loadFacets() {
+    if (FACETS) return Promise.resolve(FACETS);
+    return api('/api/student-records/facets').then(function (d) { FACETS = d; return d; });
+  }
+
+  function filterBarHtml(filters, idPrefix) {
+    if (!FACETS) return '';
+    var yearChips = '<button class="filter-chip' + (!filters.academicYear ? ' active' : '') + '" data-' + idPrefix + '-year="">All Years</button>' +
+      FACETS.academicYears.map(function (y) {
+        return '<button class="filter-chip' + (filters.academicYear === y ? ' active' : '') + '" data-' + idPrefix + '-year="' + esc(y) + '">' + esc(y) + '</button>';
+      }).join('');
+    var advisorOptions = '<option value="">All Advisors</option>' + FACETS.advisors.map(function (a) {
+      return '<option value="' + esc(a) + '"' + (filters.advisor === a ? ' selected' : '') + '>' + esc(a) + '</option>';
+    }).join('');
+    return '<div class="filter-bar">' + yearChips +
+      '<span style="width:1px;height:20px;background:var(--border);margin:0 4px;"></span>' +
+      '<select id="' + idPrefix + 'AdvisorSelect" class="counselor-select">' + advisorOptions + '</select>' +
+    '</div>';
+  }
+
+  function bindFilterBar(idPrefix, filtersObj, onChange) {
+    var yearBtns = document.querySelectorAll('[data-' + idPrefix + '-year]');
+    yearBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        filtersObj.academicYear = btn.getAttribute('data-' + idPrefix + '-year');
+        yearBtns.forEach(function (b) { b.classList.toggle('active', b === btn); });
+        onChange();
+      });
+    });
+    var sel = document.getElementById(idPrefix + 'AdvisorSelect');
+    if (sel) sel.addEventListener('change', function () { filtersObj.advisor = sel.value; onChange(); });
+  }
 
   function debounce(fn, ms) {
     var t;
@@ -37,20 +75,24 @@
   // ---------------- Search / directory ----------------
 
   function renderSearch(root) {
-    root.innerHTML = '' +
-      '<div class="page-head"><div><div class="page-title">Student Records</div>' +
-      '<div class="page-sub">Synthetic demo roster (Alderbrook University) unifying SIS, Housing, Campus Safety, Academic Integrity, and Web/Anonymous Reports.</div></div></div>' +
-      '<div class="records-search-wrap"><input id="recordsSearchInput" type="text" placeholder="Search by student name or ID…" autocomplete="off" value="' + esc(RSTATE.query) + '" /></div>' +
-      '<div id="recordsResultsWrap">' + renderResults() + '</div>';
+    loadFacets().then(function () {
+      root.innerHTML = '' +
+        '<div class="page-head"><div><div class="page-title">Student Records</div>' +
+        '<div class="page-sub">Synthetic demo roster (Alderbrook University) unifying SIS, Housing, Campus Safety, Academic Integrity, and Web/Anonymous Reports.</div></div></div>' +
+        filterBarHtml(RSTATE.filters, 'records') +
+        '<div class="records-search-wrap"><input id="recordsSearchInput" type="text" placeholder="Search by name, student ID, email, or phone…" autocomplete="off" value="' + esc(RSTATE.query) + '" /></div>' +
+        '<div id="recordsResultsWrap">' + renderResults() + '</div>';
 
-    var input = document.getElementById('recordsSearchInput');
-    input.focus();
-    input.setSelectionRange(input.value.length, input.value.length);
-    input.addEventListener('input', debounce(function (e) {
-      RSTATE.query = e.target.value;
+      var input = document.getElementById('recordsSearchInput');
+      input.focus();
+      input.setSelectionRange(input.value.length, input.value.length);
+      input.addEventListener('input', debounce(function (e) {
+        RSTATE.query = e.target.value;
+        doSearch();
+      }, 200));
+      bindFilterBar('records', RSTATE.filters, doSearch);
       doSearch();
-    }, 200));
-    doSearch();
+    });
   }
 
   function renderResults() {
@@ -75,7 +117,10 @@
   function doSearch() {
     RSTATE.searching = true;
     refreshResults();
-    api('/api/student-records?q=' + encodeURIComponent(RSTATE.query.trim())).then(function (d) {
+    var params = ['q=' + encodeURIComponent(RSTATE.query.trim())];
+    if (RSTATE.filters.academicYear) params.push('academicYear=' + encodeURIComponent(RSTATE.filters.academicYear));
+    if (RSTATE.filters.advisor) params.push('advisor=' + encodeURIComponent(RSTATE.filters.advisor));
+    api('/api/student-records?' + params.join('&')).then(function (d) {
       RSTATE.results = d.students;
       RSTATE.searching = false;
       refreshResults();
@@ -401,7 +446,7 @@
   var SOURCE_META = {
     sis: {
       title: 'SIS', subtitle: 'Student Information System — the master roster.',
-      placeholder: 'Filter by name or student ID…',
+      placeholder: 'Filter by name, student ID, email, or phone…',
       columns: ['Student ID', 'Name', 'Email', 'Major', 'Class', 'Enrollment Status'],
       returnLabel: 'SIS',
       row: function (r) {
@@ -466,18 +511,26 @@
     SRSTATE.source = source;
     SRSTATE.query = '';
     SRSTATE.results = [];
-    root.innerHTML = '' +
-      '<div class="page-head"><div><div class="page-title">' + esc(meta.title) + '</div><div class="page-sub">' + esc(meta.subtitle) + '</div></div></div>' +
-      '<div class="records-search-wrap"><input id="sourceSearchInput" type="text" placeholder="' + esc(meta.placeholder) + '" autocomplete="off" /></div>' +
-      '<div id="sourceResultsWrap">' + emptyState('Loading…', '') + '</div>';
+    SRSTATE.filters = { academicYear: '', advisor: '' };
 
-    var input = document.getElementById('sourceSearchInput');
-    input.focus();
-    input.addEventListener('input', debounce(function (e) {
-      SRSTATE.query = e.target.value;
+    var mount = function () {
+      root.innerHTML = '' +
+        '<div class="page-head"><div><div class="page-title">' + esc(meta.title) + '</div><div class="page-sub">' + esc(meta.subtitle) + '</div></div></div>' +
+        (source === 'sis' ? filterBarHtml(SRSTATE.filters, 'sourceSis') : '') +
+        '<div class="records-search-wrap"><input id="sourceSearchInput" type="text" placeholder="' + esc(meta.placeholder) + '" autocomplete="off" /></div>' +
+        '<div id="sourceResultsWrap">' + emptyState('Loading…', '') + '</div>';
+
+      var input = document.getElementById('sourceSearchInput');
+      input.focus();
+      input.addEventListener('input', debounce(function (e) {
+        SRSTATE.query = e.target.value;
+        doSourceSearch();
+      }, 200));
+      if (source === 'sis') bindFilterBar('sourceSis', SRSTATE.filters, doSourceSearch);
       doSourceSearch();
-    }, 200));
-    doSourceSearch();
+    };
+
+    if (source === 'sis') loadFacets().then(mount); else mount();
   }
 
   function renderSourceResults() {
@@ -502,7 +555,10 @@
   function doSourceSearch() {
     SRSTATE.loading = true;
     refreshSourceResults();
-    api('/api/source-records?source=' + encodeURIComponent(SRSTATE.source) + '&q=' + encodeURIComponent(SRSTATE.query.trim())).then(function (d) {
+    var params = ['source=' + encodeURIComponent(SRSTATE.source), 'q=' + encodeURIComponent(SRSTATE.query.trim())];
+    if (SRSTATE.filters.academicYear) params.push('academicYear=' + encodeURIComponent(SRSTATE.filters.academicYear));
+    if (SRSTATE.filters.advisor) params.push('advisor=' + encodeURIComponent(SRSTATE.filters.advisor));
+    api('/api/source-records?' + params.join('&')).then(function (d) {
       SRSTATE.results = d.records;
       SRSTATE.loading = false;
       refreshSourceResults();
