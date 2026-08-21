@@ -242,31 +242,49 @@ function buildEntryColumns(fields) {
   return { cols: cols, values: values };
 }
 
+// Resolves a Wellness entry's free-text studentIdExternal against the
+// canonical Student Records roster, so the entry can carry a real FK
+// (entries.student_id) instead of relying purely on name-matching. A single
+// indexed lookup is fine here — createEntry/updateEntry are per-request,
+// single-record calls, not the bulk-import path (see bulkCreateEntries,
+// which batches this instead).
+function resolveStudentId(externalId) {
+  const trimmed = String(externalId || '').trim();
+  if (!trimmed) return Promise.resolve(null);
+  return db.query('SELECT student_id FROM students WHERE student_id = $1', [trimmed])
+    .then(function (r) { return r.rows[0] ? r.rows[0].student_id : null; });
+}
+
 function createEntry(fields, userId, opts) {
   opts = opts || {};
-  const id = uuid();
-  const built = buildEntryColumns(fields);
-  const cols = ['id', 'student_key', 'semester_id', 'template_id', 'created_by_name_override'].concat(built.cols).concat(['created_by', 'updated_by']);
-  const values = [id, studentKeyFor(fields.firstName, fields.lastName), opts.semesterId || null, opts.templateId || null, opts.createdByNameOverride || null]
-    .concat(built.values).concat([userId, userId]);
-  const placeholders = values.map(function (_, i) { return '$' + (i + 1); });
-  const sql = 'INSERT INTO entries (' + cols.join(',') + ') VALUES (' + placeholders.join(',') + ') RETURNING *';
-  return db.query(sql, values).then(function (r) { return rowToEntry(r.rows[0]); });
+  return resolveStudentId(fields.studentIdExternal).then(function (studentId) {
+    const id = uuid();
+    const built = buildEntryColumns(fields);
+    const cols = ['id', 'student_key', 'student_id', 'semester_id', 'template_id', 'created_by_name_override'].concat(built.cols).concat(['created_by', 'updated_by']);
+    const values = [id, studentKeyFor(fields.firstName, fields.lastName), studentId, opts.semesterId || null, opts.templateId || null, opts.createdByNameOverride || null]
+      .concat(built.values).concat([userId, userId]);
+    const placeholders = values.map(function (_, i) { return '$' + (i + 1); });
+    const sql = 'INSERT INTO entries (' + cols.join(',') + ') VALUES (' + placeholders.join(',') + ') RETURNING *';
+    return db.query(sql, values).then(function (r) { return rowToEntry(r.rows[0]); });
+  });
 }
 
 function updateEntry(id, fields, userId, opts) {
   opts = opts || {};
-  const built = buildEntryColumns(fields);
-  const setClauses = built.cols.map(function (col, i) { return col + ' = $' + (i + 5); });
-  setClauses.push('student_key = $2');
-  setClauses.push('semester_id = $3');
-  setClauses.push('template_id = $4');
-  setClauses.push('updated_by = $' + (built.cols.length + 5));
-  setClauses.push('updated_at = now()');
-  const values = [id, studentKeyFor(fields.firstName, fields.lastName), opts.semesterId || null, opts.templateId || null]
-    .concat(built.values).concat([userId]);
-  const sql = 'UPDATE entries SET ' + setClauses.join(', ') + ' WHERE id = $1 RETURNING *';
-  return db.query(sql, values).then(function (r) { return r.rows[0] ? rowToEntry(r.rows[0]) : null; });
+  return resolveStudentId(fields.studentIdExternal).then(function (studentId) {
+    const built = buildEntryColumns(fields);
+    const setClauses = built.cols.map(function (col, i) { return col + ' = $' + (i + 6); });
+    setClauses.push('student_key = $2');
+    setClauses.push('student_id = $3');
+    setClauses.push('semester_id = $4');
+    setClauses.push('template_id = $5');
+    setClauses.push('updated_by = $' + (built.cols.length + 6));
+    setClauses.push('updated_at = now()');
+    const values = [id, studentKeyFor(fields.firstName, fields.lastName), studentId, opts.semesterId || null, opts.templateId || null]
+      .concat(built.values).concat([userId]);
+    const sql = 'UPDATE entries SET ' + setClauses.join(', ') + ' WHERE id = $1 RETURNING *';
+    return db.query(sql, values).then(function (r) { return r.rows[0] ? rowToEntry(r.rows[0]) : null; });
+  });
 }
 
 function deleteEntry(id) {
@@ -302,14 +320,16 @@ function purgeEntries(scope) {
 // Bulk-inserts pre-parsed import rows inside one transaction, batching many
 // rows per INSERT (imports can be thousands of rows — one round trip per row
 // would be far too slow). Each item:
-// { fields: {...cfg.FIELDS keys}, semesterId, templateId, createdByNameOverride, createdBy }
+// { fields: {...cfg.FIELDS keys}, semesterId, templateId, createdByNameOverride, createdBy, resolvedStudentId }
+// resolvedStudentId is stamped on by bulkCreateEntries below (one batched
+// lookup for the whole import, not a per-row query).
 const IMPORT_BATCH_SIZE = 200;
-const FIXED_COLS = ['id', 'student_key', 'semester_id', 'template_id', 'created_by_name_override'];
+const FIXED_COLS = ['id', 'student_key', 'student_id', 'semester_id', 'template_id', 'created_by_name_override'];
 const ENTRY_COLS = FIXED_COLS.concat(ENTRY_KEYS.map(camelToSnake)).concat(['created_by', 'updated_by']);
 
 function entryRowValues(item) {
   const built = buildEntryColumns(item.fields);
-  return [uuid(), studentKeyFor(item.fields.firstName, item.fields.lastName), item.semesterId || null, item.templateId || null, item.createdByNameOverride || null]
+  return [uuid(), studentKeyFor(item.fields.firstName, item.fields.lastName), item.resolvedStudentId || null, item.semesterId || null, item.templateId || null, item.createdByNameOverride || null]
     .concat(built.values).concat([item.createdBy || null, item.createdBy || null]);
 }
 
@@ -329,6 +349,23 @@ function insertBatch(client, batch) {
 
 function bulkCreateEntries(items) {
   if (!items.length) return Promise.resolve({ inserted: 0 });
+  const externalIds = Array.from(new Set(
+    items.map(function (item) { return String((item.fields || {}).studentIdExternal || '').trim(); }).filter(Boolean)
+  ));
+  const lookup = externalIds.length
+    ? db.query('SELECT student_id FROM students WHERE student_id = ANY($1)', [externalIds])
+        .then(function (r) { const s = {}; r.rows.forEach(function (row) { s[row.student_id] = true; }); return s; })
+    : Promise.resolve({});
+  return lookup.then(function (validIds) {
+    items.forEach(function (item) {
+      const ext = String((item.fields || {}).studentIdExternal || '').trim();
+      item.resolvedStudentId = ext && validIds[ext] ? ext : null;
+    });
+    return insertAllBatches(items);
+  });
+}
+
+function insertAllBatches(items) {
   const pool = db.getPool();
   return pool.connect().then(function (client) {
     return client.query('BEGIN')
@@ -486,8 +523,9 @@ function listAuditLog(filters, limit) {
 // Backs the "Student Records" tab: a synthetic SIS roster joined against
 // Housing, Campus Safety, Academic Integrity, and the Web/Anonymous
 // Reporting Portal. Seeded once by db/migrate.js from data/student_records/.
-// This dataset is intentionally separate from — and unrelated to — the
-// Wellness case entries above.
+// Wellness case entries link into this roster via entries.student_id (see
+// STUDENT_PROFILE_DOMAINS/getStudentRecordProfile below), so a student's
+// cross-domain profile includes Wellness activity alongside these sources.
 
 function studentRecordRow(row) {
   return {
@@ -680,23 +718,33 @@ function searchSourceRecords(source, params) {
   throw e;
 }
 
+// Enumerates every record type pulled into a student's cross-domain profile
+// (getStudentRecordProfile below). Adding a future domain (Student Conduct,
+// Title IX, Behavioral Incidents) means appending one entry here — no new
+// Promise.all branch, no new repo function, no route change. Table/column
+// names are fixed, developer-authored config, never derived from user
+// input, so interpolating them into SQL is safe — the same trust boundary
+// already used by searchSourceRecords above and by SOURCE_META in
+// public/records.js.
+const STUDENT_PROFILE_DOMAINS = [
+  { key: 'housing', table: 'housing', studentCol: 'student_id', orderBy: 'move_in_date DESC NULLS LAST', mapRow: housingRecordRow },
+  { key: 'campusSafety', table: 'campus_safety', studentCol: 'student_id', orderBy: 'incident_date DESC NULLS LAST', mapRow: campusSafetyRow },
+  { key: 'academicIntegrity', table: 'academic_integrity', studentCol: 'student_id', orderBy: 'incident_date DESC NULLS LAST', mapRow: academicIntegrityRow },
+  { key: 'reports', table: 'student_reports', studentCol: 'reported_student_id', orderBy: 'submitted_date DESC NULLS LAST', mapRow: studentReportRow },
+  { key: 'wellness', table: 'entries', studentCol: 'student_id', orderBy: 'created_at DESC', mapRow: rowToEntry },
+];
+
 function getStudentRecordProfile(studentId) {
   return db.query('SELECT * FROM students WHERE student_id = $1', [studentId]).then(function (r) {
     if (!r.rows[0]) return null;
     const student = studentRecordRow(r.rows[0]);
-    return Promise.all([
-      db.query('SELECT * FROM housing WHERE student_id = $1 ORDER BY move_in_date DESC NULLS LAST', [studentId]),
-      db.query('SELECT * FROM campus_safety WHERE student_id = $1 ORDER BY incident_date DESC NULLS LAST', [studentId]),
-      db.query('SELECT * FROM academic_integrity WHERE student_id = $1 ORDER BY incident_date DESC NULLS LAST', [studentId]),
-      db.query('SELECT * FROM student_reports WHERE reported_student_id = $1 ORDER BY submitted_date DESC NULLS LAST', [studentId]),
-    ]).then(function (r2) {
-      return {
-        student: student,
-        housing: r2[0].rows.map(housingRecordRow),
-        campusSafety: r2[1].rows.map(campusSafetyRow),
-        academicIntegrity: r2[2].rows.map(academicIntegrityRow),
-        reports: r2[3].rows.map(studentReportRow),
-      };
+    const queries = STUDENT_PROFILE_DOMAINS.map(function (d) {
+      return db.query('SELECT * FROM ' + d.table + ' WHERE ' + d.studentCol + ' = $1 ORDER BY ' + d.orderBy, [studentId]);
+    });
+    return Promise.all(queries).then(function (results) {
+      const profile = { student: student };
+      STUDENT_PROFILE_DOMAINS.forEach(function (d, i) { profile[d.key] = results[i].rows.map(d.mapRow); });
+      return profile;
     });
   });
 }
