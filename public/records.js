@@ -11,7 +11,10 @@
   function fmtDate(v) { return window.WCT_APP.fmtDate(v); }
   function api(path, opts) { return window.WCT_APP.api(path, opts); }
 
-  var RSTATE = { query: '', results: [], searching: false, searched: false, profile: null, activeTab: 'demographics', incidentFilter: 'all' };
+  var RSTATE = { query: '', results: [], searching: false, profile: null, activeTab: 'demographics', incidentFilter: 'all', returnView: 'recordsSearch', returnLabel: 'Student Records' };
+  var SRSTATE = { source: null, query: '', results: [], loading: false };
+
+  function badge(cls, text) { return '<span class="badge ' + cls + '">' + esc(text || '—') + '</span>'; }
 
   function debounce(fn, ms) {
     var t;
@@ -47,14 +50,11 @@
       RSTATE.query = e.target.value;
       doSearch();
     }, 200));
-    bindResultRows();
+    doSearch();
   }
 
   function renderResults() {
-    if (!RSTATE.query || RSTATE.query.trim().length < 2) {
-      return emptyState('Search 10,000 students', 'Type at least 2 characters of a name or student ID to begin.');
-    }
-    if (RSTATE.searching) return emptyState('Searching…', '');
+    if (RSTATE.searching) return emptyState('Loading…', '');
     if (!RSTATE.results.length) return emptyState('No matches', 'Try a different name or student ID.');
     var rows = RSTATE.results.map(function (s) {
       return '<tr data-student-id="' + esc(s.studentId) + '">' +
@@ -65,21 +65,19 @@
         '<td class="cell-muted">' + esc(s.enrollmentStatus || '—') + '</td>' +
       '</tr>';
     }).join('');
+    var cap = RSTATE.results.length === 200 ? ' — refine your search to narrow further' : '';
     return '<div class="table-wrap"><table class="data-table"><thead><tr>' +
       '<th>Student ID</th><th>Name</th><th>Major</th><th>Class</th><th>Enrollment Status</th>' +
       '</tr></thead><tbody>' + rows + '</tbody></table></div>' +
-      '<div class="audit-meta" style="margin-top:8px">Showing ' + RSTATE.results.length + ' result(s)' + (RSTATE.results.length === 50 ? ' (limited to first 50 — refine your search)' : '') + '.</div>';
+      '<div class="audit-meta" style="margin-top:8px">Showing ' + RSTATE.results.length + ' of ~10,000' + cap + '.</div>';
   }
 
   function doSearch() {
-    var q = RSTATE.query.trim();
-    if (q.length < 2) { RSTATE.results = []; RSTATE.searched = false; refreshResults(); return; }
     RSTATE.searching = true;
     refreshResults();
-    api('/api/student-records?q=' + encodeURIComponent(q)).then(function (d) {
+    api('/api/student-records?q=' + encodeURIComponent(RSTATE.query.trim())).then(function (d) {
       RSTATE.results = d.students;
       RSTATE.searching = false;
-      RSTATE.searched = true;
       refreshResults();
     }).catch(function (err) {
       RSTATE.searching = false;
@@ -97,21 +95,24 @@
 
   function bindResultRows() {
     document.querySelectorAll('[data-student-id]').forEach(function (tr) {
-      tr.addEventListener('click', function () { openProfile(tr.getAttribute('data-student-id')); });
+      tr.addEventListener('click', function () { openProfile(tr.getAttribute('data-student-id'), { returnView: 'recordsSearch', returnLabel: 'Student Records' }); });
     });
   }
 
-  function openProfile(studentId) {
+  function openProfile(studentId, opts) {
+    opts = opts || {};
     RSTATE.profile = null;
-    RSTATE.activeTab = 'demographics';
+    RSTATE.activeTab = opts.preferredTab || 'demographics';
     RSTATE.incidentFilter = 'all';
+    RSTATE.returnView = opts.returnView || 'recordsSearch';
+    RSTATE.returnLabel = opts.returnLabel || 'Student Records';
     window.WCT_APP.setView('recordsProfile');
     api('/api/student-records/' + encodeURIComponent(studentId)).then(function (d) {
       RSTATE.profile = d.profile;
       refreshProfile();
     }).catch(function (err) {
       window.WCT_APP.toast(err.message, 'err');
-      window.WCT_APP.setView('recordsSearch');
+      window.WCT_APP.setView(RSTATE.returnView);
     });
   }
 
@@ -138,7 +139,7 @@
   ];
 
   function profileBody() {
-    var back = '<div style="margin-bottom:18px"><button class="btn small ghost" id="recordsBackBtn">&larr; Back to Search</button></div>';
+    var back = '<div style="margin-bottom:18px"><button class="btn small ghost" id="recordsBackBtn">&larr; Back to ' + esc(RSTATE.returnLabel) + '</button></div>';
     if (!RSTATE.profile) return back + emptyState('Loading…', '');
     var s = RSTATE.profile.student;
 
@@ -386,7 +387,7 @@
 
   function bindProfileEvents() {
     var backBtn = document.getElementById('recordsBackBtn');
-    if (backBtn) backBtn.addEventListener('click', function () { window.WCT_APP.setView('recordsSearch'); });
+    if (backBtn) backBtn.addEventListener('click', function () { window.WCT_APP.setView(RSTATE.returnView); });
     document.querySelectorAll('[data-records-tab]').forEach(function (btn) {
       btn.addEventListener('click', function () { RSTATE.activeTab = btn.getAttribute('data-records-tab'); refreshProfile(); });
     });
@@ -395,5 +396,142 @@
     });
   }
 
-  window.WCT_RECORDS = { renderSearch: renderSearch, renderProfile: renderProfile };
+  // ---------------- Per-source browse lists (SIS / Housing / Campus Safety / Academic Integrity / Web Reports) ----------------
+
+  var SOURCE_META = {
+    sis: {
+      title: 'SIS', subtitle: 'Student Information System — the master roster.',
+      placeholder: 'Filter by name or student ID…',
+      columns: ['Student ID', 'Name', 'Email', 'Major', 'Class', 'Enrollment Status'],
+      returnLabel: 'SIS',
+      row: function (r) {
+        return {
+          studentId: r.studentId, preferredTab: 'demographics',
+          cells: [esc(r.studentId), esc(r.firstName) + ' ' + esc(r.lastName), esc(r.email || '—'), esc(r.major || '—'), esc(r.academicYear || '—'), esc(r.enrollmentStatus || '—')],
+        };
+      },
+    },
+    housing: {
+      title: 'Housing', subtitle: 'Residence Life — room assignments, most recent first.',
+      placeholder: 'Filter by student, hall, or ID…',
+      columns: ['Student', 'Hall', 'Room', 'Move In', 'Move Out', 'Status'],
+      returnLabel: 'Housing',
+      row: function (r) {
+        return {
+          studentId: r.studentId, preferredTab: 'contact',
+          cells: [esc(r.studentName), esc(r.residenceHall || '—'), esc(r.roomNumber || '—'), fmtDate(r.moveInDate), r.moveOutDate ? fmtDate(r.moveOutDate) : '—', badge(housingBadgeClass(r.housingStatus), r.housingStatus)],
+        };
+      },
+    },
+    campusSafety: {
+      title: 'Campus Safety', subtitle: 'Incident reports logged by Campus Safety officers, most recent first.',
+      placeholder: 'Filter by student, incident type, or ID…',
+      columns: ['Student', 'Report ID', 'Incident Type', 'Severity', 'Status', 'Date'],
+      returnLabel: 'Campus Safety',
+      row: function (r) {
+        return {
+          studentId: r.studentId, preferredTab: 'incidents',
+          cells: [esc(r.studentName), esc(r.reportId), esc(r.incidentType || '—'), badge(severityBadgeClass(r.severity), r.severity), badge(statusBadgeClass(r.status), r.status), fmtDate(r.incidentDate)],
+        };
+      },
+    },
+    academicIntegrity: {
+      title: 'Academic Integrity', subtitle: 'Academic Integrity Office cases, most recent first.',
+      placeholder: 'Filter by student, violation type, or ID…',
+      columns: ['Student', 'Case ID', 'Violation Type', 'Severity', 'Status', 'Date'],
+      returnLabel: 'Academic Integrity',
+      row: function (r) {
+        return {
+          studentId: r.studentId, preferredTab: 'incidents',
+          cells: [esc(r.studentName), esc(r.caseId), esc(r.violationType || '—'), badge(severityBadgeClass(r.severity), r.severity), badge(statusBadgeClass(r.status), r.status), fmtDate(r.incidentDate)],
+        };
+      },
+    },
+    webReports: {
+      title: 'Web/Anonymous Reports', subtitle: 'Submissions through the general reporting portal, most recent first.',
+      placeholder: 'Filter by student, category, or ID…',
+      columns: ['Student', 'Report ID', 'Category', 'Priority', 'Anonymous', 'Date'],
+      returnLabel: 'Web/Anonymous Reports',
+      row: function (r) {
+        return {
+          studentId: r.studentId, preferredTab: 'incidents',
+          cells: [r.studentId ? esc(r.studentName) : '<span class="cell-muted">Unidentified</span>', esc(r.reportId), esc(r.category || '—'), badge(priorityBadgeClass(r.priority), r.priority), r.anonymous ? 'Yes' : 'No', fmtDate(r.submittedDate)],
+        };
+      },
+    },
+  };
+
+  function renderSource(root, source) {
+    var meta = SOURCE_META[source];
+    SRSTATE.source = source;
+    SRSTATE.query = '';
+    SRSTATE.results = [];
+    root.innerHTML = '' +
+      '<div class="page-head"><div><div class="page-title">' + esc(meta.title) + '</div><div class="page-sub">' + esc(meta.subtitle) + '</div></div></div>' +
+      '<div class="records-search-wrap"><input id="sourceSearchInput" type="text" placeholder="' + esc(meta.placeholder) + '" autocomplete="off" /></div>' +
+      '<div id="sourceResultsWrap">' + emptyState('Loading…', '') + '</div>';
+
+    var input = document.getElementById('sourceSearchInput');
+    input.focus();
+    input.addEventListener('input', debounce(function (e) {
+      SRSTATE.query = e.target.value;
+      doSourceSearch();
+    }, 200));
+    doSourceSearch();
+  }
+
+  function renderSourceResults() {
+    var meta = SOURCE_META[SRSTATE.source];
+    if (SRSTATE.loading) return emptyState('Loading…', '');
+    if (!SRSTATE.results.length) return emptyState('No matches', 'Try a different name, ID, or term.');
+    var rows = SRSTATE.results.map(function (r) {
+      var built = meta.row(r);
+      var clickable = !!built.studentId;
+      var tds = built.cells.map(function (c) { return '<td>' + c + '</td>'; }).join('');
+      return clickable ?
+        '<tr data-source-student-id="' + esc(built.studentId) + '" data-preferred-tab="' + esc(built.preferredTab) + '">' + tds + '</tr>' :
+        '<tr class="no-link">' + tds + '</tr>';
+    }).join('');
+    var cap = SRSTATE.results.length === 200 ? ' — refine your search to narrow further' : '';
+    return '<div class="table-wrap"><table class="data-table"><thead><tr>' +
+      meta.columns.map(function (c) { return '<th>' + esc(c) + '</th>'; }).join('') +
+      '</tr></thead><tbody>' + rows + '</tbody></table></div>' +
+      '<div class="audit-meta" style="margin-top:8px">Showing ' + SRSTATE.results.length + ' record(s)' + cap + '.</div>';
+  }
+
+  function doSourceSearch() {
+    SRSTATE.loading = true;
+    refreshSourceResults();
+    api('/api/source-records?source=' + encodeURIComponent(SRSTATE.source) + '&q=' + encodeURIComponent(SRSTATE.query.trim())).then(function (d) {
+      SRSTATE.results = d.records;
+      SRSTATE.loading = false;
+      refreshSourceResults();
+    }).catch(function (err) {
+      SRSTATE.loading = false;
+      window.WCT_APP.toast(err.message, 'err');
+      refreshSourceResults();
+    });
+  }
+
+  function refreshSourceResults() {
+    var wrap = document.getElementById('sourceResultsWrap');
+    if (!wrap) return;
+    wrap.innerHTML = renderSourceResults();
+    bindSourceRows();
+  }
+
+  function bindSourceRows() {
+    var meta = SOURCE_META[SRSTATE.source];
+    document.querySelectorAll('[data-source-student-id]').forEach(function (tr) {
+      tr.addEventListener('click', function () {
+        openProfile(tr.getAttribute('data-source-student-id'), {
+          returnView: 'source' + SRSTATE.source[0].toUpperCase() + SRSTATE.source.slice(1),
+          returnLabel: meta.returnLabel,
+          preferredTab: tr.getAttribute('data-preferred-tab'),
+        });
+      });
+    });
+  }
+
+  window.WCT_RECORDS = { renderSearch: renderSearch, renderProfile: renderProfile, renderSource: renderSource };
 })();

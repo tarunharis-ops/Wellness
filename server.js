@@ -588,10 +588,13 @@ async function handleApi(req, res, pathname, query) {
 
   // ---- Student Records: read-only synthetic SIS/Housing/Safety/AI/Reports dataset ----
   if (pathname === '/api/student-records' && req.method === 'GET') {
-    const q = String(query.q || '').trim();
-    if (q.length < 2) return sendJSON(res, 200, { students: [] });
-    const students = await repo.searchStudentRecords(q, 50);
+    const students = await repo.searchStudentRecords(query.q, 200);
     return sendJSON(res, 200, { students: students });
+  }
+
+  if (pathname === '/api/source-records' && req.method === 'GET') {
+    const records = await repo.searchSourceRecords(String(query.source || ''), query.q, 200);
+    return sendJSON(res, 200, { records: records });
   }
 
   const studentRecordMatch = pathname.match(/^\/api\/student-records\/([^/]+)$/);

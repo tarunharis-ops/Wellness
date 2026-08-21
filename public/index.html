@@ -35,11 +35,17 @@
       <span class="brand-mark">W</span>
       <span class="brand-text">Wellness Tracker</span>
     </div>
-    <div class="mode-switch" id="modeSwitch">
-      <button class="mode-tab active" data-mode="wellness">Wellness</button>
-      <button class="mode-tab" data-mode="records">Student Records</button>
-    </div>
     <nav class="nav" id="nav">
+      <button class="nav-item" data-view="recordsSearch">Student Records</button>
+      <button class="nav-item" data-view="sourceSis">SIS</button>
+      <button class="nav-item" data-view="sourceHousing">Housing</button>
+      <button class="nav-item" data-view="sourceCampusSafety">Campus Safety</button>
+      <button class="nav-item" data-view="sourceAcademicIntegrity">Academic Integrity</button>
+      <button class="nav-item" data-view="sourceWebReports">Web/Anonymous Reports</button>
+      <div class="nav-divider"></div>
+      <button class="nav-item" data-view="log" id="navWellnessToggle">Wellness</button>
+    </nav>
+    <nav class="nav" id="navWellness" style="display:none">
       <button class="nav-item" data-view="log">Case Log</button>
       <button class="nav-item" data-view="students">Students</button>
       <button class="nav-item" data-view="dashboard">Dashboard</button>
@@ -49,9 +55,6 @@
       <button class="nav-item" data-view="import" id="navImport" style="display:none">Import</button>
       <button class="nav-item" data-view="team" id="navTeam" style="display:none">Team</button>
       <button class="nav-item" data-view="audit" id="navAudit" style="display:none">Audit Log</button>
-    </nav>
-    <nav class="nav" id="navRecords" style="display:none">
-      <button class="nav-item" data-view="recordsSearch">Search &amp; Priors</button>
     </nav>
     <div class="sidebar-footer">
       <div class="user-chip">
