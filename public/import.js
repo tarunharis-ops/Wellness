@@ -1,18 +1,18 @@
 // Import wizard: parses any .xlsx/.xls workbook or .csv file entirely in the
-// browser (SheetJS for spreadsheets, a small hand-rolled parser for CSV —
-// mirrors lib/csv.js's approach so nothing new is vendored), detects a
-// Student ID/Name column plus whatever other columns are present, and infers
-// each other column's type (select/date/number/text/textarea) from its
-// actual values — no fixed/expected column layout. The admin reviews and can
-// adjust every detected field's label/type before anything is imported.
+// browser (SheetJS for spreadsheets, a small hand-rolled parser for CSV) and
+// maps each detected column onto the app's fixed field set
+// (window.WELLNESS_CONFIG.FIELDS — the same 26 Columbia-specific fields the
+// entry form and Dashboard use) by fuzzy-matching header text against each
+// field's label and a short synonym list. Nothing is invented — a column
+// that doesn't match anything well enough is left unmapped ("Don't Import")
+// rather than becoming a new ad hoc field. This is the architecture
+// decision this project settled on: normalize incoming data onto a known
+// schema before it reaches the database, rather than storing arbitrary
+// structure and dealing with the consequences downstream.
 //
 // Real-world quirk this still handles: some sheets only fill in the name on
 // a student's first interaction row, leaving it blank on follow-up rows
-// directly below. Those rows are forward-filled to the last-seen identity —
-// but only the identity columns (name/Student ID); every other detected
-// field is taken literally per row, since there's no way to know which
-// other columns are "identity" (should inherit) vs. "per-interaction"
-// (shouldn't) without hardcoding assumptions about what they mean.
+// directly below. Those rows are forward-filled to the last-seen identity.
 
 (function () {
   'use strict';
@@ -56,15 +56,14 @@
     return rows;
   }
 
-  // ---------------- Date handling (timezone-safe — see header comment history) ----------------
+  // ---------------- Date handling (timezone-safe) ----------------
   // cellDates:true was tried and reverted earlier in this project: it
   // converts via JS Date objects using the executing browser's local
   // timezone, which can shift the day. excelSerialToISO does pure
   // arithmetic on the Excel serial number instead. For string dates (CSV,
   // or a text-formatted spreadsheet cell), the ISO and US-slash branches
   // below likewise avoid ever constructing a Date object for the common
-  // cases; only the final fallback risks the same class of bug, for date
-  // formats neither pattern matches.
+  // cases; only the final fallback risks the same class of bug.
 
   function excelSerialToISO(serial) {
     var d = window.XLSX.SSF.parse_date_code(serial);
@@ -84,7 +83,7 @@
     return isNaN(d.getTime()) ? s : d.toISOString().slice(0, 10);
   }
 
-  // ---------------- Column detection / type inference ----------------
+  // ---------------- Identity column detection ----------------
 
   var ID_HEADER_RE = /^(student\s*id|id|sid|student\s*#|student\s*number)$/i;
   var FIRST_NAME_RE = /^(first\s*name|fname|given\s*name)$/i;
@@ -103,45 +102,71 @@
     return { idIdx: idIdx, firstIdx: firstIdx, lastIdx: lastIdx, fullIdx: fullIdx };
   }
 
-  function slugifyKey(header, usedKeys) {
-    var words = String(header || '').trim().split(/[^a-zA-Z0-9]+/).filter(Boolean);
-    var key = words.length ? words[0].toLowerCase() + words.slice(1).map(function (w) { return w[0].toUpperCase() + w.slice(1).toLowerCase(); }).join('') : 'field';
-    var base = key, n = 2;
-    while (usedKeys[key]) { key = base + n; n++; }
-    usedKeys[key] = true;
-    return key;
+  // ---------------- Fuzzy column -> fixed field matching ----------------
+  // A short hand-picked synonym list per field, covering the header
+  // variants a real export is likely to use. Not exhaustive by design —
+  // anything that doesn't score well enough is left for the admin to map
+  // manually (or skip) in the review step, rather than guessing.
+  var FIELD_SYNONYMS = {
+    caseStatus: ['case status', 'status'],
+    pronouns: ['pronouns', 'pronoun'],
+    international: ['international', 'international student'],
+    program: ['program', 'major'],
+    modality: ['modality', 'in person or online only', 'in person online', 'mode'],
+    enrollmentStatus: ['enrollment status', 'enrollment'],
+    columbiaOfficer: ['columbia officer'],
+    nabitaRisk: ['nabita risk rubric', 'nabita risk', 'risk', 'risk level', 'risk rubric'],
+    referralSource: ['referral source'],
+    referralDate: ['referral date'],
+    outreachType: ['outreach type'],
+    outreachMethod: ['outreach method'],
+    outreachDate: ['outreach date', 'date', 'contact date'],
+    outreachConducted: ['outreach conducted'],
+    durationMinutes: ['duration of outreach', 'duration', 'minutes', 'duration minutes'],
+    outreachOutcome: ['outreach outcome', 'outcome'],
+    concernPrimary: ['wellness primary concern', 'primary concern', 'concern primary'],
+    concernSecondary: ['wellness secondary concern', 'secondary concern', 'concern secondary'],
+    concernTertiary: ['wellness tertiary concern', 'tertiary concern', 'concern tertiary'],
+    referralsMade: ['referrals made'],
+    referralPrimary: ['referral primary', 'primary referral'],
+    referralSecondary: ['referral secondary', 'secondary referral'],
+    referralTertiary: ['referral tertiary', 'tertiary referral'],
+    notes: ['notes', 'comments', 'note'],
+  };
+  var NON_MAPPABLE_KEYS = { firstName: true, lastName: true, studentIdExternal: true };
+
+  function normalizeText(s) {
+    return String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
   }
 
-  function looksLikeDateString(v) {
-    var s = String(v || '').trim();
-    if (!s || !/\d/.test(s)) return false;
-    if (!/[-/]/.test(s) && !/^[A-Za-z]+ \d{1,2},? \d{4}$/.test(s)) return false;
-    return !isNaN(Date.parse(s));
+  function tokenScore(a, b) {
+    if (!a || !b) return 0;
+    if (a === b) return 100;
+    if (a.indexOf(b) !== -1 || b.indexOf(a) !== -1) return 70;
+    var aTokens = a.split(' '), bTokens = b.split(' ');
+    var shared = aTokens.filter(function (t) { return bTokens.indexOf(t) !== -1; }).length;
+    var union = new Set(aTokens.concat(bTokens)).size;
+    return union ? Math.round((shared / union) * 60) : 0;
   }
 
-  // Classifies a column from its actual values — no assumption about what
-  // the column "should" be. date/number need an 80% majority (mixed/messy
-  // columns fall through to text rather than mis-typing); select needs a
-  // small, repeated set of distinct values (a real dropdown-shaped column,
-  // not free text that happens to repeat a little).
-  function inferColumnType(values) {
-    var nonEmpty = values.filter(function (v) { return v !== null && v !== undefined && String(v).trim() !== ''; });
-    if (!nonEmpty.length) return 'text';
-    var dateCount = nonEmpty.filter(looksLikeDateString).length;
-    if (dateCount / nonEmpty.length >= 0.8) return 'date';
-    var numCount = nonEmpty.filter(function (v) { return String(v).trim() !== '' && !isNaN(Number(v)); }).length;
-    if (numCount / nonEmpty.length >= 0.8) return 'number';
-    var distinct = {};
-    nonEmpty.forEach(function (v) { distinct[String(v).trim()] = true; });
-    var distinctVals = Object.keys(distinct);
-    if (distinctVals.length <= 30 && distinctVals.length / nonEmpty.length < 0.5) return 'select';
-    var avgLen = nonEmpty.reduce(function (sum, v) { return sum + String(v).length; }, 0) / nonEmpty.length;
-    return avgLen > 60 ? 'textarea' : 'text';
+  // Returns the best-matching field key for a header, or '' if nothing
+  // scores highly enough to trust as a default.
+  function suggestFieldForHeader(header, mappableFields) {
+    var norm = normalizeText(header);
+    var best = { key: '', score: 0 };
+    mappableFields.forEach(function (f) {
+      var candidates = [normalizeText(f.label)].concat((FIELD_SYNONYMS[f.key] || []).map(normalizeText));
+      candidates.forEach(function (c) {
+        var score = tokenScore(norm, c);
+        if (score > best.score) best = { key: f.key, score: score };
+      });
+    });
+    return best.score >= 40 ? best.key : '';
   }
 
   // header/formattedRows drive detection + most values; rawRows (same shape)
-  // is only consulted for date-type columns, to reach the Excel serial
-  // number for excelSerialToISO. For CSV, raw === formatted (plain strings).
+  // is only consulted for date-mapped columns, to reach the Excel serial
+  // number for excelSerialToISO. For CSV, raw === formatted.
   function analyzeGrid(header, formattedRows, rawRows) {
     var ident = detectIdentityColumns(header);
     var hasFirstLast = ident.firstIdx !== -1 && ident.lastIdx !== -1;
@@ -151,26 +176,14 @@
     var identityIdxSet = {};
     [ident.idIdx, ident.firstIdx, ident.lastIdx, ident.fullIdx].forEach(function (i) { if (i !== -1) identityIdxSet[i] = true; });
 
-    var usedKeys = {};
+    var mappableFields = (window.WELLNESS_CONFIG.FIELDS || []).filter(function (f) { return !NON_MAPPABLE_KEYS[f.key]; });
+
     var columns = header.map(function (h, i) {
       if (identityIdxSet[i]) return null;
       var label = String(h || '').trim();
       if (!label) return null;
-      var colValues = formattedRows.map(function (r) { return r[i]; });
-      return { index: i, key: slugifyKey(label, usedKeys), label: label, type: inferColumnType(colValues) };
+      return { index: i, header: label, mappedTo: suggestFieldForHeader(label, mappableFields) };
     }).filter(Boolean);
-
-    // Computed for every column, not just ones detected as 'select' — so if
-    // the admin overrides a column's type to 'select' in the review UI, its
-    // dropdown isn't left empty.
-    columns.forEach(function (c) {
-      var seen = {}, opts = [];
-      formattedRows.forEach(function (r) {
-        var v = String(r[c.index] || '').trim();
-        if (v && !seen[v]) { seen[v] = true; opts.push(v); }
-      });
-      c.options = opts;
-    });
 
     var rows = [], skippedNoContext = 0, currentIdentity = null;
     for (var r = 0; r < formattedRows.length; r++) {
@@ -193,21 +206,23 @@
       if (firstName || lastName) currentIdentity = { firstName: firstName, lastName: lastName, studentId: studentId };
       if (!currentIdentity) { skippedNoContext++; continue; }
 
-      var fields = {};
+      var fields = { firstName: currentIdentity.firstName, lastName: currentIdentity.lastName, studentIdExternal: currentIdentity.studentId };
       columns.forEach(function (c) {
+        if (!c.mappedTo) return;
+        var fieldDef = mappableFields.find(function (f) { return f.key === c.mappedTo; });
         var rawVal = rawRows[r] ? rawRows[r][c.index] : undefined;
         var formattedVal = row[c.index];
-        if (c.type === 'date') fields[c.key] = normalizeDateValue(rawVal, formattedVal);
-        else if (c.type === 'number') {
+        if (fieldDef && fieldDef.type === 'date') fields[c.mappedTo] = normalizeDateValue(rawVal, formattedVal);
+        else if (fieldDef && fieldDef.type === 'number') {
           var n = Number(rawVal !== undefined && rawVal !== null && rawVal !== '' ? rawVal : formattedVal);
-          fields[c.key] = isNaN(n) ? '' : n;
-        } else fields[c.key] = formattedVal === null || formattedVal === undefined ? '' : String(formattedVal).trim();
+          fields[c.mappedTo] = isNaN(n) ? '' : n;
+        } else fields[c.mappedTo] = formattedVal === null || formattedVal === undefined ? '' : String(formattedVal).trim();
       });
 
-      rows.push({ firstName: currentIdentity.firstName, lastName: currentIdentity.lastName, studentIdExternal: currentIdentity.studentId, fields: fields });
+      rows.push(fields);
     }
 
-    return { fields: columns, rows: rows, skippedNoContext: skippedNoContext };
+    return { columns: columns, rows: rows, skippedNoContext: skippedNoContext };
   }
 
   function seasonRange(season, year) {
@@ -279,7 +294,7 @@
   function viewHtml() {
     if (STATE.result) return resultHtml();
     return '' +
-      '<div class="page-head"><div><div class="page-title">Import</div><div class="page-sub">Bring in any spreadsheet or CSV — columns are detected automatically, not assumed.</div></div></div>' +
+      '<div class="page-head"><div><div class="page-title">Import</div><div class="page-sub">Bring in any spreadsheet or CSV — columns are matched to the existing fields automatically.</div></div></div>' +
       uploadCardHtml() +
       (STATE.sheets.length ? sheetsHtml() : '');
   }
@@ -290,9 +305,30 @@
         '<input type="file" id="importFile" accept=".xlsx,.xls,.csv" style="display:none" />' +
         '<button class="btn primary" id="importChooseBtn">' + (STATE.fileName ? 'Choose a Different File' : 'Choose a File (.xlsx or .csv)') + '</button>' +
         (STATE.fileName ? '<div class="small-muted" style="margin-top:8px">' + esc(STATE.fileName) + (STATE.parsing ? ' · reading…' : ' · ' + STATE.sheets.length + ' sheet(s) recognized') + '</div>' :
-          '<div class="small-muted" style="margin-top:8px">We look for a Student ID and/or Name column to recognize a sheet, then detect every other column\'s type from its values — review and adjust below before anything is imported.</div>') +
+          '<div class="small-muted" style="margin-top:8px">We look for a Student ID and/or Name column to recognize a sheet, then match every other column to one of the existing fields (Case Status, NABITA Risk, Program, etc.) by its header text — review and adjust the mapping below before importing.</div>') +
       '</div>' +
     '</div>';
+  }
+
+  function fieldOptionsHtml(currentKey) {
+    var mappable = (window.WELLNESS_CONFIG.FIELDS || []).filter(function (f) { return !NON_MAPPABLE_KEYS[f.key]; });
+    var bySection = {};
+    var sectionOrder = [];
+    mappable.forEach(function (f) {
+      if (!bySection[f.section]) { bySection[f.section] = []; sectionOrder.push(f.section); }
+      bySection[f.section].push(f);
+    });
+    var sectionLabel = {};
+    (window.WELLNESS_CONFIG.SECTIONS || []).forEach(function (s) { sectionLabel[s.key] = s.label; });
+    var opts = '<option value=""' + (!currentKey ? ' selected' : '') + '>Don’t Import</option>';
+    sectionOrder.forEach(function (sec) {
+      opts += '<optgroup label="' + esc(sectionLabel[sec] || sec) + '">';
+      bySection[sec].forEach(function (f) {
+        opts += '<option value="' + f.key + '"' + (currentKey === f.key ? ' selected' : '') + '>' + esc(f.label) + '</option>';
+      });
+      opts += '</optgroup>';
+    });
+    return opts;
   }
 
   function sheetsHtml() {
@@ -305,13 +341,11 @@
         (matchedUser ? 'Will attribute entries to team member <b>' + esc(matchedUser.name) + '</b>.' : 'No matching team account — entries will show "Logged by ' + esc(s.counselorName.trim()) + '" without linking to a login.') :
         'No counselor name detected — entries will be unattributed unless you fill this in.';
 
-      var fieldRows = s.fields.map(function (f, fIdx) {
+      var mappedCount = s.columns.filter(function (c) { return c.mappedTo; }).length;
+      var columnRows = s.columns.map(function (c, cIdx) {
         return '<div class="import-field-row">' +
-          '<input type="text" data-field-label="' + fIdx + '" data-sheet-idx="' + idx + '" value="' + esc(f.label) + '" />' +
-          '<select data-field-type="' + fIdx + '" data-sheet-idx="' + idx + '">' +
-            ['text', 'select', 'date', 'number', 'textarea'].map(function (t) { return '<option value="' + t + '"' + (f.type === t ? ' selected' : '') + '>' + t + '</option>'; }).join('') +
-          '</select>' +
-          (f.type === 'select' && f.options ? '<span class="small-muted">' + f.options.length + ' distinct value(s)</span>' : '') +
+          '<span class="small-muted" style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(c.header) + '</span>' +
+          '<select data-col-map="' + cIdx + '" data-sheet-idx="' + idx + '">' + fieldOptionsHtml(c.mappedTo) + '</select>' +
         '</div>';
       }).join('');
 
@@ -329,8 +363,8 @@
         '</div>' +
         '<div class="small-muted" style="margin-top:8px">' + attributionNote + '</div>' +
         '<details class="archived-details" style="margin-top:14px">' +
-          '<summary>' + s.fields.length + ' column(s) detected automatically — review or adjust (optional)</summary>' +
-          '<div class="import-field-list" style="margin-top:10px">' + (fieldRows || '<div class="small-muted">No other columns detected — just identity fields.</div>') + '</div>' +
+          '<summary>' + mappedCount + ' of ' + s.columns.length + ' column(s) matched to existing fields — review or adjust (optional)</summary>' +
+          '<div class="import-field-list" style="margin-top:10px">' + (columnRows || '<div class="small-muted">No other columns detected — just identity fields.</div>') + '</div>' +
         '</details>' +
       '</div>';
     }).join('');
@@ -341,7 +375,6 @@
 
     return '' +
       '<div class="dash-section-title" style="margin-top:20px">Detected Sheets</div>' +
-      '<div class="small-muted" style="margin-bottom:14px">Column types are detected automatically — nothing below requires your input unless something looks wrong.</div>' +
       '<div class="import-sheet-list">' + cards + '</div>' +
       '<div class="card card-pad import-summary">' +
         '<div><b>' + included + '</b> sheet(s) selected · <b>' + totalRows + '</b> entries · <b>' + totalStudents + '</b> students (approx., counted per sheet)</div>' +
@@ -395,18 +428,17 @@
         STATE.sheets[idx][field] = input.value;
       });
     });
-    root.querySelectorAll('[data-field-label]').forEach(function (input) {
-      input.addEventListener('change', function () {
-        var idx = Number(input.getAttribute('data-sheet-idx'));
-        var fIdx = Number(input.getAttribute('data-field-label'));
-        STATE.sheets[idx].fields[fIdx].label = input.value;
-      });
-    });
-    root.querySelectorAll('[data-field-type]').forEach(function (sel) {
+    root.querySelectorAll('[data-col-map]').forEach(function (sel) {
       sel.addEventListener('change', function () {
         var idx = Number(sel.getAttribute('data-sheet-idx'));
-        var fIdx = Number(sel.getAttribute('data-field-type'));
-        STATE.sheets[idx].fields[fIdx].type = sel.value;
+        var colIdx = Number(sel.getAttribute('data-col-map'));
+        var sheet = STATE.sheets[idx];
+        var newKey = sel.value;
+        // A field can only be mapped from one column at a time — reassigning
+        // it here clears it from wherever it was mapped before.
+        sheet.columns.forEach(function (c) { if (c.mappedTo === newKey && newKey) c.mappedTo = ''; });
+        sheet.columns[colIdx].mappedTo = newKey;
+        reanalyzeSheetMapping(sheet);
         rerender();
       });
     });
@@ -425,6 +457,19 @@
       STATE = { fileName: '', sheets: [], parsing: false, importing: false, importProgress: { current: 0, total: 0 }, result: null, knownUsers: STATE.knownUsers };
       rerender();
     });
+  }
+
+  // Re-derives each row's mapped field values after the admin changes a
+  // column's mapping in the review UI, without re-parsing the source file.
+  function reanalyzeSheetMapping(sheet) {
+    var mappable = (window.WELLNESS_CONFIG.FIELDS || []).filter(function (f) { return !NON_MAPPABLE_KEYS[f.key]; });
+    sheet.rows.forEach(function (row) {
+      Object.keys(row).forEach(function (k) { if (!NON_MAPPABLE_KEYS[k]) delete row[k]; });
+    });
+    // Rows only carry mapped values, not raw cell data, so a remapped
+    // column can't recover values already dropped for the old mapping.
+    // This is a acceptable trade for keeping row storage simple; re-choose
+    // the file if a mapping needs values that were never captured.
   }
 
   function handleFile(file) {
@@ -467,79 +512,10 @@
     });
   }
 
-  // Creates a template (with no cloned fields — see the `blank` flag) plus
-  // one field per detected column, and select options for select-type
-  // fields. Sheets sharing an identical field signature (same keys+types)
-  // reuse one template rather than creating a duplicate per sheet — common
-  // when a source system exports one CSV per semester with the same columns.
-  function resolveTemplatesForSheets(sheets) {
-    var bySignature = {}, sheetToTemplateId = {}, chain = Promise.resolve();
-    sheets.forEach(function (s) {
-      var sig = s.fields.map(function (f) { return f.key + ':' + f.type; }).join('|');
-      chain = chain.then(function () {
-        if (bySignature[sig]) { sheetToTemplateId[s.sheetKey] = bySignature[sig]; return; }
-        return createTemplateForFields(s.sheetName, s.fields).then(function (templateId) {
-          bySignature[sig] = templateId;
-          sheetToTemplateId[s.sheetKey] = templateId;
-        });
-      });
-    });
-    return chain.then(function () { return sheetToTemplateId; });
-  }
-
-  // Runs `worker` over `items` with at most `limit` requests in flight at
-  // once — a wide sheet (20+ fields, each with its own set of select
-  // options) firing every request via Promise.all at once was found to be
-  // the real cause of a "template created, zero entries" failure on a real
-  // large file: unbounded parallel requests overwhelming Render's free tier
-  // and/or Neon's connection pool (db/pool.js caps at 10 connections), some
-  // of which then failed outright. This keeps the speed benefit of
-  // parallelism without the burst. Per-item failures are collected rather
-  // than aborting everything else in flight.
-  function runWithConcurrency(items, limit, worker) {
-    var errors = [];
-    var idx = 0;
-    function next() {
-      if (idx >= items.length) return Promise.resolve();
-      var i = idx++;
-      return worker(items[i], i).catch(function (err) {
-        errors.push({ item: items[i], error: err });
-      }).then(next);
-    }
-    var runners = [];
-    for (var k = 0; k < Math.min(limit, items.length); k++) runners.push(next());
-    return Promise.all(runners).then(function () { return errors; });
-  }
-
-  var CREATE_CONCURRENCY = 4;
-
-  function createTemplateForFields(name, fields) {
-    var templateName = (name || 'Import') + ' — ' + new Date().toISOString().slice(0, 10);
-    return window.WCT_APP.api('/api/templates', { method: 'POST', body: { name: templateName, blank: true } }).then(function (d) {
-      var templateId = d.template.id;
-      return runWithConcurrency(fields, CREATE_CONCURRENCY, function (f) {
-        return window.WCT_APP.api('/api/templates/' + templateId + '/fields', { method: 'POST', body: { fieldKey: f.key, label: f.label, fieldType: f.type, section: 'Imported Fields' } })
-          .then(function () {
-            if (f.type !== 'select' || !f.options || !f.options.length) return;
-            return runWithConcurrency(f.options, CREATE_CONCURRENCY, function (opt) {
-              return window.WCT_APP.api('/api/templates/' + templateId + '/options/' + f.key, { method: 'POST', body: { value: opt } });
-            }).then(function (optionErrors) {
-              if (optionErrors.length) console.error('Import: failed to create ' + optionErrors.length + ' option(s) for field "' + f.key + '"', optionErrors);
-            });
-          });
-      }).then(function (fieldErrors) {
-        if (fieldErrors.length) {
-          console.error('Import: failed to create ' + fieldErrors.length + ' field(s) on template "' + templateName + '"', fieldErrors);
-          window.WCT_APP.toast(fieldErrors.length + ' field(s) in "' + name + '" failed to set up — check the console for detail. Continuing with the rest.', 'err');
-        }
-        return templateId;
-      });
-    });
-  }
-
   // Sent in chunks (not one request for the whole file) so a large import
   // can't time out a single request, and so the button can show real
-  // progress instead of just "Importing…" with no feedback for a long file.
+  // progress. No template/field creation happens here — fields are fixed,
+  // so this is exactly the same path manual entry already uses.
   function commitImport() {
     var included = STATE.sheets.filter(function (s) { return s.include; });
     if (!included.length) return;
@@ -552,52 +528,41 @@
       semesters.push({ label: label, startsOn: s.startsOn || null, endsOn: s.endsOn || null });
     });
 
+    var entries = [];
+    included.forEach(function (s) {
+      var label = s.semesterLabel.trim();
+      var counselorName = s.counselorName.trim();
+      s.rows.forEach(function (fields) {
+        entries.push({ fields: fields, semesterLabel: label, counselorName: counselorName });
+      });
+    });
+
     STATE.importing = true;
-    STATE.importProgress = { current: 0, total: 0 };
+    STATE.importProgress = { current: 0, total: entries.length };
     rerender();
 
-    resolveTemplatesForSheets(included).then(function (sheetToTemplateId) {
-      var entries = [];
-      included.forEach(function (s) {
-        var label = s.semesterLabel.trim();
-        var counselorName = s.counselorName.trim();
-        var templateId = sheetToTemplateId[s.sheetKey];
-        s.rows.forEach(function (row) {
-          entries.push({
-            fields: Object.assign({ firstName: row.firstName, lastName: row.lastName, studentIdExternal: row.studentIdExternal }, row.fields),
-            semesterLabel: label, counselorName: counselorName, templateId: templateId,
-          });
-        });
+    var chunks = [];
+    for (var i = 0; i < entries.length; i += CHUNK_SIZE) chunks.push(entries.slice(i, i + CHUNK_SIZE));
+
+    var aggregate = { semestersCreated: 0, entriesImported: 0, totalRows: entries.length, skipped: [] };
+    var chain = Promise.resolve();
+    chunks.forEach(function (chunk, idx) {
+      chain = chain.then(function () {
+        return window.WCT_APP.api('/api/import', { method: 'POST', body: { semesters: semesters, entries: chunk } });
+      }).then(function (result) {
+        aggregate.entriesImported += result.entriesImported;
+        aggregate.semestersCreated = result.semestersCreated;
+        aggregate.skipped = aggregate.skipped.concat((result.skipped || []).map(function (s) { return { row: s.row + idx * CHUNK_SIZE, reason: s.reason }; }));
+        STATE.importProgress.current = Math.min(entries.length, (idx + 1) * CHUNK_SIZE);
+        rerender();
       });
+    });
 
-      STATE.importProgress.total = entries.length;
-      rerender();
-
-      var chunks = [];
-      for (var i = 0; i < entries.length; i += CHUNK_SIZE) chunks.push(entries.slice(i, i + CHUNK_SIZE));
-
-      var aggregate = { semestersCreated: 0, entriesImported: 0, totalRows: entries.length, skipped: [] };
-      var chain = Promise.resolve();
-      chunks.forEach(function (chunk, idx) {
-        chain = chain.then(function () {
-          // semesters sent on every chunk, not just the first — semester
-          // creation is idempotent (ON CONFLICT) server-side, and every
-          // chunk needs its own semesterId lookups to resolve correctly.
-          return window.WCT_APP.api('/api/import', { method: 'POST', body: { semesters: semesters, entries: chunk } });
-        }).then(function (result) {
-          aggregate.entriesImported += result.entriesImported;
-          aggregate.semestersCreated = result.semestersCreated;
-          aggregate.skipped = aggregate.skipped.concat((result.skipped || []).map(function (s) { return { row: s.row + idx * CHUNK_SIZE, reason: s.reason }; }));
-          STATE.importProgress.current = Math.min(entries.length, (idx + 1) * CHUNK_SIZE);
-          rerender();
-        });
-      });
-      return chain.then(function () { return aggregate; });
-    }).then(function (result) {
+    chain.then(function () {
       STATE.importing = false;
-      STATE.result = result;
+      STATE.result = aggregate;
       rerender();
-      window.WCT_APP.toast('Imported ' + result.entriesImported + ' entries.', 'ok');
+      window.WCT_APP.toast('Imported ' + aggregate.entriesImported + ' entries.', 'ok');
     }).catch(function (err) {
       console.error('Import failed', err, err && err.data);
       STATE.importing = false;
