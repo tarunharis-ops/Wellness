@@ -185,13 +185,28 @@ function filterEntries(entries, query) {
   return out;
 }
 
-async function activeOptionsByGroup(templateId) {
-  const byGroup = await repo.listTemplateOptions(templateId);
-  const out = {};
-  Object.keys(byGroup).forEach(function (g) {
-    out[g] = byGroup[g].filter(function (o) { return o.active; }).map(function (o) { return o.value; });
-  });
-  return out;
+// Merges every template's active fields into one schema for the dashboard
+// to aggregate against — a field defined identically on two templates
+// (same key) merges its option lists; one unique to a single template still
+// gets its own section. No fixed/assumed field list.
+async function buildFieldSchemaForDashboard() {
+  const templates = await repo.listTemplates();
+  const merged = {};
+  const order = [];
+  for (const t of templates) {
+    const fields = await repo.listTemplateFields(t.id);
+    const activeFields = fields.filter(function (f) { return f.active; });
+    if (!activeFields.length) continue;
+    const byGroup = activeFields.some(function (f) { return f.fieldType === 'select'; }) ? await repo.listTemplateOptions(t.id) : {};
+    activeFields.forEach(function (f) {
+      if (!merged[f.fieldKey]) { merged[f.fieldKey] = { key: f.fieldKey, label: f.label, type: f.fieldType, options: [] }; order.push(f.fieldKey); }
+      if (f.fieldType === 'select') {
+        const opts = (byGroup[f.fieldKey] || []).filter(function (o) { return o.active; }).map(function (o) { return o.value; });
+        opts.forEach(function (o) { if (merged[f.fieldKey].options.indexOf(o) === -1) merged[f.fieldKey].options.push(o); });
+      }
+    });
+  }
+  return order.map(function (k) { return merged[k]; });
 }
 
 // Shared by GET /api/dashboard (on-screen) and GET /api/dashboard/export
@@ -199,25 +214,19 @@ async function activeOptionsByGroup(templateId) {
 async function buildDashboard(query) {
   const from = parseDateParam(query.from);
   const to = parseDateParam(query.to);
-  const defaultTemplate = await repo.getDefaultTemplate();
-  const optionsByGroup = defaultTemplate ? await activeOptionsByGroup(defaultTemplate.id) : {};
+  const fieldSchema = await buildFieldSchemaForDashboard();
   const entries = filterEntries(await repo.listEntries(), query);
-  return agg.computeDashboard(entries, from, to, optionsByGroup);
+  return agg.computeDashboard(entries, from, to, fieldSchema);
 }
 
-// Renders the same sections shown on the Dashboard screen as a labeled CSV —
-// the software equivalent of the original workbook's "General Data" /
-// "Graduate Raw data" snapshot tabs, but generated live for any semester /
-// counselor combination instead of copy-pasted by hand.
+// Renders the same sections shown on the Dashboard screen as a labeled CSV,
+// generated live for any semester/counselor combination — one block per
+// dynamic section (select -> value counts, number -> sum/average, date ->
+// month counts), not a fixed set of named blocks.
 function dashboardToCSV(d, semesterLabel, counselorLabel) {
   const lines = [];
   const row = function () { lines.push(Array.prototype.slice.call(arguments).map(csvEscape).join(',')); };
   const section = function (title) { lines.push(''); row(title.toUpperCase()); };
-  const bucket = function (title, counts) {
-    section(title);
-    row('Category', 'Count');
-    Object.keys(counts).sort(function (a, b) { return counts[b] - counts[a]; }).forEach(function (k) { row(k, counts[k]); });
-  };
 
   row('Wellness Dashboard Export');
   row('Semester', semesterLabel);
@@ -227,40 +236,23 @@ function dashboardToCSV(d, semesterLabel, counselorLabel) {
   section('Overview');
   row('Metric', 'Value');
   row('Unique Students', d.totals.uniqueStudents);
-  row('Active Cases', d.totals.activeCases);
   row('Total Entries Logged', d.totals.totalEntries);
-  row('Wellness Hours', d.totalHours);
 
-  section('Student Status (unique students, most recent record)');
-  row('Category', 'Count');
-  row('Full-Time', d.studentStatus.fullTime);
-  row('Part-Time', d.studentStatus.partTime);
-  row('Not Currently Enrolled', d.studentStatus.notCurrentlyEnrolled);
-  row('Non-Affiliate', d.studentStatus.nonAffiliate);
-  row('International', d.studentStatus.international);
-  row('Domestic', d.studentStatus.domestic);
-  row('In Person', d.studentStatus.inPerson);
-  row('Online Only', d.studentStatus.onlineOnly);
-  row('Mode N/A', d.studentStatus.modalityNA);
-
-  bucket('Case Status (unique students, current status)', d.caseStatus);
-  bucket('Program Breakdown', d.program.buckets);
-  bucket('Case Type — NABITA Risk Rubric', d.caseType);
-  bucket('Referral Source (every logged entry)', d.referralSource);
-  bucket('Referrals Made', d.referralsMade);
-
-  section('Wellness Hours by Category (minutes ÷ 60, every logged entry)');
-  row('Category', 'Hours');
-  Object.keys(d.hours).forEach(function (k) { row(k, d.hours[k]); });
-  row('Total', d.totalHours);
-
-  bucket('Outreach Method (every logged entry)', d.outreachMethod);
-  bucket('Wellness Concern Category (Primary + Secondary + Tertiary)', d.concerns);
-  bucket('Referral Type (every logged entry)', d.referralType);
-
-  section('Referral Date by Month');
-  row('Month', 'Count');
-  Object.keys(d.referralDateByMonth).forEach(function (k) { row(k, d.referralDateByMonth[k]); });
+  d.sections.forEach(function (s) {
+    if (s.type === 'select') {
+      section(s.label);
+      row('Category', 'Count');
+      Object.keys(s.counts).sort(function (a, b) { return s.counts[b] - s.counts[a]; }).forEach(function (k) { row(k, s.counts[k]); });
+    } else if (s.type === 'number') {
+      section(s.label);
+      row('Sum', s.sum);
+      row('Average', s.average);
+    } else if (s.type === 'date') {
+      section(s.label + ' by Month');
+      row('Month', 'Count');
+      Object.keys(s.monthCounts).forEach(function (k) { row(k, s.monthCounts[k]); });
+    }
+  });
 
   return lines.join('\r\n');
 }

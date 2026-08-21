@@ -153,20 +153,6 @@
     return (parts[0][0] + (parts[1] ? parts[1][0] : '')).toUpperCase();
   }
 
-  function caseStatusBadgeClass(status) {
-    if (status === 'Active') return 'badge-active';
-    if (status === 'Monitoring') return 'badge-monitoring';
-    if (status === 'Closed') return 'badge-closed';
-    return 'badge-neutral';
-  }
-  function riskBadgeClass(risk) {
-    if (risk === 'Mild') return 'badge-mild';
-    if (risk === 'Moderate') return 'badge-moderate';
-    if (risk === 'Elevated') return 'badge-elevated';
-    if (risk === 'Critical') return 'badge-critical';
-    return 'badge-neutral';
-  }
-
   function toast(msg, kind) {
     var stack = document.getElementById('toastStack');
     var el = document.createElement('div');
@@ -359,11 +345,15 @@
   }
 
   // ---------------- Students view ----------------
+  // Only entry count / first / last contact are guaranteed across any
+  // template — per-student status/program/risk badges moved into the
+  // per-entry drawer (opened from the card), since a template might not
+  // define anything shaped like those fields at all.
   function renderStudentsView() {
     var q = STATE.search.trim().toLowerCase();
     var list = STATE.students.filter(function (s) {
       if (!q) return true;
-      return (s.firstName + ' ' + s.lastName + ' ' + (s.program || '')).toLowerCase().indexOf(q) !== -1;
+      return (s.firstName + ' ' + s.lastName + ' ' + (s.studentIdExternal || '')).toLowerCase().indexOf(q) !== -1;
     });
     if (!list.length) {
       return '<div class="page-head"><div><div class="page-title">Students</div><div class="page-sub">Grouped case history, one card per student.</div></div></div>' +
@@ -373,14 +363,11 @@
       return '<div class="card student-card" data-student="' + escapeHtml(s.studentKey) + '">' +
         '<div class="student-card-head">' +
           '<div><div class="student-name">' + escapeHtml(s.firstName) + ' ' + escapeHtml(s.lastName) + '</div>' +
-          '<div class="student-meta">' + escapeHtml(s.program || 'No program on file') + (s.pronouns ? ' · ' + escapeHtml(s.pronouns) : '') + '</div></div>' +
-          '<span class="badge ' + caseStatusBadgeClass(s.caseStatus) + '">' + escapeHtml(s.caseStatus || '—') + '</span>' +
+          '<div class="student-meta">' + escapeHtml(s.studentIdExternal || 'No student ID on file') + '</div></div>' +
         '</div>' +
-        '<div class="student-meta">' + escapeHtml(s.enrollmentStatus || '—') + ' · ' + escapeHtml(s.modality || '—') + (s.international === 'Yes' ? ' · International' : '') + '</div>' +
         '<div class="student-stats">' +
           '<div class="student-stat"><b>' + s.entryCount + '</b>entries</div>' +
-          '<div class="student-stat"><b>' + Math.round(s.totalMinutes) + '</b>minutes logged</div>' +
-          '<div class="student-stat"><b><span class="badge ' + riskBadgeClass(s.nabitaRisk) + '">' + escapeHtml(s.nabitaRisk || '—') + '</span></b></div>' +
+          '<div class="student-stat"><b>' + fmtDate(s.firstContact) + '</b>first contact</div>' +
           '<div class="student-stat" style="margin-left:auto"><b>' + fmtDate(s.lastContact) + '</b>last contact</div>' +
         '</div>' +
       '</div>';
@@ -424,6 +411,11 @@
       bodyHtml + '</div>';
   }
 
+  // One card per section the API returns — sections are the merged
+  // select/number/date fields actually defined across active templates
+  // (see server.js's buildFieldSchemaForDashboard), not a fixed report
+  // layout. A template with no fields shaped like Case Status/NABITA Risk
+  // simply produces no section for them; nothing here assumes they exist.
   function renderDashboardView() {
     var d = STATE.dashboard;
     if (!d) return emptyState('Loading…', '');
@@ -446,6 +438,13 @@
       counselors.map(function (name) { return '<option value="' + escapeHtml(name) + '"' + (STATE.dashCounselor === name ? ' selected' : '') + '>' + escapeHtml(name) + '</option>'; }).join('') +
       '</select>';
 
+    var sectionCards = d.sections.map(function (sec) {
+      if (sec.type === 'select') return dashCard(sec.label, 'every logged entry', barList(sec.counts, { limit: 12 }));
+      if (sec.type === 'number') return dashCard(sec.label, 'sum / average, every logged entry', numberBody(sec));
+      if (sec.type === 'date') return dashCard(sec.label + ' by Month', 'selected period', monthChart(sec.monthCounts));
+      return '';
+    }).join('');
+
     return '' +
       '<div class="page-head"><div><div class="page-title">Dashboard</div><div class="page-sub">' + escapeHtml(currentSemesterLabel) + ' · ' + escapeHtml(rangeLabel) + '</div></div>' +
         '<button class="btn" id="exportDashboardBtn">Export Dashboard…</button>' +
@@ -455,43 +454,20 @@
       '</div>' +
       '<div class="stat-grid">' +
         statCard('Unique Students', d.totals.uniqueStudents, 'in selected period') +
-        statCard('Active Cases', d.totals.activeCases, 'case status = Active') +
         statCard('Total Entries Logged', d.totals.totalEntries, '') +
-        statCard('Wellness Hours', d.totalHours, 'total logged, all categories') +
       '</div>' +
-      '<div class="dash-grid">' +
-        dashCard('Student Status', 'unique students, most recent record', studentStatusBody(d.studentStatus)) +
-        dashCard('Case Status', 'unique students, current status', barList(d.caseStatus, { cls: 'success' })) +
-        dashCard('Program Breakdown', 'MS Degree Seeking vs. Non-Degree', barList(d.program.buckets)) +
-        dashCard('Case Type — NABITA Risk Rubric', 'unique students, current risk level', barList(d.caseType, { cls: 'danger' })) +
-        dashCard('Referral Source', 'every logged entry', barList(d.referralSource)) +
-        dashCard('Referrals Made', 'Columbia / External / Both', barList(d.referralsMade)) +
-        dashCard('Wellness Hours by Category', 'minutes ÷ 60, every logged entry', hoursBody(d.hours, d.totalHours)) +
-        dashCard('Outreach Method', 'every logged entry', barList(d.outreachMethod, { limit: 7 })) +
-      '</div>' +
-      '<div class="dash-section-title" style="margin-top:6px">Wellness Concern Category <span class="hint">counts every Primary + Secondary + Tertiary concern logged</span></div>' +
-      '<div class="card card-pad" style="margin-bottom:22px">' + barList(d.concerns) + '</div>' +
-      '<div class="dash-section-title">Referral Type <span class="hint">where cases were referred to — every logged entry</span></div>' +
-      '<div class="card card-pad" style="margin-bottom:22px">' + barList(d.referralType, { limit: 12 }) + '</div>' +
-      '<div class="dash-section-title">Referral Date by Month <span class="hint">referral date, selected period</span></div>' +
-      '<div class="card card-pad">' + monthChart(d.referralDateByMonth) + '</div>';
+      (d.sections.length ? '<div class="dash-grid">' + sectionCards + '</div>' :
+        emptyState('No breakdown sections yet', 'Add select, number, or date fields to a template to see them charted here.'));
   }
 
   function statCard(label, value, foot) {
     return '<div class="card stat-card"><div class="stat-label">' + escapeHtml(label) + '</div><div class="stat-value">' + value + '</div><div class="stat-foot">' + escapeHtml(foot) + '</div></div>';
   }
 
-  function studentStatusBody(s) {
-    var counts = {
-      'Full-Time': s.fullTime, 'Part-Time': s.partTime, 'Not Currently Enrolled': s.notCurrentlyEnrolled, 'Non-Affiliate': s.nonAffiliate,
-      'International': s.international, 'Domestic': s.domestic,
-      'In Person': s.inPerson, 'Online Only': s.onlineOnly, 'Mode N/A': s.modalityNA,
-    };
-    return barList(counts);
-  }
-
-  function hoursBody(hours, total) {
-    return barList(hours, { cls: 'success' }) + '<div class="section-divider"></div><div class="flex-between"><span class="small-muted">Total</span><b>' + total + ' hrs</b></div>';
+  function numberBody(sec) {
+    return '<div class="stat-grid" style="grid-template-columns:repeat(2,1fr);margin-bottom:0">' +
+      statCard('Sum', sec.sum, sec.count + ' logged') + statCard('Average', sec.average, '') +
+    '</div>';
   }
 
   // ---------------- Drawer: entry form ----------------
@@ -756,13 +732,14 @@
     STATE.drawerMode = 'student';
     var drawer = document.getElementById('drawer');
 
+    // Each entry's own template defines its fields — shows a handful of
+    // whatever values that entry actually has (as tags) plus which template
+    // it used, rather than assuming specific fields like Outreach Method.
     var items = s.entries.map(function (e) {
-      var tags = [e.outreachConducted, e.concernPrimary, e.referralSource].filter(Boolean);
+      var tags = Object.keys(e.fields || {}).map(function (k) { return e.fields[k]; }).filter(Boolean).slice(0, 4);
       return '<div class="timeline-item">' +
-        '<div class="timeline-date">' + fmtDate(e.outreachDate || e.referralDate || e.createdAt) + ' · <span class="badge ' + caseStatusBadgeClass(e.caseStatus) + '" style="margin-left:2px">' + escapeHtml(e.caseStatus || '—') + '</span></div>' +
-        '<div class="timeline-body">' + escapeHtml(e.outreachType || '') + (e.outreachMethod ? ' via ' + escapeHtml(e.outreachMethod) : '') + (e.durationMinutes ? ' · ' + e.durationMinutes + ' min' : '') + '</div>' +
+        '<div class="timeline-date">' + fmtDateTime(e.createdAt) + ' · <span class="tag" style="margin-left:2px">' + escapeHtml(templateNameFor(e.templateId)) + '</span></div>' +
         '<div class="timeline-tags">' + tags.map(function (t) { return '<span class="tag">' + escapeHtml(t) + '</span>'; }).join('') + '</div>' +
-        (e.notes ? '<div class="timeline-notes">' + escapeHtml(e.notes) + '</div>' : '') +
         '<div class="timeline-notes">Logged by ' + escapeHtml(e.createdByName || '—') + '</div>' +
         '<div class="timeline-actions"><button class="btn small" data-edit-entry="' + e.id + '">Edit</button></div>' +
       '</div>';
@@ -771,12 +748,12 @@
     drawer.innerHTML = '' +
       '<div class="drawer-head">' +
         '<div><div class="drawer-title">' + escapeHtml(s.firstName) + ' ' + escapeHtml(s.lastName) + '</div>' +
-        '<div class="drawer-sub">' + escapeHtml(s.program || 'No program on file') + (s.pronouns ? ' · ' + escapeHtml(s.pronouns) : '') + '</div></div>' +
+        '<div class="drawer-sub">' + escapeHtml(s.studentIdExternal || 'No student ID on file') + '</div></div>' +
         '<button class="drawer-close" id="drawerClose">&times;</button>' +
       '</div>' +
       '<div class="drawer-body">' +
-        '<div class="stat-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:18px">' +
-          statCard('Entries', s.entryCount, '') + statCard('Minutes Logged', Math.round(s.totalMinutes), '') + statCard('Current Risk', s.nabitaRisk || '—', '') +
+        '<div class="stat-grid" style="grid-template-columns:repeat(2,1fr);margin-bottom:18px">' +
+          statCard('Entries', s.entryCount, '') + statCard('Last Contact', fmtDate(s.lastContact), '') +
         '</div>' +
         '<div class="dash-section-title">Case History</div>' +
         '<div class="timeline">' + items + '</div>' +
