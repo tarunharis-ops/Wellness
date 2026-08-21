@@ -22,12 +22,12 @@
   }
 
   var SEMESTER_STORAGE_KEY = 'wct_semester_id';
-  var APP_MODE_STORAGE_KEY = 'wct_app_mode';
+  var LAST_VIEW_STORAGE_KEY = 'wct_last_view';
+  var WELLNESS_VIEWS = ['log', 'students', 'dashboard', 'template', 'appearance', 'import', 'team', 'audit'];
 
   var STATE = {
     currentUser: null,
-    appMode: localStorage.getItem(APP_MODE_STORAGE_KEY) || 'wellness',
-    view: 'log',
+    view: localStorage.getItem(LAST_VIEW_STORAGE_KEY) || 'recordsSearch',
     entries: [],
     students: [],
     semesters: [],
@@ -209,9 +209,16 @@
   // ---------------- Rendering shell ----------------
   function setView(view) {
     STATE.view = view;
+    localStorage.setItem(LAST_VIEW_STORAGE_KEY, view);
+    var inWellness = WELLNESS_VIEWS.indexOf(view) !== -1;
     document.querySelectorAll('.nav-item').forEach(function (btn) {
       btn.classList.toggle('active', btn.getAttribute('data-view') === view);
     });
+    document.getElementById('navWellnessToggle').classList.toggle('active', inWellness);
+    document.getElementById('navWellness').style.display = inWellness ? '' : 'none';
+    document.querySelector('.semester-wrap').style.display = inWellness ? '' : 'none';
+    document.querySelector('.search-wrap').style.display = inWellness ? '' : 'none';
+    document.querySelector('.topbar-actions').style.display = inWellness ? '' : 'none';
     render();
   }
 
@@ -230,20 +237,12 @@
     else if (STATE.view === 'appearance') { root.innerHTML = renderAppearanceView(); }
     else if (STATE.view === 'recordsSearch') { window.WCT_RECORDS.renderSearch(root); }
     else if (STATE.view === 'recordsProfile') { window.WCT_RECORDS.renderProfile(root); }
+    else if (STATE.view === 'sourceSis') { window.WCT_RECORDS.renderSource(root, 'sis'); }
+    else if (STATE.view === 'sourceHousing') { window.WCT_RECORDS.renderSource(root, 'housing'); }
+    else if (STATE.view === 'sourceCampusSafety') { window.WCT_RECORDS.renderSource(root, 'campusSafety'); }
+    else if (STATE.view === 'sourceAcademicIntegrity') { window.WCT_RECORDS.renderSource(root, 'academicIntegrity'); }
+    else if (STATE.view === 'sourceWebReports') { window.WCT_RECORDS.renderSource(root, 'webReports'); }
     bindViewEvents();
-  }
-
-  // ---------------- App mode (Wellness vs. Student Records) ----------------
-  function setAppMode(mode) {
-    STATE.appMode = mode;
-    localStorage.setItem(APP_MODE_STORAGE_KEY, mode);
-    document.querySelectorAll('.mode-tab').forEach(function (t) { t.classList.toggle('active', t.getAttribute('data-mode') === mode); });
-    document.getElementById('nav').style.display = mode === 'wellness' ? '' : 'none';
-    document.getElementById('navRecords').style.display = mode === 'records' ? '' : 'none';
-    document.querySelector('.semester-wrap').style.display = mode === 'wellness' ? '' : 'none';
-    document.querySelector('.search-wrap').style.display = mode === 'wellness' ? '' : 'none';
-    document.querySelector('.topbar-actions').style.display = mode === 'wellness' ? '' : 'none';
-    setView(mode === 'wellness' ? 'log' : 'recordsSearch');
   }
 
   // ---------------- Appearance ----------------
@@ -1247,13 +1246,9 @@
       var btn = e.target.closest('.nav-item');
       if (btn) setView(btn.getAttribute('data-view'));
     });
-    document.getElementById('navRecords').addEventListener('click', function (e) {
+    document.getElementById('navWellness').addEventListener('click', function (e) {
       var btn = e.target.closest('.nav-item');
       if (btn) setView(btn.getAttribute('data-view'));
-    });
-    document.getElementById('modeSwitch').addEventListener('click', function (e) {
-      var btn = e.target.closest('.mode-tab');
-      if (btn) setAppMode(btn.getAttribute('data-mode'));
     });
     document.getElementById('search').addEventListener('input', debounce(function (e) { STATE.search = e.target.value; render(); }, 120));
     document.getElementById('newEntryBtn').addEventListener('click', function () { STATE.linkedStudentPrefill = null; openEntryDrawer(null); });
@@ -1301,7 +1296,7 @@
     }
     bindGlobalEvents();
     initIdleTimer();
-    setAppMode(STATE.appMode);
+    setView(STATE.view);
     loadAll().then(render).catch(function (err) { toast('Failed to load data: ' + err.message, 'err'); });
   }
 

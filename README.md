@@ -53,16 +53,27 @@ persistent, internet-hosted web app instead of a row-per-case spreadsheet.
 
 ## Student Records (separate from the Wellness case tracker)
 
-A second top-level section, switched to via the **Wellness / Student Records** toggle above the
-sidebar nav. It's a read-only lookup over a synthetic demo roster ("Alderbrook University") joined
-across four source systems — SIS, Housing, Campus Safety, Academic Integrity, and the Web/Anonymous
-Reporting Portal — seeded once from the CSVs in `data/student_records/` (see that folder's
-`README.md` for column definitions and provenance) into their own Postgres tables (`students`,
-`housing`, `campus_safety`, `academic_integrity`, `student_reports` in `db/schema.sql`), imported by
-`db/migrate.js` the first time it runs against an empty `students` table. This dataset is entirely
-separate from the Wellness `entries` table above — no data flows between the two.
+Six sidebar tabs, in order — **Student Records, SIS, Housing, Campus Safety, Academic Integrity,
+Web/Anonymous Reports** — followed by **Wellness** last, which expands to reveal the original
+Wellness sub-nav (Case Log, Students, Dashboard, Template, Appearance, and the admin-only Import /
+Team / Audit Log) exactly as before. It's a read-only lookup over a synthetic demo roster
+("Alderbrook University") joined across four source systems — SIS, Housing, Campus Safety, Academic
+Integrity, and the Web/Anonymous Reporting Portal — seeded once from the CSVs in
+`data/student_records/` (see that folder's `README.md` for column definitions and provenance) into
+their own Postgres tables (`students`, `housing`, `campus_safety`, `academic_integrity`,
+`student_reports` in `db/schema.sql`), imported by `db/migrate.js` the first time it runs against an
+empty `students` table. This dataset is entirely separate from the Wellness `entries` table above —
+no data flows between the two.
 
-Search by name or student ID (`Student Records → Search & Priors`) to open a profile with five tabs:
+Every list — the cross-source **Student Records** search and each individual source tab (SIS,
+Housing, Campus Safety, Academic Integrity, Web/Anonymous Reports) — browses a bounded, alphabetized
+or most-recent-first page (200 rows) by default, no query required, and filters live as you type;
+none of them ever ship the full ~10k/~6.5k/etc. table to the browser at once. Clicking a row in a
+source tab opens that student's profile straight to the most relevant tab (e.g. a Campus Safety row
+opens directly to Incidents & Case Reports) and "Back to [Section]" returns to wherever you came
+from.
+
+Search by name or student ID (`Student Records`) to open a profile with five tabs:
 
 - **Demographics** — identification and academic standing (major, class, advisor, enrollment date).
 - **Contact & Housing** — email/phone/address, current housing assignment, and full housing history.

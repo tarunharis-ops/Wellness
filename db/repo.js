@@ -502,17 +502,137 @@ function studentReportRow(row) {
   };
 }
 
-// Simple substring search over student_id / first / last / "first last" —
-// fine at this table's size (~10k rows); caller enforces a minimum query
-// length so this never runs as an unbounded full-table scan from an empty box.
+// Substring search over student_id / first / last / "first last". An empty
+// query is "browse mode" — the caller still gets a bounded, alphabetically
+// sorted page rather than the whole ~10k table, so the list view can render
+// something scrollable immediately without ever shipping an unbounded dump.
 function searchStudentRecords(q, limit) {
-  const needle = '%' + String(q || '').trim() + '%';
+  limit = limit || 200;
+  const trimmed = String(q || '').trim();
+  if (!trimmed) {
+    return db.query(
+      'SELECT student_id, first_name, last_name, major, academic_year, enrollment_status FROM students ORDER BY last_name, first_name LIMIT $1',
+      [limit]
+    ).then(function (r) { return r.rows.map(studentRecordRow); });
+  }
+  const needle = '%' + trimmed + '%';
   return db.query(
     'SELECT student_id, first_name, last_name, major, academic_year, enrollment_status FROM students ' +
     "WHERE student_id ILIKE $1 OR first_name ILIKE $1 OR last_name ILIKE $1 OR (first_name || ' ' || last_name) ILIKE $1 " +
     'ORDER BY last_name, first_name LIMIT $2',
-    [needle, limit || 50]
+    [needle, limit]
   ).then(function (r) { return r.rows.map(studentRecordRow); });
+}
+
+// ---- Per-source-system browse lists (Housing / Campus Safety / Academic
+// Integrity / Web Reports) — same browse-or-search shape as students above,
+// each joined to students for a display name. Used by the dedicated per-
+// source nav tabs, distinct from the cross-source Student Records search.
+
+function sourceHousingRow(row) {
+  return {
+    housingId: row.housing_id, studentId: row.student_id, studentName: row.first_name + ' ' + row.last_name,
+    residenceHall: row.residence_hall, roomNumber: row.room_number,
+    moveInDate: row.move_in_date, moveOutDate: row.move_out_date, housingStatus: row.housing_status,
+  };
+}
+function searchHousingRecords(q, limit) {
+  const trimmed = String(q || '').trim();
+  const needle = '%' + trimmed + '%';
+  const where = trimmed ? "WHERE h.student_id ILIKE $1 OR s.first_name ILIKE $1 OR s.last_name ILIKE $1 OR h.residence_hall ILIKE $1" : '';
+  const params = trimmed ? [needle, limit] : [limit];
+  return db.query(
+    'SELECT h.*, s.first_name, s.last_name FROM housing h JOIN students s ON s.student_id = h.student_id ' + where +
+    ' ORDER BY h.move_in_date DESC NULLS LAST LIMIT $' + (trimmed ? 2 : 1),
+    params
+  ).then(function (r) { return r.rows.map(sourceHousingRow); });
+}
+
+function sourceCampusSafetyRow(row) {
+  return {
+    reportId: row.report_id, studentId: row.student_id, studentName: row.first_name + ' ' + row.last_name,
+    incidentDate: row.incident_date, location: row.location, incidentType: row.incident_type,
+    severity: row.severity, status: row.status,
+  };
+}
+function searchCampusSafetyRecords(q, limit) {
+  const trimmed = String(q || '').trim();
+  const needle = '%' + trimmed + '%';
+  const where = trimmed ? "WHERE c.student_id ILIKE $1 OR s.first_name ILIKE $1 OR s.last_name ILIKE $1 OR c.incident_type ILIKE $1" : '';
+  const params = trimmed ? [needle, limit] : [limit];
+  return db.query(
+    'SELECT c.*, s.first_name, s.last_name FROM campus_safety c JOIN students s ON s.student_id = c.student_id ' + where +
+    ' ORDER BY c.incident_date DESC NULLS LAST LIMIT $' + (trimmed ? 2 : 1),
+    params
+  ).then(function (r) { return r.rows.map(sourceCampusSafetyRow); });
+}
+
+function sourceAcademicIntegrityRow(row) {
+  return {
+    caseId: row.case_id, studentId: row.student_id, studentName: row.first_name + ' ' + row.last_name,
+    incidentDate: row.incident_date, courseCode: row.course_code, violationType: row.violation_type,
+    severity: row.severity, status: row.status,
+  };
+}
+function searchAcademicIntegrityRecords(q, limit) {
+  const trimmed = String(q || '').trim();
+  const needle = '%' + trimmed + '%';
+  const where = trimmed ? "WHERE a.student_id ILIKE $1 OR s.first_name ILIKE $1 OR s.last_name ILIKE $1 OR a.violation_type ILIKE $1" : '';
+  const params = trimmed ? [needle, limit] : [limit];
+  return db.query(
+    'SELECT a.*, s.first_name, s.last_name FROM academic_integrity a JOIN students s ON s.student_id = a.student_id ' + where +
+    ' ORDER BY a.incident_date DESC NULLS LAST LIMIT $' + (trimmed ? 2 : 1),
+    params
+  ).then(function (r) { return r.rows.map(sourceAcademicIntegrityRow); });
+}
+
+function sourceWebReportRow(row) {
+  return {
+    reportId: row.report_id, studentId: row.reported_student_id,
+    studentName: row.first_name ? (row.first_name + ' ' + row.last_name) : null,
+    submittedDate: row.submitted_date, category: row.category, priority: row.priority, anonymous: row.anonymous,
+  };
+}
+function searchWebReportRecords(q, limit) {
+  const trimmed = String(q || '').trim();
+  const needle = '%' + trimmed + '%';
+  const where = trimmed ? "WHERE w.reported_student_id ILIKE $1 OR s.first_name ILIKE $1 OR s.last_name ILIKE $1 OR w.category ILIKE $1" : '';
+  const params = trimmed ? [needle, limit] : [limit];
+  return db.query(
+    'SELECT w.*, s.first_name, s.last_name FROM student_reports w LEFT JOIN students s ON s.student_id = w.reported_student_id ' + where +
+    ' ORDER BY w.submitted_date DESC NULLS LAST LIMIT $' + (trimmed ? 2 : 1),
+    params
+  ).then(function (r) { return r.rows.map(sourceWebReportRow); });
+}
+
+function sourceSisRow(row) {
+  return {
+    studentId: row.student_id, firstName: row.first_name, lastName: row.last_name, email: row.email,
+    major: row.major, academicYear: row.academic_year, enrollmentStatus: row.enrollment_status,
+  };
+}
+function searchSisRecords(q, limit) {
+  const trimmed = String(q || '').trim();
+  const needle = '%' + trimmed + '%';
+  const where = trimmed ? "WHERE student_id ILIKE $1 OR first_name ILIKE $1 OR last_name ILIKE $1 OR (first_name || ' ' || last_name) ILIKE $1" : '';
+  const params = trimmed ? [needle, limit] : [limit];
+  return db.query(
+    'SELECT student_id, first_name, last_name, email, major, academic_year, enrollment_status FROM students ' + where +
+    ' ORDER BY last_name, first_name LIMIT $' + (trimmed ? 2 : 1),
+    params
+  ).then(function (r) { return r.rows.map(sourceSisRow); });
+}
+
+function searchSourceRecords(source, q, limit) {
+  limit = limit || 200;
+  if (source === 'sis') return searchSisRecords(q, limit);
+  if (source === 'housing') return searchHousingRecords(q, limit);
+  if (source === 'campusSafety') return searchCampusSafetyRecords(q, limit);
+  if (source === 'academicIntegrity') return searchAcademicIntegrityRecords(q, limit);
+  if (source === 'webReports') return searchWebReportRecords(q, limit);
+  const e = new Error('Unknown source "' + source + '".');
+  e.status = 400;
+  throw e;
 }
 
 function getStudentRecordProfile(studentId) {
@@ -546,5 +666,5 @@ module.exports = {
   listTemplates, getTemplate, getDefaultTemplate, createTemplate,
   listTemplateOptions, addTemplateOption, setTemplateOptionActive,
   createAuditLog, listAuditLog,
-  searchStudentRecords, getStudentRecordProfile,
+  searchStudentRecords, getStudentRecordProfile, searchSourceRecords,
 };
