@@ -18,7 +18,6 @@ const crypto = require('crypto');
 
 require('./lib/env'); // loads .env in local dev if present
 
-const cfg = require('./lib/config');
 const agg = require('./lib/aggregate');
 const auth = require('./lib/auth');
 const repo = require('./db/repo');
@@ -111,23 +110,38 @@ async function currentUser(req) {
   return session.user;
 }
 
-function sanitizeFields(input) {
-  const out = {};
-  cfg.FIELDS.forEach(function (f) {
-    let v = input[f.key];
+// Fields are dynamic per-template (see db/schema.sql's template_fields) —
+// only First/Last Name are guaranteed. Coerces number-type fields, trims
+// strings, and drops anything not defined (active) on the given template.
+// Split into a sync core (given an already-fetched field list — used by
+// runImport, which resolves one template for many rows and shouldn't hit the
+// DB per row) and the normal async form (fetches the field list itself).
+function sanitizeFieldsWithSchema(input, templateFields) {
+  const out = {
+    firstName: String(input.firstName || '').trim(),
+    lastName: String(input.lastName || '').trim(),
+    studentIdExternal: input.studentIdExternal ? String(input.studentIdExternal).trim() : '',
+  };
+  (templateFields || []).filter(function (f) { return f.active; }).forEach(function (f) {
+    let v = input[f.fieldKey];
     if (v === undefined || v === null) v = '';
     if (typeof v === 'string') v = v.trim();
-    if (f.type === 'number') { v = v === '' ? '' : Number(v); if (isNaN(v)) v = ''; }
-    out[f.key] = v;
+    if (f.fieldType === 'number') { v = v === '' ? '' : Number(v); if (isNaN(v)) v = ''; }
+    out[f.fieldKey] = v;
   });
   return out;
 }
 
+async function sanitizeFields(input, templateId) {
+  if (!templateId) return sanitizeFieldsWithSchema(input, []);
+  const fields = await repo.listTemplateFields(templateId);
+  return sanitizeFieldsWithSchema(input, fields);
+}
+
 function validateEntry(fields, semesterId, templateId) {
   const errors = [];
-  cfg.FIELDS.forEach(function (f) {
-    if (f.required && (fields[f.key] === '' || fields[f.key] === undefined)) errors.push(f.label + ' is required.');
-  });
+  if (!fields.firstName) errors.push('First Name is required.');
+  if (!fields.lastName) errors.push('Last Name is required.');
   if (!semesterId) errors.push('Semester is required.');
   if (!templateId) errors.push('Template is required.');
   return errors;
@@ -138,9 +152,21 @@ function csvEscape(value) {
   if (/[",\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
   return s;
 }
+// Column header for a camelCase field key, e.g. "concernPrimary" -> "Concern Primary".
+function humanizeKey(key) {
+  return String(key || '').replace(/([a-z0-9])([A-Z])/g, '$1 $2').replace(/^./, function (c) { return c.toUpperCase(); });
+}
+// Columns are derived from whatever fields actually appear across the
+// entries being exported (no fixed column list) — Student ID/First/Last
+// Name always lead, since those are the only guaranteed fields.
 function entriesToCSV(entries) {
-  const header = cfg.CSV_COLUMNS.map(function (c) { return csvEscape(c.header); }).join(',');
-  const rows = entries.map(function (e) { return cfg.CSV_COLUMNS.map(function (c) { return csvEscape(e[c.key]); }).join(','); });
+  const dynamicKeys = [];
+  entries.forEach(function (e) {
+    Object.keys(e.fields || {}).forEach(function (k) { if (dynamicKeys.indexOf(k) === -1) dynamicKeys.push(k); });
+  });
+  const columns = ['studentIdExternal', 'firstName', 'lastName'].concat(dynamicKeys);
+  const header = columns.map(function (k) { return csvEscape(k === 'studentIdExternal' ? 'Student ID' : humanizeKey(k)); }).join(',');
+  const rows = entries.map(function (e) { return columns.map(function (k) { return csvEscape(e[k]); }).join(','); });
   return [header].concat(rows).join('\r\n');
 }
 
@@ -159,13 +185,28 @@ function filterEntries(entries, query) {
   return out;
 }
 
-async function activeOptionsByGroup(templateId) {
-  const byGroup = await repo.listTemplateOptions(templateId);
-  const out = {};
-  Object.keys(byGroup).forEach(function (g) {
-    out[g] = byGroup[g].filter(function (o) { return o.active; }).map(function (o) { return o.value; });
-  });
-  return out;
+// Merges every template's active fields into one schema for the dashboard
+// to aggregate against — a field defined identically on two templates
+// (same key) merges its option lists; one unique to a single template still
+// gets its own section. No fixed/assumed field list.
+async function buildFieldSchemaForDashboard() {
+  const templates = await repo.listTemplates();
+  const merged = {};
+  const order = [];
+  for (const t of templates) {
+    const fields = await repo.listTemplateFields(t.id);
+    const activeFields = fields.filter(function (f) { return f.active; });
+    if (!activeFields.length) continue;
+    const byGroup = activeFields.some(function (f) { return f.fieldType === 'select'; }) ? await repo.listTemplateOptions(t.id) : {};
+    activeFields.forEach(function (f) {
+      if (!merged[f.fieldKey]) { merged[f.fieldKey] = { key: f.fieldKey, label: f.label, type: f.fieldType, options: [] }; order.push(f.fieldKey); }
+      if (f.fieldType === 'select') {
+        const opts = (byGroup[f.fieldKey] || []).filter(function (o) { return o.active; }).map(function (o) { return o.value; });
+        opts.forEach(function (o) { if (merged[f.fieldKey].options.indexOf(o) === -1) merged[f.fieldKey].options.push(o); });
+      }
+    });
+  }
+  return order.map(function (k) { return merged[k]; });
 }
 
 // Shared by GET /api/dashboard (on-screen) and GET /api/dashboard/export
@@ -173,25 +214,19 @@ async function activeOptionsByGroup(templateId) {
 async function buildDashboard(query) {
   const from = parseDateParam(query.from);
   const to = parseDateParam(query.to);
-  const defaultTemplate = await repo.getDefaultTemplate();
-  const optionsByGroup = defaultTemplate ? await activeOptionsByGroup(defaultTemplate.id) : {};
+  const fieldSchema = await buildFieldSchemaForDashboard();
   const entries = filterEntries(await repo.listEntries(), query);
-  return agg.computeDashboard(entries, from, to, optionsByGroup);
+  return agg.computeDashboard(entries, from, to, fieldSchema);
 }
 
-// Renders the same sections shown on the Dashboard screen as a labeled CSV —
-// the software equivalent of the original workbook's "General Data" /
-// "Graduate Raw data" snapshot tabs, but generated live for any semester /
-// counselor combination instead of copy-pasted by hand.
+// Renders the same sections shown on the Dashboard screen as a labeled CSV,
+// generated live for any semester/counselor combination — one block per
+// dynamic section (select -> value counts, number -> sum/average, date ->
+// month counts), not a fixed set of named blocks.
 function dashboardToCSV(d, semesterLabel, counselorLabel) {
   const lines = [];
   const row = function () { lines.push(Array.prototype.slice.call(arguments).map(csvEscape).join(',')); };
   const section = function (title) { lines.push(''); row(title.toUpperCase()); };
-  const bucket = function (title, counts) {
-    section(title);
-    row('Category', 'Count');
-    Object.keys(counts).sort(function (a, b) { return counts[b] - counts[a]; }).forEach(function (k) { row(k, counts[k]); });
-  };
 
   row('Wellness Dashboard Export');
   row('Semester', semesterLabel);
@@ -201,40 +236,23 @@ function dashboardToCSV(d, semesterLabel, counselorLabel) {
   section('Overview');
   row('Metric', 'Value');
   row('Unique Students', d.totals.uniqueStudents);
-  row('Active Cases', d.totals.activeCases);
   row('Total Entries Logged', d.totals.totalEntries);
-  row('Wellness Hours', d.totalHours);
 
-  section('Student Status (unique students, most recent record)');
-  row('Category', 'Count');
-  row('Full-Time', d.studentStatus.fullTime);
-  row('Part-Time', d.studentStatus.partTime);
-  row('Not Currently Enrolled', d.studentStatus.notCurrentlyEnrolled);
-  row('Non-Affiliate', d.studentStatus.nonAffiliate);
-  row('International', d.studentStatus.international);
-  row('Domestic', d.studentStatus.domestic);
-  row('In Person', d.studentStatus.inPerson);
-  row('Online Only', d.studentStatus.onlineOnly);
-  row('Mode N/A', d.studentStatus.modalityNA);
-
-  bucket('Case Status (unique students, current status)', d.caseStatus);
-  bucket('Program Breakdown', d.program.buckets);
-  bucket('Case Type — NABITA Risk Rubric', d.caseType);
-  bucket('Referral Source (every logged entry)', d.referralSource);
-  bucket('Referrals Made', d.referralsMade);
-
-  section('Wellness Hours by Category (minutes ÷ 60, every logged entry)');
-  row('Category', 'Hours');
-  Object.keys(d.hours).forEach(function (k) { row(k, d.hours[k]); });
-  row('Total', d.totalHours);
-
-  bucket('Outreach Method (every logged entry)', d.outreachMethod);
-  bucket('Wellness Concern Category (Primary + Secondary + Tertiary)', d.concerns);
-  bucket('Referral Type (every logged entry)', d.referralType);
-
-  section('Referral Date by Month');
-  row('Month', 'Count');
-  Object.keys(d.referralDateByMonth).forEach(function (k) { row(k, d.referralDateByMonth[k]); });
+  d.sections.forEach(function (s) {
+    if (s.type === 'select') {
+      section(s.label);
+      row('Category', 'Count');
+      Object.keys(s.counts).sort(function (a, b) { return s.counts[b] - s.counts[a]; }).forEach(function (k) { row(k, s.counts[k]); });
+    } else if (s.type === 'number') {
+      section(s.label);
+      row('Sum', s.sum);
+      row('Average', s.average);
+    } else if (s.type === 'date') {
+      section(s.label + ' by Month');
+      row('Month', 'Count');
+      Object.keys(s.monthCounts).forEach(function (k) { row(k, s.monthCounts[k]); });
+    }
+  });
 
   return lines.join('\r\n');
 }
@@ -281,16 +299,33 @@ const server = http.createServer(function (req, res) {
   sendText(res, 404, 'Not found');
 });
 
+// Builds the field/section list for one template — no static fallback list;
+// an empty/missing template just means no fields. Used both for the initial
+// page load (Default template, via /config.js) and whenever the entry form
+// switches templates (GET /api/templates/:id/fields).
+async function buildTemplateFieldConfig(templateId) {
+  if (!templateId) return { FIELDS: [], SECTIONS: [], DEFAULT_TEMPLATE_ID: null };
+  const [fields, byGroup] = await Promise.all([
+    repo.listTemplateFields(templateId),
+    repo.listTemplateOptions(templateId),
+  ]);
+  const shaped = fields.filter(function (f) { return f.active; }).map(function (f) {
+    const out = { key: f.fieldKey, label: f.label, type: f.fieldType, section: f.section || 'Fields', fieldId: f.id };
+    if (f.fieldType === 'select') out.options = (byGroup[f.fieldKey] || []).filter(function (o) { return o.active; }).map(function (o) { return o.value; });
+    return out;
+  });
+  const sectionKeys = [];
+  shaped.forEach(function (f) { if (sectionKeys.indexOf(f.section) === -1) sectionKeys.push(f.section); });
+  return {
+    FIELDS: shaped,
+    SECTIONS: sectionKeys.map(function (s) { return { key: s, label: s }; }),
+    DEFAULT_TEMPLATE_ID: templateId,
+  };
+}
+
 async function handleConfigJs(res) {
   const defaultTemplate = await repo.getDefaultTemplate().catch(function () { return null; });
-  const byGroup = defaultTemplate ? await repo.listTemplateOptions(defaultTemplate.id).catch(function () { return {}; }) : {};
-  const fields = cfg.FIELDS.map(function (f) {
-    if (f.type !== 'select') return f;
-    const live = (byGroup[f.optionGroup] || []).filter(function (o) { return o.active; }).map(function (o) { return o.value; });
-    const groupDefaults = (cfg.OPTION_GROUPS.find(function (g) { return g.key === f.optionGroup; }) || {}).defaults || [];
-    return Object.assign({}, f, { options: live.length ? live : groupDefaults });
-  });
-  const payload = { FIELDS: fields, SECTIONS: cfg.SECTIONS, CSV_COLUMNS: cfg.CSV_COLUMNS, DEFAULT_TEMPLATE_ID: defaultTemplate ? defaultTemplate.id : null };
+  const payload = await buildTemplateFieldConfig(defaultTemplate ? defaultTemplate.id : null);
   sendText(res, 200, 'window.WELLNESS_CONFIG = ' + JSON.stringify(payload) + ';\n', 'text/javascript; charset=utf-8');
 }
 
@@ -390,7 +425,7 @@ async function handleApi(req, res, pathname, query) {
     }
     if (req.method === 'POST' && !id) {
       const body = await readBody(req);
-      const fields = sanitizeFields(body);
+      const fields = await sanitizeFields(body, body.templateId);
       const errors = validateEntry(fields, body.semesterId, body.templateId);
       if (errors.length) return sendJSON(res, 400, { errors: errors });
       const entry = await repo.createEntry(fields, user.id, { semesterId: body.semesterId, templateId: body.templateId });
@@ -399,7 +434,7 @@ async function handleApi(req, res, pathname, query) {
     }
     if ((req.method === 'PUT' || req.method === 'PATCH') && id) {
       const body = await readBody(req);
-      const fields = sanitizeFields(body);
+      const fields = await sanitizeFields(body, body.templateId);
       const errors = validateEntry(fields, body.semesterId, body.templateId);
       if (errors.length) return sendJSON(res, 400, { errors: errors });
       const entry = await repo.updateEntry(id, fields, user.id, { semesterId: body.semesterId, templateId: body.templateId });
@@ -493,19 +528,58 @@ async function handleApi(req, res, pathname, query) {
     const body = await readBody(req);
     const name = String(body.name || '').trim();
     if (!name) return sendJSON(res, 400, { error: 'Template name is required.' });
-    const template = await repo.createTemplate(name, user.id).catch(function (err) {
+    const template = await repo.createTemplate(name, user.id, { blank: !!body.blank }).catch(function (err) {
       if (/duplicate key|unique/i.test(err.message)) { const e = new Error('A template named "' + name + '" already exists.'); e.status = 400; throw e; }
       throw err;
     });
-    const options = await repo.listTemplateOptions(template.id);
     logAudit(req, user, 'template.create', template.id, { name: template.name });
-    return sendJSON(res, 201, { template: template, groups: cfg.OPTION_GROUPS.map(function (g) { return { key: g.key, label: g.label, options: options[g.key] || [] }; }) });
+    return sendJSON(res, 201, { template: template, config: await buildTemplateFieldConfig(template.id) });
   }
 
+  // Full dynamic field + section list for one template — what the entry
+  // form fetches whenever the chosen template changes.
+  const templateFieldsMatch = pathname.match(/^\/api\/templates\/([^/]+)\/fields$/);
+  if (templateFieldsMatch && req.method === 'GET') {
+    return sendJSON(res, 200, await buildTemplateFieldConfig(templateFieldsMatch[1]));
+  }
+  if (templateFieldsMatch && req.method === 'POST') {
+    const templateId = templateFieldsMatch[1];
+    await requireTemplateEditable(templateId, user);
+    const body = await readBody(req);
+    const fieldKey = String(body.fieldKey || '').trim();
+    const label = String(body.label || '').trim();
+    if (!fieldKey || !label) return sendJSON(res, 400, { error: 'fieldKey and label are required.' });
+    const field = await repo.addTemplateField(templateId, {
+      fieldKey: fieldKey, label: label, fieldType: body.fieldType || 'text', section: body.section || null,
+    }, user.id).catch(function (err) {
+      if (/duplicate key|unique/i.test(err.message)) { const e = new Error('A field with key "' + fieldKey + '" already exists on this template.'); e.status = 400; throw e; }
+      throw err;
+    });
+    logAudit(req, user, 'template.field_add', templateId, { fieldKey: fieldKey, fieldType: field.fieldType });
+    return sendJSON(res, 201, { field: field });
+  }
+
+  const templateFieldPatchMatch = pathname.match(/^\/api\/templates\/([^/]+)\/fields\/([^/]+)$/);
+  if (templateFieldPatchMatch && (req.method === 'PATCH' || req.method === 'DELETE')) {
+    const templateId = templateFieldPatchMatch[1], fieldId = templateFieldPatchMatch[2];
+    await requireTemplateEditable(templateId, user);
+    const patch = req.method === 'DELETE' ? { active: false } : await readBody(req);
+    const field = await repo.updateTemplateField(templateId, fieldId, patch);
+    if (!field) return sendJSON(res, 404, { error: 'Field not found' });
+    logAudit(req, user, req.method === 'DELETE' ? 'template.field_archive' : 'template.field_update', templateId, { fieldKey: field.fieldKey });
+    return sendJSON(res, 200, { field: field });
+  }
+
+  // Full option rows (id/active, not just the active value strings
+  // buildTemplateFieldConfig serves the entry form) — the Template admin
+  // page needs ids to archive/restore individual options.
   const templateOptionsMatch = pathname.match(/^\/api\/templates\/([^/]+)\/options$/);
   if (templateOptionsMatch && req.method === 'GET') {
-    const options = await repo.listTemplateOptions(templateOptionsMatch[1]);
-    return sendJSON(res, 200, { groups: cfg.OPTION_GROUPS.map(function (g) { return { key: g.key, label: g.label, options: options[g.key] || [] }; }) });
+    const templateId = templateOptionsMatch[1];
+    const [fields, byGroup] = await Promise.all([repo.listTemplateFields(templateId), repo.listTemplateOptions(templateId)]);
+    const groups = fields.filter(function (f) { return f.fieldType === 'select'; })
+      .map(function (f) { return { key: f.fieldKey, label: f.label, options: byGroup[f.fieldKey] || [] }; });
+    return sendJSON(res, 200, { groups: groups });
   }
 
   const templateAddMatch = pathname.match(/^\/api\/templates\/([^/]+)\/options\/([^/]+)$/);
@@ -515,7 +589,9 @@ async function handleApi(req, res, pathname, query) {
     const body = await readBody(req);
     const value = String(body.value || '').trim();
     if (!value) return sendJSON(res, 400, { error: 'Value is required.' });
-    if (!cfg.OPTION_GROUPS.find(function (g) { return g.key === groupKey; })) return sendJSON(res, 404, { error: 'Unknown option group.' });
+    const fields = await repo.listTemplateFields(templateId);
+    const field = fields.find(function (f) { return f.fieldKey === groupKey && f.fieldType === 'select'; });
+    if (!field) return sendJSON(res, 404, { error: 'Unknown or non-select field.' });
     const row = await repo.addTemplateOption(templateId, groupKey, value, user.id);
     logAudit(req, user, 'template.option_add', templateId, { groupKey: groupKey, value: value });
     return sendJSON(res, 201, { option: { id: row.id, value: row.value, active: row.active } });
@@ -587,13 +663,18 @@ async function handleApi(req, res, pathname, query) {
   }
 
   // ---- Student Records: read-only synthetic SIS/Housing/Safety/AI/Reports dataset ----
+  if (pathname === '/api/student-records/facets' && req.method === 'GET') {
+    const facets = await repo.getStudentRecordFacets();
+    return sendJSON(res, 200, facets);
+  }
+
   if (pathname === '/api/student-records' && req.method === 'GET') {
-    const students = await repo.searchStudentRecords(query.q, 200);
+    const students = await repo.searchStudentRecords({ q: query.q, academicYear: query.academicYear, advisor: query.advisor, limit: 200 });
     return sendJSON(res, 200, { students: students });
   }
 
   if (pathname === '/api/source-records' && req.method === 'GET') {
-    const records = await repo.searchSourceRecords(String(query.source || ''), query.q, 200);
+    const records = await repo.searchSourceRecords(String(query.source || ''), { q: query.q, academicYear: query.academicYear, advisor: query.advisor, limit: 200 });
     return sendJSON(res, 200, { records: records });
   }
 
@@ -638,8 +719,14 @@ async function runImport(body, user) {
     labelToId[label] = semester.id;
   }
 
-  const defaultTemplate = await repo.getDefaultTemplate();
-  const importTemplateId = (defaultTemplate || {}).id || null;
+  // Each row carries its own templateId now — the Import wizard resolves
+  // (or creates) one per detected column schema client-side before calling
+  // this endpoint, since different sheets in one import can be shaped
+  // differently. Field lists are fetched once per distinct template, not
+  // once per row.
+  const templateIds = Array.from(new Set(rows.map(function (r) { return r.templateId; }).filter(Boolean)));
+  const fieldsByTemplate = {};
+  for (const tid of templateIds) { fieldsByTemplate[tid] = await repo.listTemplateFields(tid); }
 
   const users = await repo.listUsers();
   const nameToUserId = {};
@@ -648,18 +735,20 @@ async function runImport(body, user) {
   const valid = [];
   const skipped = [];
   rows.forEach(function (row, idx) {
-    const fields = sanitizeFields(row.fields || {});
+    const templateId = row.templateId;
+    if (!templateId || !fieldsByTemplate[templateId]) { skipped.push({ row: idx + 1, reason: 'No template resolved for this row.' }); return; }
+    const fields = sanitizeFieldsWithSchema(row.fields || {}, fieldsByTemplate[templateId]);
     const semesterLabel = String(row.semesterLabel || '').trim();
     const semesterId = labelToId[semesterLabel];
     if (!semesterId) { skipped.push({ row: idx + 1, reason: 'Unrecognized semester "' + semesterLabel + '"' }); return; }
-    const errors = validateEntry(fields, semesterId, importTemplateId);
+    const errors = validateEntry(fields, semesterId, templateId);
     if (errors.length) { skipped.push({ row: idx + 1, reason: errors.join(' ') }); return; }
     const counselorName = String(row.counselorName || '').trim();
     const matchedUserId = counselorName ? nameToUserId[counselorName.toLowerCase()] : null;
     valid.push({
       fields: fields,
       semesterId: semesterId,
-      templateId: importTemplateId,
+      templateId: templateId,
       createdBy: matchedUserId || null,
       createdByNameOverride: matchedUserId ? null : (counselorName || null),
     });

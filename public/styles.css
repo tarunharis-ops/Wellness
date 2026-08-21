@@ -508,6 +508,14 @@ table.data-table { width: 100%; border-collapse: collapse; min-width: 900px; }
 .import-sheet-name { font-family: var(--font-serif); font-weight: 400; font-size: 16px; }
 .import-summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; position: sticky; bottom: 16px; box-shadow: var(--shadow-md); }
 .import-skip-list { max-height: 260px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
+.import-field-list { display: flex; flex-direction: column; gap: 6px; max-height: 240px; overflow-y: auto; }
+.import-field-row { display: flex; align-items: center; gap: 8px; }
+.import-field-row input[type=text] {
+  flex: 1; padding: 7px 10px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--surface); font-size: 12.5px; outline: none;
+}
+.import-field-row input[type=text]:focus { border-color: var(--text); }
+.import-field-row select { padding: 7px 8px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--surface); font-size: 12px; flex-shrink: 0; }
+.import-field-row .small-muted { flex-shrink: 0; white-space: nowrap; }
 
 /* ---------- Idle timeout ---------- */
 .idle-overlay {
