@@ -252,6 +252,8 @@
       options.push('<option value="' + s.id + '"' + (STATE.currentSemesterId === s.id ? ' selected' : '') + '>' + escapeHtml(s.label) + ' (' + s.entryCount + ')</option>');
     });
     sel.innerHTML = options.join('');
+    var delBtn = document.getElementById('deleteSemesterBtn');
+    if (delBtn) delBtn.style.display = (STATE.currentSemesterId !== 'all' && STATE.currentUser && STATE.currentUser.role === 'admin') ? '' : 'none';
   }
 
   // ---------------- Log view ----------------
@@ -1270,6 +1272,15 @@
     document.getElementById('logoutBtn').addEventListener('click', function () { window.WCT_AUTH.logout(); });
     document.getElementById('semesterSelect').addEventListener('change', function (e) { setSemester(e.target.value); });
     document.getElementById('newSemesterBtn').addEventListener('click', promptNewSemester);
+    document.getElementById('deleteSemesterBtn').addEventListener('click', function () {
+      var s = STATE.semesters.find(function (x) { return x.id === STATE.currentSemesterId; });
+      if (!s) return;
+      if (!confirm('Delete semester "' + s.label + '"? This only works if no entries use it, and cannot be undone.')) return;
+      api('/api/semesters/' + s.id, { method: 'DELETE' }).then(function () {
+        toast('Semester "' + s.label + '" deleted', 'ok');
+        return setSemester('all');
+      }).catch(function (err) { toast(err.message, 'err'); });
+    });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeDrawer(); });
   }
 

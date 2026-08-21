@@ -189,6 +189,14 @@ function findOrCreateSemester(fields, userId) {
   return createSemester(fields, userId);
 }
 
+function getSemester(id) {
+  return db.query('SELECT * FROM semesters WHERE id = $1', [id]).then(function (r) { return r.rows[0] ? semesterRow(Object.assign({ entry_count: 0 }, r.rows[0])) : null; });
+}
+
+function deleteSemester(id) {
+  return db.query('DELETE FROM semesters WHERE id = $1', [id]).then(function (r) { return r.rowCount > 0; });
+}
+
 function semesterRow(row) {
   return {
     id: row.id, label: row.label, startsOn: row.starts_on, endsOn: row.ends_on,
@@ -773,7 +781,7 @@ module.exports = {
   countUsers, createUser, getUserByEmail, getUserById, listUsers, setUserActive, setUserRole, touchLogin, publicUser,
   createSession, getSession, deleteSession, touchSessionActivity,
   createInvite, listInvites, getInviteByToken, markInviteUsed, deleteInvite,
-  listSemesters, createSemester, findOrCreateSemester,
+  listSemesters, createSemester, findOrCreateSemester, getSemester, deleteSemester,
   listEntries, getEntry, createEntry, updateEntry, deleteEntry, bulkCreateEntries, studentKeyFor,
   countEntriesForScope, purgeEntries,
   listTemplates, getTemplate, getDefaultTemplate, createTemplate, deleteTemplate, countEntriesForTemplate,
