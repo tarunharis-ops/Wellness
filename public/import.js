@@ -108,7 +108,7 @@
   // anything that doesn't score well enough is left for the admin to map
   // manually (or skip) in the review step, rather than guessing.
   var FIELD_SYNONYMS = {
-    caseStatus: ['case status', 'status'],
+    caseStatus: ['case status'],
     pronouns: ['pronouns', 'pronoun'],
     international: ['international', 'international student'],
     program: ['program', 'major'],
@@ -150,18 +150,21 @@
   }
 
   // Returns the best-matching field key for a header, or '' if nothing
-  // scores highly enough to trust as a default.
+  // scores highly enough to trust as a default — including when the top
+  // score is a tie between two *different* fields (e.g. a bare "Status"
+  // column scores equally against Case Status and Enrollment Status; since
+  // the header alone can't disambiguate, guessing either would be actively
+  // wrong for the loser, so it's left for the admin to pick).
   function suggestFieldForHeader(header, mappableFields) {
     var norm = normalizeText(header);
-    var best = { key: '', score: 0 };
+    var bestScore = 0, bestKeys = [];
     mappableFields.forEach(function (f) {
       var candidates = [normalizeText(f.label)].concat((FIELD_SYNONYMS[f.key] || []).map(normalizeText));
-      candidates.forEach(function (c) {
-        var score = tokenScore(norm, c);
-        if (score > best.score) best = { key: f.key, score: score };
-      });
+      var fieldScore = candidates.reduce(function (max, c) { return Math.max(max, tokenScore(norm, c)); }, 0);
+      if (fieldScore > bestScore) { bestScore = fieldScore; bestKeys = [f.key]; }
+      else if (fieldScore === bestScore && fieldScore > 0) { bestKeys.push(f.key); }
     });
-    return best.score >= 40 ? best.key : '';
+    return bestScore >= 40 && bestKeys.length === 1 ? bestKeys[0] : '';
   }
 
   // header/formattedRows drive detection + most values; rawRows (same shape)
