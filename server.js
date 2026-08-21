@@ -578,11 +578,15 @@ async function handleApi(req, res, pathname, query) {
     return sendJSON(res, 200, { field: field });
   }
 
+  // Full option rows (id/active, not just the active value strings
+  // buildTemplateFieldConfig serves the entry form) — the Template admin
+  // page needs ids to archive/restore individual options.
   const templateOptionsMatch = pathname.match(/^\/api\/templates\/([^/]+)\/options$/);
   if (templateOptionsMatch && req.method === 'GET') {
-    const config = await buildTemplateFieldConfig(templateOptionsMatch[1]);
-    const groups = config.FIELDS.filter(function (f) { return f.type === 'select'; })
-      .map(function (f) { return { key: f.key, label: f.label, options: f.options || [] }; });
+    const templateId = templateOptionsMatch[1];
+    const [fields, byGroup] = await Promise.all([repo.listTemplateFields(templateId), repo.listTemplateOptions(templateId)]);
+    const groups = fields.filter(function (f) { return f.fieldType === 'select'; })
+      .map(function (f) { return { key: f.fieldKey, label: f.label, options: byGroup[f.fieldKey] || [] }; });
     return sendJSON(res, 200, { groups: groups });
   }
 

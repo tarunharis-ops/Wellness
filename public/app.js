@@ -3,11 +3,6 @@
 
   function getFields() { return window.WELLNESS_CONFIG.FIELDS; }
   function getSections() { return window.WELLNESS_CONFIG.SECTIONS; }
-  function getFieldMap() {
-    var m = {};
-    getFields().forEach(function (f) { m[f.key] = f; });
-    return m;
-  }
 
   function reloadConfig() {
     return new Promise(function (resolve) {
@@ -34,8 +29,8 @@
     currentSemesterId: localStorage.getItem(SEMESTER_STORAGE_KEY) || 'all',
     dashCounselor: 'all',
     search: '',
-    filters: { caseStatus: '', nabitaRisk: '' },
-    sort: { key: 'outreachDate', dir: 'desc' },
+    filters: {},
+    sort: { key: 'createdAt', dir: 'desc' },
     dashboard: null,
     dashRangeMode: 'all',
     dashFrom: '',
@@ -274,19 +269,25 @@
   }
 
   // ---------------- Log view ----------------
+  // Search scans identity fields plus every dynamic field value present on
+  // an entry — not a fixed list of "searchable" columns, since fields vary
+  // by template. Filters are likewise a generic { fieldKey: value } map.
   function filteredEntries() {
     var q = STATE.search.trim().toLowerCase();
     var list = STATE.entries.filter(function (e) {
-      if (STATE.filters.caseStatus && e.caseStatus !== STATE.filters.caseStatus) return false;
-      if (STATE.filters.nabitaRisk && e.nabitaRisk !== STATE.filters.nabitaRisk) return false;
+      for (var key in STATE.filters) {
+        if (STATE.filters[key] && e[key] !== STATE.filters[key]) return false;
+      }
       if (!q) return true;
-      var hay = [e.firstName, e.lastName, e.notes, e.program, e.concernPrimary, e.concernSecondary].join(' ').toLowerCase();
+      var hay = [e.firstName, e.lastName, e.studentIdExternal]
+        .concat(Object.keys(e.fields || {}).map(function (k) { return e.fields[k]; }))
+        .join(' ').toLowerCase();
       return hay.indexOf(q) !== -1;
     });
     var key = STATE.sort.key, dir = STATE.sort.dir === 'asc' ? 1 : -1;
     list.sort(function (a, b) {
       var av = a[key] || '', bv = b[key] || '';
-      if (key === 'outreachDate' || key === 'referralDate' || key === 'createdAt') {
+      if (key === 'createdAt' || key === 'updatedAt') {
         av = av ? new Date(av).getTime() : 0;
         bv = bv ? new Date(bv).getTime() : 0;
       } else { av = String(av).toLowerCase(); bv = String(bv).toLowerCase(); }
@@ -297,40 +298,49 @@
     return list;
   }
 
+  function templateNameFor(templateId) {
+    var t = STATE.templates.find(function (x) { return x.id === templateId; });
+    return t ? t.name : '—';
+  }
+
+  // Table columns are the only fields guaranteed to exist across any
+  // template — everything else lives in the per-entry drawer, which renders
+  // whatever fields that entry's template actually defines.
   function renderLogView() {
     var list = filteredEntries();
     var showSemesterCol = STATE.currentSemesterId === 'all';
     var rows = list.map(function (e) {
       return '<tr data-id="' + e.id + '">' +
-        '<td><span class="badge ' + caseStatusBadgeClass(e.caseStatus) + '">' + escapeHtml(e.caseStatus || '—') + '</span></td>' +
+        '<td class="cell-muted">' + escapeHtml(e.studentIdExternal || '—') + '</td>' +
         '<td class="cell-name">' + escapeHtml(e.firstName) + ' ' + escapeHtml(e.lastName) + '</td>' +
-        '<td class="cell-muted">' + escapeHtml(e.program || '—') + '</td>' +
-        '<td><span class="badge ' + riskBadgeClass(e.nabitaRisk) + '">' + escapeHtml(e.nabitaRisk || '—') + '</span></td>' +
-        '<td class="cell-muted">' + escapeHtml(e.outreachConducted || '—') + '</td>' +
-        '<td class="cell-muted">' + fmtDate(e.outreachDate) + '</td>' +
-        '<td class="cell-muted">' + (e.durationMinutes !== '' && e.durationMinutes !== undefined ? e.durationMinutes + ' min' : '—') + '</td>' +
-        '<td class="cell-muted">' + escapeHtml(e.concernPrimary || '—') + '</td>' +
+        '<td class="cell-muted">' + escapeHtml(templateNameFor(e.templateId)) + '</td>' +
         '<td class="cell-muted">' + escapeHtml(e.createdByName || '—') + '</td>' +
+        '<td class="cell-muted">' + fmtDateTime(e.createdAt) + '</td>' +
         (showSemesterCol ? '<td class="cell-muted">' + escapeHtml(e.semesterLabel || '—') + '</td>' : '') +
         '</tr>';
+    }).join('');
+
+    // One dropdown filter per select-type field on the active template —
+    // capped to fields with a handful of options so the bar stays usable
+    // even when a template has many select fields (e.g. 19 on Default).
+    var dynamicFilters = getFields().filter(function (f) { return f.type === 'select' && f.options && f.options.length && f.options.length <= 8; });
+    var filterBarHtml = dynamicFilters.map(function (f) {
+      var opts = '<option value="">All ' + escapeHtml(f.label) + '</option>' + f.options.map(function (o) {
+        return '<option value="' + escapeHtml(o) + '"' + (STATE.filters[f.key] === o ? ' selected' : '') + '>' + escapeHtml(o) + '</option>';
+      }).join('');
+      return '<select class="counselor-select" data-dynamic-filter="' + f.key + '">' + opts + '</select>';
     }).join('');
 
     return '' +
       '<div class="page-head">' +
         '<div><div class="page-title">Case Log</div><div class="page-sub">Shared with your whole team — click a row to edit.</div></div>' +
       '</div>' +
-      '<div class="filter-bar">' +
-        filterChips('caseStatus', optionsFor('caseStatus'), STATE.filters.caseStatus) +
-        '<span style="width:1px;height:20px;background:var(--border);margin:0 4px;"></span>' +
-        filterChips('nabitaRisk', optionsFor('nabitaRisk'), STATE.filters.nabitaRisk) +
-      '</div>' +
+      (filterBarHtml ? '<div class="filter-bar">' + filterBarHtml + '</div>' : '') +
       '<div class="table-wrap">' +
         (list.length ? (
         '<table class="data-table">' +
           '<thead><tr>' +
-            th('caseStatus', 'Status') + th('lastName', 'Student') + th('program', 'Program') +
-            th('nabitaRisk', 'Risk') + th('outreachConducted', 'Outreach') + th('outreachDate', 'Date') +
-            th('durationMinutes', 'Duration') + th('concernPrimary', 'Primary Concern') + '<th>Logged By</th>' +
+            '<th>Student ID</th>' + th('lastName', 'Student') + '<th>Template</th><th>Logged By</th>' + th('createdAt', 'Date') +
             (showSemesterCol ? '<th>Semester</th>' : '') +
           '</tr></thead>' +
           '<tbody>' + rows + '</tbody>' +
@@ -344,21 +354,8 @@
     return '<th data-sort="' + key + '">' + label + arrow + '</th>';
   }
 
-  function filterChips(field, options, current) {
-    var all = '<button class="filter-chip' + (!current ? ' active' : '') + '" data-filter="' + field + '" data-value="">All</button>';
-    var chips = options.map(function (o) {
-      return '<button class="filter-chip' + (current === o ? ' active' : '') + '" data-filter="' + field + '" data-value="' + escapeHtml(o) + '">' + escapeHtml(o) + '</button>';
-    }).join('');
-    return all + chips;
-  }
-
   function emptyState(big, small) {
     return '<div class="empty-state"><div class="big">' + escapeHtml(big) + '</div><div>' + escapeHtml(small) + '</div></div>';
-  }
-
-  function optionsFor(fieldKey) {
-    var f = getFieldMap()[fieldKey];
-    return f ? f.options : [];
   }
 
   // ---------------- Students view ----------------
@@ -549,13 +546,30 @@
     '</div>';
   }
 
-  function entryFormHtml(entry, isNew) {
-    var sectionsHtml = getSections().map(function (sec) {
-      var fields = getFields().filter(function (f) { return f.section === sec.key; });
+  // First/Last Name (+ optional Student ID) are the only guaranteed fields —
+  // structural columns, not part of a template's dynamic field list — so
+  // they're always rendered, independent of which template is selected.
+  function coreIdentityFieldsHtml(entry) {
+    return '<div class="form-section"><div class="form-section-title">Identity</div><div class="form-grid">' +
+      fieldInputHtml({ key: 'firstName', label: 'First Name', type: 'text', required: true }, entry ? entry.firstName : '') +
+      fieldInputHtml({ key: 'lastName', label: 'Last Name', type: 'text', required: true }, entry ? entry.lastName : '') +
+      fieldInputHtml({ key: 'studentIdExternal', label: 'Student ID (optional)', type: 'text' }, entry ? entry.studentIdExternal : '') +
+    '</div></div>';
+  }
+
+  // Renders one form-section per section in the given template config
+  // (fetched from GET /api/templates/:id/fields) — everything past Identity/
+  // Semester/Template is fully dynamic and driven by that template's field
+  // list, not a fixed schema.
+  function buildDynamicSectionsHtml(config, entry) {
+    return (config.SECTIONS || []).map(function (sec) {
+      var fields = (config.FIELDS || []).filter(function (f) { return f.section === sec.key; });
       var html = fields.map(function (f) { return fieldInputHtml(f, entry ? entry[f.key] : (f.default || '')); }).join('');
       return '<div class="form-section"><div class="form-section-title">' + escapeHtml(sec.label) + '</div><div class="form-grid">' + html + '</div></div>';
     }).join('');
+  }
 
+  function entryFormHtml(entry, isNew, config) {
     var linkBox = '';
     if (isNew) {
       linkBox = '<div class="linked-student-box">' +
@@ -567,34 +581,25 @@
       '</div>';
     }
 
-    return '<form id="entryForm"><div id="formErrors"></div>' + linkBox + semesterFieldHtml(entry) + templateFieldHtml(entry) + sectionsHtml + '</form>';
+    return '<form id="entryForm"><div id="formErrors"></div>' + linkBox + coreIdentityFieldsHtml(entry) + semesterFieldHtml(entry) + templateFieldHtml(entry) +
+      '<div id="entryDynamicSections">' + buildDynamicSectionsHtml(config, entry) + '</div></form>';
   }
 
-  // Re-populates every select-type field's options from the given template,
-  // preserving whatever is currently chosen even if that value isn't part of
-  // this template's list (e.g. editing an entry created under a different
-  // template) — never silently blanks out existing data.
-  function applyTemplateOptions(templateId) {
+  // Swaps in a different template's whole field set (not just its option
+  // values — templates can have entirely different fields now). Cached per
+  // template so switching back and forth doesn't re-fetch; the Template admin
+  // page invalidates this cache (STATE.templateOptionsCache) when a
+  // template's fields/options change.
+  function applyTemplateFields(templateId, entryForPrefill) {
     if (!templateId || templateId === CREATE_TEMPLATE_VALUE) return Promise.resolve();
     var cached = STATE.templateOptionsCache[templateId];
-    var fetchP = cached ? Promise.resolve(cached) : api('/api/templates/' + templateId + '/options').then(function (d) {
-      var byGroup = {};
-      d.groups.forEach(function (g) { byGroup[g.key] = g.options.filter(function (o) { return o.active; }).map(function (o) { return o.value; }); });
-      STATE.templateOptionsCache[templateId] = byGroup;
-      return byGroup;
+    var fetchP = cached ? Promise.resolve(cached) : api('/api/templates/' + templateId + '/fields').then(function (config) {
+      STATE.templateOptionsCache[templateId] = config;
+      return config;
     });
-    return fetchP.then(function (byGroup) {
-      getFields().forEach(function (f) {
-        if (f.type !== 'select') return;
-        var el = document.querySelector('#entryForm [name="' + f.key + '"]');
-        if (!el) return;
-        var currentValue = el.value;
-        var options = byGroup[f.optionGroup] || [];
-        if (currentValue && options.indexOf(currentValue) === -1) options = options.concat([currentValue]);
-        el.innerHTML = '<option value="">— Select —</option>' + options.map(function (o) {
-          return '<option value="' + escapeHtml(o) + '"' + (o === currentValue ? ' selected' : '') + '>' + escapeHtml(o) + '</option>';
-        }).join('');
-      });
+    return fetchP.then(function (config) {
+      var container = document.getElementById('entryDynamicSections');
+      if (container) container.innerHTML = buildDynamicSectionsHtml(config, entryForPrefill || null);
     });
   }
 
@@ -604,25 +609,33 @@
     STATE.editingId = isNew ? null : entryId;
     STATE.drawerMode = 'entry';
 
-    var drawer = document.getElementById('drawer');
-    var attribution = (!isNew && (entry.createdByName || entry.updatedByName)) ?
-      '<div class="drawer-sub">Logged by ' + escapeHtml(entry.createdByName || '—') + (entry.updatedByName && entry.updatedByName !== entry.createdByName ? ' · last edited by ' + escapeHtml(entry.updatedByName) : '') + '</div>' : '';
+    var initialTemplateId = (entry && entry.templateId) ? entry.templateId : (window.WELLNESS_CONFIG.DEFAULT_TEMPLATE_ID || '');
+    var cached = initialTemplateId ? STATE.templateOptionsCache[initialTemplateId] : null;
+    var configPromise = !initialTemplateId ? Promise.resolve({ FIELDS: [], SECTIONS: [] }) :
+      cached ? Promise.resolve(cached) :
+      api('/api/templates/' + initialTemplateId + '/fields').then(function (config) { STATE.templateOptionsCache[initialTemplateId] = config; return config; });
 
-    drawer.innerHTML = '' +
-      '<div class="drawer-head">' +
-        '<div><div class="drawer-title">' + (isNew ? 'New Entry' : 'Edit Entry') + '</div>' +
-        (isNew ? '<div class="drawer-sub">Mirrors copying row 2 and filling it in for a new interaction.</div>' : '<div class="drawer-sub">' + escapeHtml((entry.firstName || '') + ' ' + (entry.lastName || '')) + '</div>' + attribution) +
+    configPromise.then(function (config) {
+      var drawer = document.getElementById('drawer');
+      var attribution = (!isNew && (entry.createdByName || entry.updatedByName)) ?
+        '<div class="drawer-sub">Logged by ' + escapeHtml(entry.createdByName || '—') + (entry.updatedByName && entry.updatedByName !== entry.createdByName ? ' · last edited by ' + escapeHtml(entry.updatedByName) : '') + '</div>' : '';
+
+      drawer.innerHTML = '' +
+        '<div class="drawer-head">' +
+          '<div><div class="drawer-title">' + (isNew ? 'New Entry' : 'Edit Entry') + '</div>' +
+          (isNew ? '<div class="drawer-sub">Fill in a new interaction.</div>' : '<div class="drawer-sub">' + escapeHtml((entry.firstName || '') + ' ' + (entry.lastName || '')) + '</div>' + attribution) +
+          '</div>' +
+          '<button class="drawer-close" id="drawerClose">&times;</button>' +
         '</div>' +
-        '<button class="drawer-close" id="drawerClose">&times;</button>' +
-      '</div>' +
-      '<div class="drawer-body">' + entryFormHtml(entry, isNew) + '</div>' +
-      '<div class="drawer-foot">' +
-        (isNew ? '<span></span>' : '<button class="btn danger" id="deleteEntryBtn">Delete Entry</button>') +
-        '<div style="display:flex;gap:8px"><button class="btn" id="cancelEntryBtn">Cancel</button><button class="btn primary" id="saveEntryBtn">' + (isNew ? 'Create Entry' : 'Save Changes') + '</button></div>' +
-      '</div>';
+        '<div class="drawer-body">' + entryFormHtml(entry, isNew, config) + '</div>' +
+        '<div class="drawer-foot">' +
+          (isNew ? '<span></span>' : '<button class="btn danger" id="deleteEntryBtn">Delete Entry</button>') +
+          '<div style="display:flex;gap:8px"><button class="btn" id="cancelEntryBtn">Cancel</button><button class="btn primary" id="saveEntryBtn">' + (isNew ? 'Create Entry' : 'Save Changes') + '</button></div>' +
+        '</div>';
 
-    openDrawer();
-    bindEntryFormEvents(isNew);
+      openDrawer();
+      bindEntryFormEvents(isNew);
+    });
   }
 
   function bindEntryFormEvents(isNew) {
@@ -651,16 +664,13 @@
     }
     var templateSelect = document.getElementById('entryTemplateSelect');
     var activeTemplateId = templateSelect.value;
-    applyTemplateOptions(activeTemplateId);
     templateSelect.addEventListener('change', function () {
       if (templateSelect.value === CREATE_TEMPLATE_VALUE) {
         var name = prompt('New template name (e.g. "Undergrad Wellness"):');
         if (!name || !name.trim()) { templateSelect.value = activeTemplateId; return; }
         api('/api/templates', { method: 'POST', body: { name: name.trim() } }).then(function (d) {
           STATE.templates.push(d.template);
-          var byGroup = {};
-          d.groups.forEach(function (g) { byGroup[g.key] = g.options.filter(function (o) { return o.active; }).map(function (o) { return o.value; }); });
-          STATE.templateOptionsCache[d.template.id] = byGroup;
+          STATE.templateOptionsCache[d.template.id] = d.config;
           var newOpt = document.createElement('option');
           newOpt.value = d.template.id;
           newOpt.textContent = d.template.name;
@@ -668,11 +678,11 @@
           templateSelect.value = d.template.id;
           activeTemplateId = d.template.id;
           toast('Template "' + d.template.name + '" created', 'ok');
-          return applyTemplateOptions(d.template.id);
+          return applyTemplateFields(d.template.id);
         }).catch(function (err) { toast(err.message, 'err'); templateSelect.value = activeTemplateId; });
       } else {
         activeTemplateId = templateSelect.value;
-        applyTemplateOptions(activeTemplateId);
+        applyTemplateFields(activeTemplateId);
       }
     });
 
@@ -684,19 +694,22 @@
   }
 
   function fillIdentityFields(s) {
-    ['firstName', 'lastName', 'pronouns', 'international', 'program', 'modality', 'enrollmentStatus', 'columbiaOfficer'].forEach(function (key) {
-      var el = document.querySelector('[name="' + key + '"]');
-      if (el) el.value = s[key] || '';
+    var fnEl = document.querySelector('[name="firstName"]'); if (fnEl) fnEl.value = s.firstName || '';
+    var lnEl = document.querySelector('[name="lastName"]'); if (lnEl) lnEl.value = s.lastName || '';
+    var idEl = document.querySelector('[name="studentIdExternal"]'); if (idEl) idEl.value = s.studentIdExternal || '';
+    document.querySelectorAll('#entryDynamicSections [name]').forEach(function (el) {
+      if (s[el.name] !== undefined) el.value = s[el.name] || '';
     });
   }
 
   function collectFormData() {
     var form = document.getElementById('entryForm');
     var data = {};
-    getFields().forEach(function (f) {
-      var el = form.querySelector('[name="' + f.key + '"]');
-      data[f.key] = el ? el.value : '';
+    ['firstName', 'lastName', 'studentIdExternal'].forEach(function (key) {
+      var el = form.querySelector('[name="' + key + '"]');
+      data[key] = el ? el.value : '';
     });
+    form.querySelectorAll('#entryDynamicSections [name]').forEach(function (el) { data[el.name] = el.value; });
     var semesterEl = form.querySelector('[name="semesterId"]');
     data.semesterId = semesterEl ? semesterEl.value : '';
     var templateEl = form.querySelector('[name="templateId"]');
@@ -708,7 +721,9 @@
     var data = collectFormData();
     var errBox = document.getElementById('formErrors');
     errBox.innerHTML = '';
-    var missing = getFields().filter(function (f) { return f.required && !data[f.key]; });
+    var missing = [];
+    if (!data.firstName) missing.push({ label: 'First Name' });
+    if (!data.lastName) missing.push({ label: 'Last Name' });
     if (!data.semesterId) missing.push({ label: 'Semester' });
     if (!data.templateId || data.templateId === CREATE_TEMPLATE_VALUE) missing.push({ label: 'Template' });
     if (missing.length) {
@@ -771,11 +786,11 @@
     openDrawer();
     document.getElementById('drawerClose').addEventListener('click', closeDrawer);
     document.getElementById('addFollowupBtn').addEventListener('click', function () {
-      STATE.linkedStudentPrefill = {
-        firstName: s.firstName, lastName: s.lastName, pronouns: s.pronouns, international: s.international,
-        program: s.program, modality: s.modality, enrollmentStatus: s.enrollmentStatus, columbiaOfficer: s.columbiaOfficer,
-        caseStatus: s.caseStatus,
-      };
+      var latest = s.entries && s.entries[0];
+      STATE.linkedStudentPrefill = Object.assign(
+        { firstName: s.firstName, lastName: s.lastName, studentIdExternal: latest ? latest.studentIdExternal : '' },
+        latest && latest.fields ? latest.fields : {}
+      );
       openEntryDrawer(null);
     });
     drawer.querySelectorAll('[data-edit-entry]').forEach(function (btn) {
@@ -1167,8 +1182,8 @@
         render();
       });
     });
-    root.querySelectorAll('[data-filter]').forEach(function (chip) {
-      chip.addEventListener('click', function () { STATE.filters[chip.getAttribute('data-filter')] = chip.getAttribute('data-value'); render(); });
+    root.querySelectorAll('[data-dynamic-filter]').forEach(function (sel) {
+      sel.addEventListener('change', function () { STATE.filters[sel.getAttribute('data-dynamic-filter')] = sel.value; render(); });
     });
     root.querySelectorAll('[data-student]').forEach(function (card) {
       card.addEventListener('click', function () { openStudentDrawer(card.getAttribute('data-student')); });
