@@ -357,6 +357,7 @@
       statCard('General Reports', p.reports.length) +
       statCard('Campus Safety Flags', p.campusSafety.length) +
       statCard('Academic Integrity Violations', p.academicIntegrity.length) +
+      statCard('Wellness Cases', p.wellness.length) +
     '</div>';
 
     var events = [];
@@ -373,6 +374,14 @@
     p.reports.forEach(function (r) {
       events.push({ date: r.submittedDate, label: r.category || 'General report', tag: 'Web Report', notes: r.description, badges: [r.priority ? { cls: priorityBadgeClass(r.priority), text: r.priority } : null] });
     });
+    p.wellness.forEach(function (w) {
+      events.push({
+        date: w.outreachDate || w.referralDate,
+        label: (w.outreachConducted || 'Wellness case activity') + (w.caseStatus ? ' (' + w.caseStatus + ')' : ''),
+        tag: 'Wellness', notes: w.notes,
+        badges: [w.nabitaRisk ? { cls: severityBadgeClass(w.nabitaRisk), text: w.nabitaRisk } : null],
+      });
+    });
     events = events.filter(function (e) { return e.date; });
     events.sort(function (a, b) { return a.date < b.date ? 1 : -1; });
 
@@ -387,7 +396,7 @@
 
     return stats +
       '<div class="dash-section-title">Unified Chronological Timeline</div>' +
-      '<div class="timeline">' + (items || emptyState('No history on file', 'This student has no incidents, violations, or housing records.')) + '</div>';
+      '<div class="timeline">' + (items || emptyState('No history on file', 'This student has no incidents, violations, housing records, or Wellness cases.')) + '</div>';
   }
 
   function statCard(label, value) {

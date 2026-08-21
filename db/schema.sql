@@ -147,13 +147,14 @@ CREATE INDEX IF NOT EXISTS idx_audit_actor ON audit_log(actor_id);
 CREATE INDEX IF NOT EXISTS idx_audit_action ON audit_log(action_type);
 
 -- ---------------------------------------------------------------------------
--- Student Records — a separate, read-only reference dataset (synthetic demo
--- data: "Alderbrook University") joined from four source systems: the SIS
--- roster plus Housing, Campus Safety, and Academic Integrity records, and the
--- general Web/Anonymous Reporting Portal. Seeded once from the CSVs in
+-- Student Records — a reference dataset (synthetic demo data: "Alderbrook
+-- University") joined from four source systems: the SIS roster plus
+-- Housing, Campus Safety, and Academic Integrity records, and the general
+-- Web/Anonymous Reporting Portal. Seeded once from the CSVs in
 -- data/student_records/ by db/migrate.js — see that folder's README.md for
--- full column definitions and provenance. Unrelated to the Wellness case
--- entries above; this is its own tab in the app.
+-- full column definitions and provenance. Wellness case entries link into
+-- this roster via entries.student_id (see below) so a student's profile can
+-- pull records from every domain, including Wellness.
 -- ---------------------------------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS students (
@@ -172,6 +173,13 @@ CREATE TABLE IF NOT EXISTS students (
 );
 CREATE INDEX IF NOT EXISTS idx_students_last_name ON students(lower(last_name));
 CREATE INDEX IF NOT EXISTS idx_students_first_name ON students(lower(first_name));
+
+-- Real FK linkage from Wellness case entries to the canonical Student
+-- Records roster, distinct from entries.student_id_external (free-text,
+-- user-typed, often unmatched). Nullable — most entries may never resolve
+-- to a known student_id; a non-null value must reference a real row.
+ALTER TABLE entries ADD COLUMN IF NOT EXISTS student_id TEXT REFERENCES students(student_id);
+CREATE INDEX IF NOT EXISTS idx_entries_student_id ON entries(student_id);
 
 CREATE TABLE IF NOT EXISTS housing (
   housing_id TEXT PRIMARY KEY,

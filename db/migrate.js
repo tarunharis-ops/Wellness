@@ -57,6 +57,37 @@ async function revertDynamicSchema() {
   console.log('Reverted dynamic schema: restored 23 fixed entries columns, dropped fields JSONB and template_fields.');
 }
 
+// Links pre-existing Wellness entries to the canonical Student Records
+// roster: for any entry whose free-text student_id_external happens to
+// match a real students.student_id, sets the new real entries.student_id
+// FK. Batched (one lookup query, one write query for the whole table) —
+// never a per-row query, which is what caused the import-performance
+// incident earlier in this project. Idempotent: only touches rows where
+// student_id is still NULL, so re-running is a cheap no-op once caught up.
+async function backfillEntryStudentIds() {
+  const candidates = await db.query(
+    "SELECT id, student_id_external FROM entries WHERE student_id IS NULL AND student_id_external IS NOT NULL AND student_id_external != ''"
+  );
+  if (!candidates.rows.length) return;
+
+  const externalIds = candidates.rows.map(function (r) { return r.student_id_external; });
+  const matched = await db.query('SELECT student_id FROM students WHERE student_id = ANY($1)', [externalIds]);
+  const validIds = {};
+  matched.rows.forEach(function (r) { validIds[r.student_id] = true; });
+
+  const toUpdate = candidates.rows.filter(function (r) { return validIds[r.student_id_external]; });
+  if (!toUpdate.length) {
+    console.log('Backfill: 0 of ' + candidates.rows.length + ' entries matched a known student_id.');
+    return;
+  }
+
+  const valuesSql = toUpdate.map(function (r, i) { return '($' + (i * 2 + 1) + ',$' + (i * 2 + 2) + ')'; }).join(',');
+  const params = [];
+  toUpdate.forEach(function (r) { params.push(r.id, r.student_id_external); });
+  await db.query('UPDATE entries e SET student_id = v.sid FROM (VALUES ' + valuesSql + ') AS v(id, sid) WHERE e.id = v.id', params);
+  console.log('Backfilled student_id on ' + toUpdate.length + ' of ' + candidates.rows.length + ' candidate entries.');
+}
+
 async function run() {
   // Must run before schema.sql is applied — schema.sql's CREATE INDEX on
   // outreach_date (and similar) assumes the fixed columns already exist,
@@ -66,6 +97,8 @@ async function run() {
   const schema = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8');
   await db.query(schema);
   console.log('Schema OK.');
+
+  await backfillEntryStudentIds();
 
   // Ensure exactly one Default template exists — every new template clones
   // its active options from this one.
